@@ -1,0 +1,8 @@
+= Building an SPA with React and Spring Data REST
+
+This is a collection of apps that use Spring Data REST and its powerful backend functionality combined with React's sophisticated features to build a UI.
+
+* https://www.youtube.com/watch?v=TgCr7v9tdKM[Spring Data REST] provides a fast way to build hypermedia-powered repositories
+* http://facebook.github.io/react/index.html[React] is Facebook's solution to efficient, fast, and easy-to-use views in the land of JavaScript
+
+include::basic/README.adoc[leveloffset=+1]

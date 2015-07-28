@@ -1,0 +1,349 @@
+= Basic Features
+
+In this section, you will see how to get a bare-bones Spring Data REST set up and running quickly. Then you will build a simply UI on top of it using Facebook's React tools.
+
+== Step 0 - Setting up your environment
+
+To get off the ground, you can either grab the code from this repository, or you can do it yourself, by hand.
+
+If you want to do it yourself, visit http://start.spring.io and pick these items:
+
+* Rest Repositories
+* Thymeleaf
+* JPA
+* H2
+
+This demo uses Java 8, Maven Project, and the latest stable release of Spring Boot.
+
+== In the beginning...
+
+In the beginning there was data. And it was good. But then people wanted to access the data through various means. Over the years, people have cobbled together lots of MVC controllers, many using Spring's powerful REST support. But to do it over and over costs a lot of time.
+
+Spring Data REST addresses how simple this problem can be if some assumptions are made:
+
+* The developer is using a Spring Data project that supports the repository model.
+* Pick on some well accepted, industry standard protocols, like HTTP verbs, formats, standardize media types, and IANA-approved link names.
+
+=== Declaring your domain
+
+The cornerstone of any Spring Data REST-based application are the domain objects. For this session, you will build an application to track the employees for a company. Kick that off by creating a data type like this:
+
+.src/main/java/com/greglturnquist/payroll/Employee.java
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
+----
+
+* `@Entity` is a JPA annotation that denotes the whole class for storage in a relational table.
+* `@Id` and `@GeneratedValue` are JPA annotation to note the primary key and that is generated automatically when needed.
+* `@Data` and `@RequiredArgsConstructor` are Project Lombok annotations to autogenerate getters, setters, constructors, toString, hash, equals, and other things. It cuts down on the boilerplate.
+
+This entity is used to track employee information. In this case, their name and job description.
+
+=== Defining the repository
+
+Another key piece of a Spring Data REST application is to create a corresponding repository definition.
+
+.src/main/java/com/greglturnquist/payroll/EmployeeRepository.java
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=code]
+----
+
+* The repository extends Spring Data Commons' `CrudRepository` and plugs in the type of the domain object and its primary key
+
+That is all that is needed! In fact, you don't even have to annotate this invisible if its top-level and visible. If you use your IDE and open up `CrudRepository`, you'll find a fist full of pre-built methods already defined.
+
+=== Pre-loading the demo
+
+To build up an application, you need to pre-load it with some data like this:
+
+.src/main/java/com/greglturnquist/payroll/DatabaseLoader.java
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[tag=code]
+----
+
+* This class is marked with Spring's `@Component` annotation so that it is automatically picked up during component scan and register in the application context.
+* It implements Spring Boot's `CommandLineRunner` so that it gets run after all the beans are created and registered.
+* It uses constructor injection and autowiring to get Spring Data's automatically created `EmployeeRepository`.
+* The `run()` method is invoked with command line arguments, loading up your data.
+
+One of the biggest, most powerful tools that Spring Data brings is the ability to skip writing JPA statements. Often times, the most common operations you write over and over. Spring Data looks at the name of methods in a repository class and figures out the operation you need. It lets you write finders, which we'll cover in another session.
+
+That is how we can write an empty interface and inherit already build save, find, and delete operations.
+
+=== Launching the back end
+
+For the last step towards an operation application, you just need a `public static void main` using Spring Boot:
+
+.src/main/java/com/greglturnquist/payroll/ReactAndSpringDataRestApplication.java
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/ReactAndSpringDataRestApplication.java[tag=code]
+----
+
+Assuming the previous class as well as your Maven build file were generated from http://start.spring.io, you can now launch it either by running that `main()` method, or typing `mvn spring-boot:run` on the command line.
+
+NOTE: If you aren't up-to-date in Spring Boot and how it works, you should consider watch one of https://www.youtube.com/watch?v=sbPSjI4tt10[Josh Long's introduction to Spring Boot]. With that out of the way, press on!
+
+=== Touring your REST service
+
+With the app running, you can check things out on the command line using http://curl.haxx.se/[cURL] (or any other tool you like).
+
+----
+$ curl localhost:8080
+{
+  "_links" : {
+    "employees" : {
+      "href" : "http://localhost:8080/employees"
+    },
+    "profile" : {
+      "href" : "http://localhost:8080/alps"
+    }
+  }
+}
+----
+
+When you ping the root node, you get back a collection of links wrapped up in a http://stateless.co/hal_specification.html[HAL-formatted JSON document].
+
+* *_links* is a the collection of links available.
+* *employees* points to an aggregate root for the employee objects defined by the `EmployeeRepository` interface.
+* *profile* is an IANA-standard relation and points to discoverable metadata about the entire service. We'll explore this in a later session.
+
+You can explore this service by traveling to the *employees* link.
+
+----
+$ curl localhost:8080/employees
+{
+  "_embedded" : {
+    "employees" : [ {
+      "firstName" : "Frodo",
+      "lastName" : "Baggins",
+      "description" : "ring bearer",
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/employees/1"
+        }
+      }
+    } ]
+  }
+}
+----
+
+At this stage, you are viewing the entire collection of employees. It's a type of preview of data. 
+
+What's included along with the data you loaded earlier is a *_links* attribute with a *self* link, a canonical representation of that particular employee.
+
+IMPORTANT: Links are a critical facet of REST. They provide the power to navigate to related items, and make affordances for other parties to navigate around your API without having to rewrite themselves everytime there is a change. 
+
+You can decide to view that one employee if you wish.
+
+----
+$ curl localhost:8080/employees/1
+{
+  "firstName" : "Frodo",
+  "lastName" : "Baggins",
+  "description" : "ring bearer",
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/employees/1"
+    }
+  }
+}
+----
+
+Little change here, except that there is no need for the *_embedded* wrapper since there is only domain object.
+
+That's all and good, but you are probably itching to create some new entries.
+
+----
+$ curl -X POST localhost:8080/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
+{
+  "firstName" : "Bilbo",
+  "lastName" : "Baggins",
+  "description" : "burglar",
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/employees/2"
+    }
+  }
+}
+----
+
+You can also PUT, PATCH, and DELETE as shown in https://spring.io/guides/gs/accessing-data-rest/[this related guide]. But let's not dig into that. You have already spent way too much time interacting with this REST service manually. Instead, don't you want to build a slick UI instead?
+
+=== Setting up a custom UI controller
+
+Spring Boot makes it super simple to stand up a custom web page. First, you need a Spring MVC controller.
+
+.src/main/java/com/greglturnquist/payroll/HomeController.java
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/HomeController.java[tag=code]
+----
+
+* `@Controller` marks this class as a Spring MVC controller.
+* `@RequestMapping` flags the `index()` method to support the `/` route.
+* It returns `index` as the name of the template, which Spring Boot's autoconfigured view resolver, will map to `src/main/resources/templates/index.html`.
+
+=== Defining an HTML template
+
+We are using Thymeleaf, although we won't really use many of its key features.
+
+.src/main/resources/templates/index.html
+[source,html]
+----
+include::src/main/resources/templates/index.html[]
+----
+
+The key part is the `<div id="react"></div>` component in the middle. It is where we will have React plug in its rendered output.
+
+=== Loading JavaScript modules
+
+This application uses http://requirejs.org/[requirejs] to load modules at runtime. This tutorial won't go into extensive detail on JavaScript loading. Feel free to use whatever you prefer.
+
+The follow bower modules are being used:
+
+* requirejs
+* rest
+* jsx-requirejs-plugin (which pulls in react)
+
+The paths for all your modules are defined in `run.js`:
+
+.src/main/resources/static/run.js
+[source,javascript]
+----
+include::src/main/resources/static/run.js[]
+----
+
+The `jsx` parts are used to flag JSX files and how they are handled.
+
+Next, you need to load the React bits when the DOM finishes loading. 
+
+.src/main/resources/static/main.js
+[source,javascript]
+----
+include::src/main/resources/static/main.js[]
+----
+
+If you are using tools like jQuery, they have alternative ways to detect when the browser is done loading the DOM.
+
+Now, for the gold, `app.jsx`. This contains our component definitions as well as code to fetch data from the backend. Let's look at in parts.
+
+For starters, since you using requireJS to load things, go ahead and fetch the modules you need:
+
+.src/main/resources/static/app.jsx
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=vars]
+----
+
+* `React` is the main library from Facebook for building this app.
+* `client` is a restJS configuration that includes suport for HAL, URI Template, and other things. We won't show it here.
+
+React is based on defining components. Oftentimes, one component can hold multiple instances of another in a parent-child relationship. It's easy for this concept to extend several layers. 
+
+Below is the defintion for an `EmployeeList`.
+
+.src/main/resources/static/app.jsx
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=employee-list]
+----
+
+* `getInitialState` is the API to initialize data that is expected to vary.
+* `componentDidMount` is the API invoked after React renders a component in the DOM.
+* `render` is the API to "draw" the components on the screen.
+
+NOTE: In React, uppercase is the convention for identifying components.
+
+In this component, an array of employees is fetched from the Spring Data REST back end stored in this component's *state* data.
+
+[[NOTE]]
+====
+React has two types of data: *state* and *properties*. 
+
+State is data that the component is expected to handle itself. It is also data that can fluctuate and change. To read the state, you use `this.state`. To update it, you use `this.setState()`. The common convention is to initialize state with nothing and declare all the parts in `getInitialState` and then load it from the server using `componentDidMount`. From there on, updates can be driven by user action or other events.
+
+Properties encompass data that is passed into the component. Properties do NOT change but are instead fixed values. To set them, you assign them to attributes when creating a new component.
+
+WARNING: JavaScript doesn't lock down data types like other languages. You can try to subvert properties by assigning values, but this doesn't work with React and its ability to make efficient updates to the DOM.
+====
+
+In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] solution. When it is done retrieving from `/employees`, it then invokes the function inside `done()` and set's the state based on it's HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /employees` earlier and how it had *employees* as an array nested inside *_embedded*.
+
+Further down in the `render()` method, `this.state.employees` is being mapped over to transform the array of employee records into an array of `<Employee/>` React components (which we'll define a little further down). It's important to note the creation of a new React component:
+
+[source,javascript]
+----
+return (<Employee key={employee._links.self.href} data={employee} />)
+----
+
+Here you are invoked a new component (uppercased) along with two properties: *key* and *data*. These are supplied the values from `employee._links.self.href` and `employee`.
+
+IMPORTANT: Whenever you work with Spring Data REST, the *self* link IS the key for a given resource. React needs a unique identifer for lists of children, and `_links.self.href` is perfect.
+
+Finally, you return an unstructure list wrapped around the array of `employees` built with mapping.
+
+[source,javascript]
+----
+<ul>
+	{employees}
+</ul>
+----
+
+This simple layout of state, properties, and HTML shows how React lets you declaritively create a simple and easy-to-understand component.
+
+Next, you need to actually define what an `<Employee />` is.
+
+.src/main/resources/static/app.jsx
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=employee]
+----
+
+This component is much simpler. It has a single HTML list item wrapped around the employee's three properties. The property itself is `this.props.employee`. Notice how passing in a JavaScript object makes it easy to pass along data fetched from the server?
+
+Because this component doesn't manage any state nor does it deal with any user inputs, there is nothing else to initialize. This might tempt you to cram it into the `<EmployeeList />` up above. Don't do it! Instead, splitting your app up into small components that serve one job will make it easier to build up their functionality in the future.
+
+The last step is to render the whole thing.
+
+.src/main/resources/static/app.jsx
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=render]
+----
+
+`React.render()` accepts two arguments: a React component you defined as well as a DOM node to inject it. Remember how you saw the `<div id="react"></div>` item earlier from the HTML page? This is where it gets picked up and plugged in.
+
+With all this in place, re-run the application (mvn spring-boot:run) and visit http://localhost:8080.
+
+image::basic/images/basic-1.png[]
+
+You can see the initial employee loaded up by the system.
+
+Remember using cURL to create new entries? Do that again.
+
+----
+curl -X POST localhost:8080/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
+----
+
+Refresh the browser, and you should see the new entry:
+
+image::basic/images/basic-2.png[]
+
+And now you can see both of them listed on the web site.
+
+=== Review
+
+In this session, we defined a domain object and a corresponding repository. Then we let Spring Data REST export it with full blown hypermedia controls. Next we created a front end using React. We declared some simple components and loaded them using requireJS. The front end fetched data from the back end and served it up as an unstructured list.
+
+Issues?
+
+* The web page wasn't dynamic. You had to refresh the browser to fetch new records.
+* The web page didn't use any of the hypermedia controls. Instead, it was hardcoded to fetch data from `/employees`.
+* It's read only. While you can alter records using cURL, the web page offers none of that.
+* The page had no CSS styling.
+
+These are issues we can tackle in the next session.
