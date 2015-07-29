@@ -6,8 +6,8 @@ define(function (require) {
 	var client = require('./client');
 	// end::vars[]
 
-	// tag::employee-list[]
-	var EmployeeList = React.createClass({
+	// tag::app[]
+	var App = React.createClass({
 		getInitialState: function () {
 			return ({employees: []});
 		},
@@ -18,15 +18,30 @@ define(function (require) {
 			})
 		},
 		render: function () {
-			var employees = this.state.employees.map(function(employee) {
+			return (
+				<EmployeeList employees={this.state.employees}/>
+			)
+		}
+	})
+	// end::app[]
+
+	// tag::employee-list[]
+	var EmployeeList = React.createClass({
+		render: function () {
+			var employees = this.props.employees.map(function (employee) {
 				return (
-					<Employee key={employee._links.self.href} employee={employee} />
+					<Employee key={employee._links.self.href} employee={employee}/>
 				)
 			});
 			return (
-				<ul>
+				<table>
+					<tr>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Description</th>
+					</tr>
 					{employees}
-				</ul>
+				</table>
 			)
 		}
 	})
@@ -36,9 +51,11 @@ define(function (require) {
 	var Employee = React.createClass({
 		render: function () {
 			return (
-				<li>
-					{this.props.employee.firstName} {this.props.employee.lastName}, {this.props.employee.description}
-				</li>
+				<tr>
+					<td>{this.props.employee.firstName}</td>
+					<td>{this.props.employee.lastName}</td>
+					<td>{this.props.employee.description}</td>
+				</tr>
 			)
 		}
 	})
@@ -46,7 +63,7 @@ define(function (require) {
 
 	// tag::render[]
 	React.render(
-		<EmployeeList />,
+		<App />,
 		document.getElementById('react')
 	)
 	// end::render[]

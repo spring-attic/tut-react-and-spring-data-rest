@@ -1,1 +1,33 @@
 = React.js and Spring Data REST: Part 2 - Hypermedia Controls
+
+In the previous session, you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls provided by Spring Data REST.
+
+== Step 0 - Setting up your environment
+
+To get off the ground, you can either grab the code from this repository, or you can do it yourself, by hand. This project is based on the previous session with more modifications coming.
+
+
+== ...and then there was REST
+
+[quote, Roy T. Fielding, http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven]
+I am getting frustrated by the number of people calling any HTTP-based interface a REST API. Today’s example is the SocialSite REST API. That is RPC. It screams RPC....What needs to be done to make the REST architectural style clear on the notion that hypertext is a constraint? In other words, if the engine of application state (and hence the API) is not being driven by hypertext, then it cannot be RESTful and cannot be a REST API. Period. Is there some broken manual somewhere that needs to be fixed?
+
+So, what exactly ARE hypermedia controls, i.e. hypertext, and how can you use them? To find out, let's take a step back and look at the core mission of REST.
+
+The core concept of REST was to borrow some of the ideas that made the web so successful and apply them to APIs. Despite the web's vast size, dynamic nature, and low rate that clients, i.e. browsers, have to updated, the web is an amazing success. Roy Fielding sought to use some of its constraints and features and see if that would afford similar expansion of API production and consumption.
+
+One of the constraints are to limit the number of verbs. For REST, the primary ones are GET, POST, PUT, DELETE, and PATCH. There are others, but we won't get into them here.
+
+* GET - fetch the state of a resource without altering the system
+* POST - create a new resource without saying where
+* PUT - replace an existing resource, overwriting whatever else is already there (if anything)
+* PATCH - alter an existing resource partially
+
+NOTE: There is debate about the exact semantics of *PATH* due it not being part of the HTTP spec where these other verbs are defined. Spring Data REST does the following: PUT overrides an existing resource, nulling out unspecified attributes. PATCH partially updates an existing resource, ignoring unspecified attributes. A good way to remember this is "what you PUT is what you GET."
+
+WARNING: Spring Data REST supports Spring Data Cassandra because it embraces the repository programming model. But Cassandra itself doesn't support upseting null into fields. Hence, Spring Data REST and PUT/PATCH doesn't abide by these assumptions when working with Cassandra.
+
+Another feature of REST is to include links to relevant resources. For example, if you were looking at an order, a RESTful API would include a link to the related customer, links to the catalog of items, and perhaps a link to the store from which the order was placed.
+
+=== Starting from the top
+

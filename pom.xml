@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.greglturnquist</groupId>
+	<artifactId>react-and-spring-data-rest</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>React.js and Spring Data REST - Root</name>
+	<description>An SPA with ReactJS in the frontend and Spring Data REST in the backend</description>
+
+	<modules>
+		<module>basic</module>
+		<module>hypermedia</module>
+	</modules>
+
+</project>

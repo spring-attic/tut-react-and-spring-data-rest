@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.greglturnquist</groupId>
-	<artifactId>react-and-spring-data-rest-basic</artifactId>
+	<artifactId>react-and-spring-data-rest-hypermedia</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>React.js and Spring Data REST - Basic</name>
+	<name>React.js and Spring Data REST - Hypermedia</name>
 	<description>An SPA with ReactJS in the frontend and Spring Data REST in the backend</description>
 
 	<parent>

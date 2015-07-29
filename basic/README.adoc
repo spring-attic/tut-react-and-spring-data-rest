@@ -238,14 +238,12 @@ include::src/main/resources/static/app.jsx[tag=vars]
 
 React is based on defining components. Oftentimes, one component can hold multiple instances of another in a parent-child relationship. It's easy for this concept to extend several layers. 
 
-For our domain model, imagine a single, top level container for all employees. Inside that container are multiple components, one for each employee.
+To start things off, it's very handy to have a top level container for all components. (This will become more evident as we expand upon the code throughout this series.) Right now, you only have the employee list. But you might need some other related components later on, so let's start with this:
 
-Below is the definition for an `EmployeeList`.
-
-.src/main/resources/static/app.jsx
+.src/main/resources/static/app.jsx - App component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=employee-list]
+include::src/main/resources/static/app.jsx[tag=app]
 ----
 
 * `React.createClass({...})` is the method to create a React component.
@@ -255,7 +253,7 @@ include::src/main/resources/static/app.jsx[tag=employee-list]
 
 NOTE: In React, uppercase is the convention for identifying components.
 
-In the *EmployeeList* component, an array of employees is fetched from the Spring Data REST backend and stored in this component's *state* data.
+In the *App* component, an array of employees is fetched from the Spring Data REST backend and stored in this component's *state* data.
 
 [[NOTE]]
 ====
@@ -272,7 +270,17 @@ WARNING: JavaScript doesn't lock down data types like other languages. You can t
 
 In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] solution. When it is done retrieving from `/api/employees`, it then invokes the function inside `done()` and set's the state based on it's HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /api/employees` earlier and see how it maps onto this structure.
 
-With this updated state, the `render()` function is invoked by the framework. Using JavaScript's map function, `this.state.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you'll see a little further down). 
+When the state is updated, the `render()` function is invoked by the framework. The employee state data is included in creation of the `<EmployeeList />` React component as an input parameter.
+
+Below is the definition for an `EmployeeList`.
+
+.src/main/resources/static/app.jsx - EmployeeList component
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=employee-list]
+----
+
+Using JavaScript's map function, `this.props.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you'll see a little further down). 
 
 [source,javascript]
 ----
@@ -305,7 +313,7 @@ Worried about mixing logic with your structure? React's APIs encourage nice, dec
 
 Next, you need to actually define what an `<Employee />` is.
 
-.src/main/resources/static/app.jsx
+.src/main/resources/static/app.jsx - Employee component
 [source,javascript,indent=0]
 ----
 include::src/main/resources/static/app.jsx[tag=employee]
@@ -317,7 +325,7 @@ Because this component doesn't manage any state nor does it deal with any user i
 
 The last step is to render the whole thing.
 
-.src/main/resources/static/app.jsx
+.src/main/resources/static/app.jsx - rendering code
 [source,javascript,indent=0]
 ----
 include::src/main/resources/static/app.jsx[tag=render]
