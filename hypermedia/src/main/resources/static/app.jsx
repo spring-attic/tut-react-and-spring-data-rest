@@ -9,6 +9,22 @@ define(function (require) {
 	var root = '/api';
 
 	var App = React.createClass({
+		loadFromServer: function (pageSize) {
+			var self = this;
+			follow(client, root, [{rel: 'employees', params: {size: pageSize}}]).done(function (response) {
+				self.setState({employees: response.entity._embedded.employees, attributes: self.state.attributes,
+					pageSize: pageSize, links: response.entity._links});
+
+				client({method: 'GET', path: response.entity._links.self.href + '/schema'}).done(function (response) {
+					self.setState({
+						employees: self.state.employees,
+						attributes: Object.keys(response.entity.properties),
+						pageSize: pageSize,
+						links: self.state.links
+					});
+				})
+			});
+		},
 		onCreate: function (newEmployee) {
 			var self = this;
 			follow(client, root, ['employees']).then(function (response) {
@@ -21,7 +37,9 @@ define(function (require) {
 			}).done(function (response) {
 				self.setState({
 					employees: self.state.employees.concat([response.entity]),
-					attributes: self.state.attributes
+					attributes: self.state.attributes,
+					pageSize: self.state.pageSize,
+					links: self.state.links
 				});
 			});
 		},
@@ -31,32 +49,40 @@ define(function (require) {
 				var newEmployees = self.state.employees.filter(function (thatEmployee) {
 					return thatEmployee._links.self.href !== employee._links.self.href;
 				})
-				self.setState({employees: newEmployees, attributes: self.state.attributes});
+				self.setState({
+					employees: newEmployees, attributes: self.state.attributes,
+					pageSize: self.state.pageSize, links: self.state.links
+				});
 			})
 		},
+		onNavigate: function(navUri) {
+			var self = this;
+			client({method: 'GET', path: navUri}).done(function(response) {
+				self.setState({employees: response.entity._embedded.employees, attributes: self.state.attributes,
+					links: response.entity._links});
+			});
+		},
+		updatePageSize: function (pageSize) {
+			this.loadFromServer(pageSize);
+		},
 		getInitialState: function () {
-			return ({employees: [], attributes: []});
+			return ({employees: [], attributes: [], pageSize: 2, links: {}});
 		},
 		// tag::follow[]
 		componentDidMount: function () {
-			var self = this;
-			follow(client, root, ['employees']).done(function (response) {
-				self.setState({employees: response.entity._embedded.employees, attributes: self.state.attributes});
-
-				client({method: 'GET', path: response.entity._links.self.href + '/schema'}).done(function (response) {
-					self.setState({
-						employees: self.state.employees,
-						attributes: Object.keys(response.entity.properties)
-					});
-				})
-			});
+			this.loadFromServer(this.state.pageSize);
 		},
 		// end::follow[]
 		render: function () {
 			return (
 				<div>
 					<CreateDialog attributes={this.state.attributes} onCreate={this.onCreate}/>
-					<EmployeeList employees={this.state.employees} onDelete={this.onDelete}/>
+					<EmployeeList employees={this.state.employees}
+								  links={this.state.links}
+								  pageSize={this.state.pageSize}
+								  onNavigate={this.onNavigate}
+								  onDelete={this.onDelete}
+								  updatePageSize={this.updatePageSize}/>
 				</div>
 			)
 		}
@@ -104,6 +130,31 @@ define(function (require) {
 	})
 
 	var EmployeeList = React.createClass({
+		handleInput: function (e) {
+			e.preventDefault();
+			var pageSize = React.findDOMNode(this.refs.pageSize).value;
+			if (/^[0-9]+$/.test(pageSize)) {
+				this.props.updatePageSize(pageSize);
+			} else {
+				React.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+			}
+		},
+		handleNavFirst: function(e){
+			e.preventDefault();
+			this.props.onNavigate(this.props.links.first.href);
+		},
+		handleNavPrev: function(e) {
+			e.preventDefault();
+			this.props.onNavigate(this.props.links.prev.href);
+		},
+		handleNavNext: function(e) {
+			e.preventDefault();
+			this.props.onNavigate(this.props.links.next.href);
+		},
+		handleNavLast: function(e) {
+			e.preventDefault();
+			this.props.onNavigate(this.props.links.last.href);
+		},
 		render: function () {
 			var self = this;
 			var employees = this.props.employees.map(function (employee) {
@@ -111,16 +162,37 @@ define(function (require) {
 					<Employee key={employee._links.self.href} employee={employee} onDelete={self.props.onDelete}/>
 				)
 			});
+
+			var navLinks = [];
+			if ("first" in this.props.links) {
+				navLinks.push(<button key="first" onClick={this.handleNavFirst}>&lt;&lt;</button>);
+			}
+			if ("prev" in this.props.links) {
+				navLinks.push(<button key="prev" onClick={this.handleNavPrev}>&lt;</button>);
+			}
+			if ("next" in this.props.links) {
+				navLinks.push(<button key="next" onClick={this.handleNavNext}>&gt;</button>);
+			}
+			if ("last" in this.props.links) {
+				navLinks.push(<button key="last" onClick={this.handleNavLast}>&gt;&gt;</button>);
+			}
+
 			return (
-				<table>
-					<tr>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>Description</th>
-						<th></th>
-					</tr>
-					{employees}
-				</table>
+				<div>
+					<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}></input>
+					<table>
+						<tr>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Description</th>
+							<th></th>
+						</tr>
+						{employees}
+					</table>
+					<div>
+						{navLinks}
+					</div>
+				</div>
 			)
 		}
 	})
