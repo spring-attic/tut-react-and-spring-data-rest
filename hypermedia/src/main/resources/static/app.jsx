@@ -9,22 +9,26 @@ define(function (require) {
 	var root = '/api';
 
 	var App = React.createClass({
+		// tag::follow-2[]
 		loadFromServer: function (pageSize) {
 			var self = this;
-			follow(client, root, [{rel: 'employees', params: {size: pageSize}}]).done(function (response) {
-				self.setState({employees: response.entity._embedded.employees, attributes: self.state.attributes,
-					pageSize: pageSize, links: response.entity._links});
-
-				client({method: 'GET', path: response.entity._links.self.href + '/schema'}).done(function (response) {
+			follow(client, root, [
+				{rel: 'employees', params: {size: pageSize}}]).done(function (employeeCollection) {
+				client({
+					method: 'GET',
+					path: employeeCollection.entity._links.self.href + '/schema'
+				}).done(function (response) {
 					self.setState({
-						employees: self.state.employees,
+						employees: employeeCollection.entity._embedded.employees,
 						attributes: Object.keys(response.entity.properties),
 						pageSize: pageSize,
-						links: self.state.links
+						links: employeeCollection.entity._links
 					});
 				})
 			});
 		},
+		// end::follow-2[]
+		// tag::create[]
 		onCreate: function (newEmployee) {
 			var self = this;
 			follow(client, root, ['employees']).then(function (response) {
@@ -43,6 +47,8 @@ define(function (require) {
 				});
 			});
 		},
+		// end::create[]
+		// tag::delete[]
 		onDelete: function (employee) {
 			var self = this;
 			client({method: 'DELETE', path: employee._links.self.href}).done(function (response) {
@@ -55,6 +61,8 @@ define(function (require) {
 				});
 			})
 		},
+		// end::delete[]
+		// tag::navigate[]
 		onNavigate: function(navUri) {
 			var self = this;
 			client({method: 'GET', path: navUri}).done(function(response) {
@@ -62,17 +70,20 @@ define(function (require) {
 					links: response.entity._links});
 			});
 		},
+		// end::navigate[]
+		// tag::update-page-size[]
 		updatePageSize: function (pageSize) {
 			this.loadFromServer(pageSize);
 		},
+		// end::update-page-size[]
 		getInitialState: function () {
 			return ({employees: [], attributes: [], pageSize: 2, links: {}});
 		},
-		// tag::follow[]
+		// tag::follow-1[]
 		componentDidMount: function () {
 			this.loadFromServer(this.state.pageSize);
 		},
-		// end::follow[]
+		// end::follow-1[]
 		render: function () {
 			return (
 				<div>
@@ -88,6 +99,7 @@ define(function (require) {
 		}
 	})
 
+	// tag::create-dialog[]
 	var CreateDialog = React.createClass({
 		handleSubmit: function (e) {
 			e.preventDefault();
@@ -105,7 +117,7 @@ define(function (require) {
 		render: function () {
 			var inputs = this.props.attributes.map(function (attribute) {
 				return (
-					<input key={attribute} type="text" name={attribute} placeholder={attribute} ref={attribute}></input>
+					<input key={attribute} type="text" placeholder={attribute} ref={attribute} />
 				)
 			})
 			return (
@@ -118,7 +130,7 @@ define(function (require) {
 
 							<h2>Create new employee</h2>
 
-							<form onSubmit={this.handleSubmit}>
+							<form>
 								{inputs}
 								<button onClick={this.handleSubmit}>Create</button>
 							</form>
@@ -128,6 +140,7 @@ define(function (require) {
 			)
 		}
 	})
+	// end::create-dialog[]
 
 	var EmployeeList = React.createClass({
 		handleInput: function (e) {
@@ -197,6 +210,7 @@ define(function (require) {
 		}
 	})
 
+	// tag::employee[]
 	var Employee = React.createClass({
 		handleDelete: function () {
 			this.props.onDelete(this.props.employee);
@@ -214,6 +228,7 @@ define(function (require) {
 			)
 		}
 	})
+	// end::employee[]
 
 	React.render(
 		<App />,

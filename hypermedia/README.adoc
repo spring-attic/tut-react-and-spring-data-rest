@@ -29,5 +29,224 @@ WARNING: Spring Data REST supports Spring Data Cassandra because it embraces the
 
 Another feature of REST is to include links to relevant resources. For example, if you were looking at an order, a RESTful API would include a link to the related customer, links to the catalog of items, and perhaps a link to the store from which the order was placed.
 
-=== Starting from the top
+=== Turning on paging from the backend
+
+Before we get underway with using frontend hypermedia controls, let's turn on all the controls we can. Spring Data REST provides paging support. To use it, you just need to tweak the repository definition.
+
+.src/main/java/com/greglturnquist/payroll/EmployeeRepository.java
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=code]
+----
+
+Your interface now extends `PagingAndSortingRepository` which adds extra options to set page size, and also adds navigational links to hop from page to page. The rest of the backend is the same (exception for some https://github.com/gregturn/react-and-spring-data-rest/blob/master/hypermedia/src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[extra pre-loaded data] to make things interesting).
+
+Restart the application (`mvn spring-boot:run`) and you can see how it works.
+
+----
+$ curl localhost:8080/api/employees?size=2
+{
+  "_links" : {
+    "first" : {
+      "href" : "http://localhost:8080/api/employees?page=0&size=2"
+    },
+    "self" : {
+      "href" : "http://localhost:8080/api/employees"
+    },
+    "next" : {
+      "href" : "http://localhost:8080/api/employees?page=1&size=2"
+    },
+    "last" : {
+      "href" : "http://localhost:8080/api/employees?page=2&size=2"
+    }
+  },
+  "_embedded" : {
+    "employees" : [ {
+      "firstName" : "Frodo",
+      "lastName" : "Baggins",
+      "description" : "ring bearer",
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/api/employees/1"
+        }
+      }
+    }, {
+      "firstName" : "Bilbo",
+      "lastName" : "Baggins",
+      "description" : "burglar",
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/api/employees/2"
+        }
+      }
+    } ]
+  },
+  "page" : {
+    "size" : 2,
+    "totalElements" : 6,
+    "totalPages" : 3,
+    "number" : 0
+  }
+}
+----
+
+The default page size is 20, so to see how it works, this shows is with `?size=2` applied. As expected, only two employees are listed. In addition, there is also a *first*, *next*, and *last* link.
+
+If you navigate to the *next* link, you'll then see a *prev* link as well:
+
+----
+$ curl "http://localhost:8080/api/employees?page=1&size=2"
+{
+  "_links" : {
+    "first" : {
+      "href" : "http://localhost:8080/api/employees?page=0&size=2"
+    },
+    "prev" : {
+      "href" : "http://localhost:8080/api/employees?page=0&size=2"
+    },
+    "self" : {
+      "href" : "http://localhost:8080/api/employees"
+    },
+    "next" : {
+      "href" : "http://localhost:8080/api/employees?page=2&size=2"
+    },
+    "last" : {
+      "href" : "http://localhost:8080/api/employees?page=2&size=2"
+    }
+  },
+...
+----
+
+NOTE: When using "&" in URL query parameters, the command line things it's a line break. Wrap the whole URL with quotation marks to bypass that.
+
+That looks neat, but it will be even better when you update the frontend to take advantage of that.
+
+=== Navigating by relationship
+
+Since there are no more modifications needed on the backend, you can focus purely on the frontend. (That's part of the beauty of Spring Data REST. No messy controller updates!)
+
+In the previous session, you hardcoded the path to `/api/employees`. Instead, the ONLY path you should hardcode is the root.
+
+[source,javascript]
+----
+...
+var root = '/api';
+...
+----
+
+With a handy little https://github.com/gregturn/react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/follow.js[`follow()` function], you can now start from the root and navigate to where you need!
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=follow-1]
+----
+
+In the previous session, the loading was done directly inside `componentDidMount()`. In this session, we are making it possible to reload the entire list of employees when the page size is updated. To do so, we have moved things into `loadFromServer()`.
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=follow-2]
+----
+
+`loadFromServer` is very similar the previous session, but instead if uses `follow()`.
+
+* The first argument is the `client` object used to make REST calls.
+* The second argument is the root URI to start from.
+* The third argument is an array of relationships to navigate along. Each one can be a string or an object.
+
+The array of relationships can be as simple as `["employees"]`, meaning when the first call is made, look in *_links_ for the relationship (or *rel*) named *employees*. Find its *href* and navigate to it. If there is another relationship in the array, rinse and repeat.
+
+Sometimes, just a rel isn't enough. In this fragment of code, it is also plugging in a query parameter of *?size=<pageSize>*. There are other options that can be supplied, as you'll see further along.
+
+=== Grabbing JSON Schema metadata
+
+After navigating to *employees* with the size-based query, the *employeeCollection* is processed. In the previous session, we called it day. In this situation, we are grabbing some extra metadata, http://json-schema.org/[JSON Schema] found a `/api/employees/schema`.
+
+You can see the data yourself:
+
+----
+$ curl http://localhost:8080/api/employees/schema
+{
+  "title" : "com.greglturnquist.payroll.Employee",
+  "properties" : {
+    "firstName" : {
+      "readOnly" : false,
+      "type" : "string"
+    },
+    "lastName" : {
+      "readOnly" : false,
+      "type" : "string"
+    },
+    "description" : {
+      "readOnly" : false,
+      "type" : "string"
+    }
+  },
+  "descriptors" : { },
+  "type" : "object",
+  "$schema" : "http://json-schema.org/draft-04/schema#"
+}
+----
+
+NOTE: Navigating to the JSON Schema metadata requires hand editing the URI. There are plans underway to add a navigable link in the future to Spring Data REST to best use hypermedia concepts.
+
+By capturing this information in the container's state, you can make good use of it later on when building data forms.
+
+=== Creating new records
+
+Equipped with all this metadata, you can now add some extra controls to the UI. To do so, you can create a new React component, `<CreateDialog />`.
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=create-dialog]
+----
+
+This new component has the expected `render()` function. At the top of this function is call to map over the supplied JSON Schema attribute data, and convert them into an array of `<input>` elements.
+
+* *key* is again needed by React to distinguish between multiple child nodes.
+* It's a simple text-based entry field.
+* *placeholder* is where we can show the user with field is which.
+* You may used to having a *name* attribute, but it's not necessary. With React, *ref* is the mechanism to grab a particular DOM node (as you'll soon see).
+
+
+Inside this component's top-level `<div>` is an anchor tag and another `<div>`. The anchor tag is the button to open the dialog. And the nested `<div>` is the hidden dialog itself. In this example, we are use pure HTML5 and CSS3. No JavaScript at all! You can https://github.com/gregturn/react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/main.css[see the CSS code] used to show/hide the dialog. We won't dive into that here.
+
+Nestled inside `<div id="createEmployee">` is a form. Inside the form is where the dynamic list of input fields get injected followed by the *Create* button. The button has an `onClick={this.handleSubmit}` event handler. This is the React way of registering an event handler.
+
+If you look at the `handleSubmit()` function, it starts off by stopping the standard event from bubbling further up the hierarchy. It then uses the same JSON Schema attribute properties to iterate over and find each `<input>` using `React.findDOMNode(self.refs[attribute])`.
+
+`self.refs` is a way to reach out and grab a particular React component by name. In that sense, you are ONLY getting the virtual DOM component. To grab the actual DOM element (in this case to read its value), you then plug it into `React.findDOMNode()`.
+
+After iterating over every attribute and building up the `newEmployee` object, we invoke a callback to `onCreate()` the new employee. Tracing the `onCreate` function back to the top at `App.onCreate`, you can see how it operates.
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=create]
+----
+
+Once again, you use the `follow()` function to navigate to the *employees* resource where POST operations are performed. In this case, there was no need to apply any parameters, so the string-version of rels was fine. The operation is completed, and when done, the top-level state is updated by concatenating the new employee record to the existing list of employees.
+
+IMPORTANT: React operates with a one-way data flow. The idea is to have state at the top and let it flow downward into relevant components. Instead of a lower level component push state changes up to a higher level, it is highly recommended you pass in a callback. This might feel new and awkward, but after you spend a few days working with React, you will come to appreciate how this nicely keeps components decoupled.
+
+After creating a new employee, the DOM elements are then cleared out and you navigate away from the dialog, causing it to hide again.
+
+=== Deleting existing records
+
+Deleting entries is much easier. All you need is to get a hold of its HAL-based record, and you can apply *DELETE* to its *self* link.
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=employee]
+----
+
+This updated version of the Employee component shows an extra entry at the end of the row, a delete button. It is registered to invoke `this.handleDelete` when clicked upon. The `handleDelete()` function can then invoke the callback passed down while supplying the contextually important `this.props.employee` record.
+
+IMPORTANT: This is a key facet of React. By having a top level function supplied with component-level details (`this.props.onDelete(this.props.employee)`) it becomes very easy to orchestrate behavior between components. State is much easier to manage when it is kept at the top of your hiearchy. Pushing callbacks down to the component where the context can be found is very easy, and continues to support this fluid, one-way data flow.
+
+Tracing the `onDelete()` function back to the top at `App.onDelete`, you can see how it operates:
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=delete]
+----
 
