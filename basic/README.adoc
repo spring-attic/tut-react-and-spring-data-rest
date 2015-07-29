@@ -82,7 +82,7 @@ By default, Spring Data REST hosts a root collection of links at `/`. If you pla
 include::src/main/resources/application.properties[]
 ----
 
-=== Launching the back end
+=== Launching the backend
 
 For the last step towards an operation application, you just need a `public static void main` using Spring Boot:
 
@@ -255,7 +255,7 @@ include::src/main/resources/static/app.jsx[tag=employee-list]
 
 NOTE: In React, uppercase is the convention for identifying components.
 
-In the *EmployeeList* component, an array of employees is fetched from the Spring Data REST back end and stored in this component's *state* data.
+In the *EmployeeList* component, an array of employees is fetched from the Spring Data REST backend and stored in this component's *state* data.
 
 [[NOTE]]
 ====
