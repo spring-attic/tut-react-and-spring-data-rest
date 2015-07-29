@@ -13,13 +13,15 @@ define(function (require) {
 		},
 		componentDidMount: function () {
 			var self = this;
-			client({method: 'GET', path: '/employees'}).done(function (response) {
+			client({method: 'GET', path: '/api/employees'}).done(function (response) {
 				self.setState({employees: response.entity._embedded.employees});
 			})
 		},
 		render: function () {
 			var employees = this.state.employees.map(function(employee) {
-				return (<Employee key={employee._links.self.href} data={employee} />)
+				return (
+					<Employee key={employee._links.self.href} employee={employee} />
+				)
 			});
 			return (
 				<ul>
@@ -34,7 +36,9 @@ define(function (require) {
 	var Employee = React.createClass({
 		render: function () {
 			return (
-				<li>{this.props.data.firstName} {this.props.data.lastName}, {this.props.data.description}</li>
+				<li>
+					{this.props.employee.firstName} {this.props.employee.lastName}, {this.props.employee.description}
+				</li>
 			)
 		}
 	})

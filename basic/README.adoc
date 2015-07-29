@@ -1,4 +1,4 @@
-= Basic Features
+= React.js and Spring Data REST: Part 1 - Basic Features
 
 In this section, you will see how to get a bare-bones Spring Data REST set up and running quickly. Then you will build a simply UI on top of it using Facebook's React tools.
 
@@ -73,6 +73,15 @@ One of the biggest, most powerful tools that Spring Data brings is the ability t
 
 That is how we can write an empty interface and inherit already build save, find, and delete operations.
 
+=== Adjusting the root URI
+
+By default, Spring Data REST hosts a root collection of links at `/`. If you plan to also host a web UI at the same path (which this session does), you can change the root URI with a single setting.
+
+.src/main/resources/application.properties
+----
+include::src/main/resources/application.properties[]
+----
+
 === Launching the back end
 
 For the last step towards an operation application, you just need a `public static void main` using Spring Boot:
@@ -92,14 +101,14 @@ NOTE: If you aren't up-to-date in Spring Boot and how it works, you should consi
 With the app running, you can check things out on the command line using http://curl.haxx.se/[cURL] (or any other tool you like).
 
 ----
-$ curl localhost:8080
+$ curl localhost:8080/api
 {
   "_links" : {
     "employees" : {
-      "href" : "http://localhost:8080/employees"
+      "href" : "http://localhost:8080/api/employees"
     },
     "profile" : {
-      "href" : "http://localhost:8080/alps"
+      "href" : "http://localhost:8080/api/alps"
     }
   }
 }
@@ -114,7 +123,7 @@ When you ping the root node, you get back a collection of links wrapped up in a 
 You can explore this service by traveling to the *employees* link.
 
 ----
-$ curl localhost:8080/employees
+$ curl localhost:8080/api/employees
 {
   "_embedded" : {
     "employees" : [ {
@@ -123,7 +132,7 @@ $ curl localhost:8080/employees
       "description" : "ring bearer",
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/employees/1"
+          "href" : "http://localhost:8080/api/employees/1"
         }
       }
     } ]
@@ -140,14 +149,14 @@ IMPORTANT: Links are a critical facet of REST. They provide the power to navigat
 You can decide to view that one employee if you wish.
 
 ----
-$ curl localhost:8080/employees/1
+$ curl localhost:8080/api/employees/1
 {
   "firstName" : "Frodo",
   "lastName" : "Baggins",
   "description" : "ring bearer",
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/employees/1"
+      "href" : "http://localhost:8080/api/employees/1"
     }
   }
 }
@@ -158,14 +167,14 @@ Little change here, except that there is no need for the *_embedded* wrapper sin
 That's all and good, but you are probably itching to create some new entries.
 
 ----
-$ curl -X POST localhost:8080/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
+$ curl -X POST localhost:8080/api/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
 {
   "firstName" : "Bilbo",
   "lastName" : "Baggins",
   "description" : "burglar",
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/employees/2"
+      "href" : "http://localhost:8080/api/employees/2"
     }
   }
 }
@@ -201,37 +210,20 @@ The key part is the `<div id="react"></div>` component in the middle. It is wher
 
 === Loading JavaScript modules
 
-This application uses http://requirejs.org/[requirejs] to load modules at runtime. This tutorial won't go into extensive detail on JavaScript loading. Feel free to use whatever you prefer.
+This tutorial won't go into extensive detail on how it uses requirejs to load JavaScript modules. But thanks to the *frontend-maven-plugin*, you don't HAVE to install any of the NodeJS tools to build and run the code.
 
-The follow bower modules are being used:
+The following JavaScript modules will be used:
 
 * requirejs
+* react
 * rest
-* jsx-requirejs-plugin (which pulls in react)
+* jsx-requirejs-plugin
 
-The paths for all your modules are defined in `run.js`:
+If you're interested, the paths for the JavaScript moodules are defined in https://github.com/gregturn/react-and-spring-data-rest/blob/master/basic/src/main/resources/static/run.js[run.js]. The main JavaScript app is loaded by the web page through https://github.com/gregturn/react-and-spring-data-rest/blob/master/basic/src/main/resources/static/main.js[main.js]. 
 
-.src/main/resources/static/run.js
-[source,javascript]
-----
-include::src/main/resources/static/run.js[]
-----
+With all that in place, you can focus on the React bits which are fetched after the DOM is loaded. It's broken down into parts as below:
 
-The `jsx` parts are used to flag JSX files and how they are handled.
-
-Next, you need to load the React bits when the DOM finishes loading. 
-
-.src/main/resources/static/main.js
-[source,javascript]
-----
-include::src/main/resources/static/main.js[]
-----
-
-If you are using tools like jQuery, they have alternative ways to detect when the browser is done loading the DOM.
-
-Now, for the gold, `app.jsx`. This contains our component definitions as well as code to fetch data from the backend. Let's look at in parts.
-
-For starters, since you using requireJS to load things, go ahead and fetch the modules you need:
+For starters, since you are using requirejs to load things, go ahead and fetch the modules you need:
 
 .src/main/resources/static/app.jsx
 [source,javascript,indent=0]
@@ -240,11 +232,15 @@ include::src/main/resources/static/app.jsx[tag=vars]
 ----
 
 * `React` is the main library from Facebook for building this app.
-* `client` is a restJS configuration that includes suport for HAL, URI Template, and other things. We won't show it here.
+* `client` is some custom code that configures restjs to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/gregturn/react-and-spring-data-rest/blob/master/basic/src/main/resources/static/client.js[read the code here].
+
+=== Diving into React
 
 React is based on defining components. Oftentimes, one component can hold multiple instances of another in a parent-child relationship. It's easy for this concept to extend several layers. 
 
-Below is the defintion for an `EmployeeList`.
+For our domain model, imagine a single, top level container for all employees. Inside that container are multiple components, one for each employee.
+
+Below is the definition for an `EmployeeList`.
 
 .src/main/resources/static/app.jsx
 [source,javascript,indent=0]
@@ -252,48 +248,60 @@ Below is the defintion for an `EmployeeList`.
 include::src/main/resources/static/app.jsx[tag=employee-list]
 ----
 
-* `getInitialState` is the API to initialize data that is expected to vary.
+* `React.createClass({...})` is the method to create a React component.
+* `getInitialState` is the API to initialize state data (data that is expected to vary).
 * `componentDidMount` is the API invoked after React renders a component in the DOM.
 * `render` is the API to "draw" the components on the screen.
 
 NOTE: In React, uppercase is the convention for identifying components.
 
-In this component, an array of employees is fetched from the Spring Data REST back end stored in this component's *state* data.
+In the *EmployeeList* component, an array of employees is fetched from the Spring Data REST back end and stored in this component's *state* data.
 
 [[NOTE]]
 ====
-React has two types of data: *state* and *properties*. 
+React components have two types of data: *state* and *properties*. 
 
-State is data that the component is expected to handle itself. It is also data that can fluctuate and change. To read the state, you use `this.state`. To update it, you use `this.setState()`. The common convention is to initialize state with nothing and declare all the parts in `getInitialState` and then load it from the server using `componentDidMount`. From there on, updates can be driven by user action or other events.
+*State* is data that the component is expected to handle itself. It is also data that can fluctuate and change. To read the state, you use `this.state`. To update it, you use `this.setState()`. Every time `this.setState()` is called, React updates the state, calculates a diff between the previous state and the new state, and injects a set of changes to the DOM on the page. This results a fast and efficient updates to your UI. 
 
-Properties encompass data that is passed into the component. Properties do NOT change but are instead fixed values. To set them, you assign them to attributes when creating a new component.
+The common convention is to initialize state with nothing and declare all the parts in `getInitialState`. Then you load it from the server using `componentDidMount`. From there on, updates can be driven by user action or other events.
+
+*Properties* encompass data that is passed into the component. Properties do NOT change but are instead fixed values. To set them, you assign them to attributes when creating a new component.
 
 WARNING: JavaScript doesn't lock down data types like other languages. You can try to subvert properties by assigning values, but this doesn't work with React and its ability to make efficient updates to the DOM.
 ====
 
-In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] solution. When it is done retrieving from `/employees`, it then invokes the function inside `done()` and set's the state based on it's HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /employees` earlier and how it had *employees* as an array nested inside *_embedded*.
+In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] solution. When it is done retrieving from `/api/employees`, it then invokes the function inside `done()` and set's the state based on it's HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /api/employees` earlier and see how it maps onto this structure.
 
-Further down in the `render()` method, `this.state.employees` is being mapped over to transform the array of employee records into an array of `<Employee/>` React components (which we'll define a little further down). It's important to note the creation of a new React component:
+With this updated state, the `render()` function is invoked by the framework. Using JavaScript's map function, `this.state.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you'll see a little further down). 
 
 [source,javascript]
 ----
-return (<Employee key={employee._links.self.href} data={employee} />)
+return (
+  <Employee key={employee._links.self.href} data={employee} />
+)
 ----
 
-Here you are invoked a new component (uppercased) along with two properties: *key* and *data*. These are supplied the values from `employee._links.self.href` and `employee`.
+This shows a new React component (note the uppercase format) being created along with two properties: *key* and *data*. These are supplied the values from `employee._links.self.href` and `employee`.
 
-IMPORTANT: Whenever you work with Spring Data REST, the *self* link IS the key for a given resource. React needs a unique identifer for lists of children, and `_links.self.href` is perfect.
+IMPORTANT: Whenever you work with Spring Data REST, the *self* link IS the key for a given resource. React needs a unique identifer for child nodes, and `_links.self.href` is perfect.
 
 Finally, you return an unstructure list wrapped around the array of `employees` built with mapping.
 
 [source,javascript]
 ----
 <ul>
-	{employees}
+  {employees}
 </ul>
 ----
 
 This simple layout of state, properties, and HTML shows how React lets you declaritively create a simple and easy-to-understand component.
+
+[[NOTE]]
+====
+Does this code contain both HTML _and_ JavaScript? Yes. If you noticed the file extension, this is https://facebook.github.io/jsx/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse.
+
+Worried about mixing logic with your structure? React's APIs encourage nice, declarative structure combined with state and properties. Mixing them together provides easy-to-read components that can be easily combined to build apps.
+====
 
 Next, you need to actually define what an `<Employee />` is.
 
@@ -305,7 +313,7 @@ include::src/main/resources/static/app.jsx[tag=employee]
 
 This component is much simpler. It has a single HTML list item wrapped around the employee's three properties. The property itself is `this.props.employee`. Notice how passing in a JavaScript object makes it easy to pass along data fetched from the server?
 
-Because this component doesn't manage any state nor does it deal with any user inputs, there is nothing else to initialize. This might tempt you to cram it into the `<EmployeeList />` up above. Don't do it! Instead, splitting your app up into small components that serve one job will make it easier to build up their functionality in the future.
+Because this component doesn't manage any state nor does it deal with any user inputs, there is nothing else to initialize. This might tempt you to cram it into the `<EmployeeList />` up above. Don't do it! Instead, splitting your app up into small components that each serve one job will make it easier to build up their functionality in the future.
 
 The last step is to render the whole thing.
 
@@ -317,7 +325,7 @@ include::src/main/resources/static/app.jsx[tag=render]
 
 `React.render()` accepts two arguments: a React component you defined as well as a DOM node to inject it. Remember how you saw the `<div id="react"></div>` item earlier from the HTML page? This is where it gets picked up and plugged in.
 
-With all this in place, re-run the application (mvn spring-boot:run) and visit http://localhost:8080.
+With all this in place, re-run the application (`mvn spring-boot:run`) and visit http://localhost:8080.
 
 image::basic/images/basic-1.png[]
 
@@ -326,7 +334,7 @@ You can see the initial employee loaded up by the system.
 Remember using cURL to create new entries? Do that again.
 
 ----
-curl -X POST localhost:8080/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
+curl -X POST localhost:8080/api/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
 ----
 
 Refresh the browser, and you should see the new entry:
@@ -337,13 +345,16 @@ And now you can see both of them listed on the web site.
 
 === Review
 
-In this session, we defined a domain object and a corresponding repository. Then we let Spring Data REST export it with full blown hypermedia controls. Next we created a front end using React. We declared some simple components and loaded them using requireJS. The front end fetched data from the back end and served it up as an unstructured list.
+In this session:
+
+* You defined a domain object and a corresponding repository.
+* You let Spring Data REST export it with full blown hypermedia controls. 
+* You created two simple React components in a parent-child relationship, had them fetch server side data, and render them in as a simple, static HTML structure.
 
 Issues?
 
 * The web page wasn't dynamic. You had to refresh the browser to fetch new records.
-* The web page didn't use any of the hypermedia controls. Instead, it was hardcoded to fetch data from `/employees`.
+* The web page didn't use any of the hypermedia controls or metadata. Instead, it was hardcoded to fetch data from `/api/employees`.
 * It's read only. While you can alter records using cURL, the web page offers none of that.
-* The page had no CSS styling.
 
-These are issues we can tackle in the next session.
+These are things we can address in the next session. Until then, happy coding!

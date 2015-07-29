@@ -1,0 +1,1 @@
+= React.js and Spring Data REST: Part 2 - Hypermedia Controls
