@@ -349,14 +349,13 @@ In this session:
 
 * You turned on Spring Data REST's paging feature.
 * You threw out hardcoded URI paths and started using the root URI combined with relationship names or "rels". 
-* You added the ability to create new employees.
-* You updated the UI to dynamically creates buttons to use the page-based hypermedia controls.
-* You added the ability to create and delete employees, and then update the UI as needed.
-* You made it possible to change the page size and have the UI dynamically respond to that.
+* You updated the UI to dynamically using the page-based hypermedia controls.
+* You added the ability to create and delete employees and then update the UI as needed.
+* You made it possible to change the page size and have the UI dynamically respond.
 
 Issues?
 
-* While the web page is now very dynamic, try opening another browser and point it at the same app. Changes in one browser won't update anything in the other.
+While the web page is now very dynamic, try opening another browser and point it at the same app. Changes in one browser won't update anything in the other.
 
-These are things we can address in the next session. Until then, happy coding!
+That is something we can address in the next session. Until then, happy coding!
 
