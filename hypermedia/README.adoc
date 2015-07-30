@@ -1,6 +1,8 @@
+[[react-and-spring-data-rest-part-2]]
 = React.js and Spring Data REST: Part 2 - Hypermedia Controls
+:prev_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/basic
 
-In the previous session, you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls provided by Spring Data REST.
+In the {prev_session}[previous session], you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls provided by Spring Data REST.
 
 == Step 0 - Setting up your environment
 
@@ -29,7 +31,7 @@ WARNING: Spring Data REST supports Spring Data Cassandra because it embraces the
 
 Another feature of REST is to include links to relevant resources. For example, if you were looking at an order, a RESTful API would include a link to the related customer, links to the catalog of items, and perhaps a link to the store from which the order was placed.
 
-=== Turning on paging from the backend
+== Turning on paging from the backend
 
 Before we get underway with using frontend hypermedia controls, let's turn on all the controls we can. Spring Data REST provides paging support. To use it, you just need to tweak the repository definition.
 
@@ -90,7 +92,7 @@ $ curl localhost:8080/api/employees?size=2
 }
 ----
 
-The default page size is 20, so to see how it works, this shows is with `?size=2` applied. As expected, only two employees are listed. In addition, there is also a *first*, *next*, and *last* link.
+The default page size is 20, so to see how it works, this shows it with `?size=2` applied. As expected, only two employees are listed. In addition, there is also a *first*, *next*, and *last* link.
 
 If you navigate to the *next* link, you'll then see a *prev* link as well:
 
@@ -121,7 +123,7 @@ NOTE: When using "&" in URL query parameters, the command line things it's a lin
 
 That looks neat, but it will be even better when you update the frontend to take advantage of that.
 
-=== Navigating by relationship
+== Navigating by relationship
 
 Since there are no more modifications needed on the backend, you can focus purely on the frontend. (That's part of the beauty of Spring Data REST. No messy controller updates!)
 
@@ -158,7 +160,7 @@ The array of relationships can be as simple as `["employees"]`, meaning when the
 
 Sometimes, just a rel isn't enough. In this fragment of code, it is also plugging in a query parameter of *?size=<pageSize>*. There are other options that can be supplied, as you'll see further along.
 
-=== Grabbing JSON Schema metadata
+== Grabbing JSON Schema metadata
 
 After navigating to *employees* with the size-based query, the *employeeCollection* is processed. In the previous session, we called it day. In this situation, we are grabbing some extra metadata, http://json-schema.org/[JSON Schema] found a `/api/employees/schema`.
 
@@ -192,7 +194,8 @@ NOTE: Navigating to the JSON Schema metadata requires hand editing the URI. Ther
 
 By capturing this information in the container's state, you can make good use of it later on when building data forms.
 
-=== Creating new records
+[[creating-new-records]]
+== Creating new records
 
 Equipped with all this metadata, you can now add some extra controls to the UI. To do so, you can create a new React component, `<CreateDialog />`.
 
@@ -224,13 +227,75 @@ After iterating over every attribute and building up the `newEmployee` object, w
 include::src/main/resources/static/app.jsx[tag=create]
 ----
 
-Once again, you use the `follow()` function to navigate to the *employees* resource where POST operations are performed. In this case, there was no need to apply any parameters, so the string-version of rels was fine. The operation is completed, and when done, the top-level state is updated by concatenating the new employee record to the existing list of employees.
+Once again, you use the `follow()` function to navigate to the *employees* resource where POST operations are performed. In this case, there was no need to apply any parameters, so the string-version of rels is fine. In this situation, the POST call is returned. This allows the next `then()` clause handle processing the outcome of the POST.
+
+New records are typically added to end of the dataset. Since you are looking at certain page size, it's logcical to expect the new employee record to not be on the current page. To handle this, you need to fetch a new batch of data with the same page size applied. Again, that promise is returned for the final clause inside `done()`.
+
+Since the user probably wants to see the newly created employee, you can then use the hypermedia controls and navigate to the *last* entry.
+
+This introduces the concept of paging in our UI. Let's tackle that next!
+
+[[NOTE]]
+====
+First time using a promise-based API? https://promisesaplus.com/[Promises] are a way to kick of asynchronous operations and then register a function to respond when the task is done. Promises are designed to be chained together to avoid "callback hell". Look at the following flow.
+
+[source,javascript]
+----
+when.promise(async_func_call())
+	.then(function(results) {
+		/* process the outcome of async_func_call */
+	})
+	.then(function(more_results) {
+		/* process the previous then() return value */
+	})
+	.done(function(yet_more) {
+		/* process the previous then() and then wrap things up */
+	});
+----
+
+For more details, check out http://know.cujojs.com/tutorials/promises/consuming-promises[this tutorial on promises].
+
+The secret thing to remember with promises is that `then()` functions NEED to return something, whether its a value or another promise.  `done()` functions do NOT need to return anything, and you don't chain anything after one. In case you haven't noticed yet, `client` (which is an instance of `rest` from rest.js) as well as the `follow` function return promises.
+====
 
 IMPORTANT: React operates with a one-way data flow. The idea is to have state at the top and let it flow downward into relevant components. Instead of a lower level component push state changes up to a higher level, it is highly recommended you pass in a callback. This might feel new and awkward, but after you spend a few days working with React, you will come to appreciate how this nicely keeps components decoupled.
 
-After creating a new employee, the DOM elements are then cleared out and you navigate away from the dialog, causing it to hide again.
+== Paging through data
 
-=== Deleting existing records
+You set up paging on the backend and are taking advantage of it when creating new employees.
+
+In <<creating-new-records,the previous section>>, you used the page controls to jump to the *last* page. It would be really handy to dynamically apply it to the UI and let the user navigate as desired. Additionally, flexibly adjusting the controls based on available navigation links would be great.
+
+First, let's check out the `onNavigate()` function you used.
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=navigate]
+----
+
+This is defined at the top, inside `App.onNavigate`. Again, this is to allow managing the state of the UI in the top component. After passing `onNavigate()` down to the `<EmployeeList />` React component, the following handlers are coded up to handle clicking on some buttons:
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=handle-nav]
+----
+
+Each of these functions intercepts the default event and stops it from bubbling up. Then it invokes the `onNavigate()` function with the proper hypermedia link. 
+
+Finally, you can conditionally display the controls based on which links appear in the hypermedia links in `EmployeeList.render`:
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=employee-list-render]
+----
+
+As in the previous session, it still transforms `this.props.employees` into an array of `<Element />` components. Then it builds up an array of `navLinks`, an array of HTML buttons.
+
+NOTE: Because React is based on XML, you can't put "<" inside the `<button>` element. You must instead use the encoded version.
+
+Then you can see `{navLinks}` inserted towards the bottom of the returned HTML.
+
+== Deleting existing records
 
 Deleting entries is much easier. All you need is to get a hold of its HAL-based record, and you can apply *DELETE* to its *self* link.
 
@@ -241,7 +306,7 @@ include::src/main/resources/static/app.jsx[tag=employee]
 
 This updated version of the Employee component shows an extra entry at the end of the row, a delete button. It is registered to invoke `this.handleDelete` when clicked upon. The `handleDelete()` function can then invoke the callback passed down while supplying the contextually important `this.props.employee` record.
 
-IMPORTANT: This is a key facet of React. By having a top level function supplied with component-level details (`this.props.onDelete(this.props.employee)`) it becomes very easy to orchestrate behavior between components. State is much easier to manage when it is kept at the top of your hiearchy. Pushing callbacks down to the component where the context can be found is very easy, and continues to support this fluid, one-way data flow.
+IMPORTANT: Once again, it's easiest to manage state in the top component, in one place. This might not ALWAYS be the case, but in my own discovery of React, it has become very simple to manage it in one place. By invoking the callback with component-specific details (`this.props.onDelete(this.props.employee)`) it is very easy to orchestrate behavior between components. 
 
 Tracing the `onDelete()` function back to the top at `App.onDelete`, you can see how it operates:
 
@@ -249,4 +314,49 @@ Tracing the `onDelete()` function back to the top at `App.onDelete`, you can see
 ----
 include::src/main/resources/static/app.jsx[tag=delete]
 ----
+
+The behavior to apply after deleting a record with a page-based UI is a bit tricky. In this case, it reloads the whole data from the server, applying the same page size. Then it shows the first page.
+
+If you are deleting the last record on the last page, it will jump to the first page.
+
+== Adjusting the page size
+
+One way to see how hypermedia really shines is to update the page size. Spring Data REST fluidly updates the navigational links based on the page size.
+
+There is an HTML element at the top of `ElementList.render`: `<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>`.
+
+The `ElementList.handleInput` is shown below:
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=handle-page-size-updates]
+----
+
+Again, it stops the event from bubbling up. Then it uses the *ref* attribute of the `<input>` to find the DOM node and extract its value, all through React's `findDOMNode()` helper function. Finally, it tests if the input is really a number by checking if its a string of digits. If so, it invokes the callback, sending the new page size to the `App` React component. If not, the last character entered is stripped off and reassigned to the `<input>` element's value.
+
+What does `App` do when it gets a `updatePageSize()`? Check it out:
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=update-page-size]
+----
+
+Because a new page size causes changes to all the navigation links, its best to refetch the data and start from the beginning. 
+
+== Review
+
+In this session:
+
+* You turned on Spring Data REST's paging feature.
+* You threw out hardcoded URI paths and started using the root URI combined with relationship names or "rels". 
+* You added the ability to create new employees.
+* You updated the UI to dynamically creates buttons to use the page-based hypermedia controls.
+* You added the ability to create and delete employees, and then update the UI as needed.
+* You made it possible to change the page size and have the UI dynamically respond to that.
+
+Issues?
+
+* While the web page is now very dynamic, try opening another browser and point it at the same app. Changes in one browser won't update anything in the other.
+
+These are things we can address in the next session. Until then, happy coding!
 

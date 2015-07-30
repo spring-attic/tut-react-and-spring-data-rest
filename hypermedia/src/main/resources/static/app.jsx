@@ -38,27 +38,18 @@ define(function (require) {
 					entity: newEmployee,
 					headers: {'Content-Type': 'application/json'}
 				})
+			}).then(function (response) {
+				return follow(client, root, [{rel: 'employees', params: {'size': self.state.pageSize}}]);
 			}).done(function (response) {
-				self.setState({
-					employees: self.state.employees.concat([response.entity]),
-					attributes: self.state.attributes,
-					pageSize: self.state.pageSize,
-					links: self.state.links
-				});
-			});
+				self.onNavigate(response.entity._links.last.href);
+			})
 		},
 		// end::create[]
 		// tag::delete[]
 		onDelete: function (employee) {
 			var self = this;
 			client({method: 'DELETE', path: employee._links.self.href}).done(function (response) {
-				var newEmployees = self.state.employees.filter(function (thatEmployee) {
-					return thatEmployee._links.self.href !== employee._links.self.href;
-				})
-				self.setState({
-					employees: newEmployees, attributes: self.state.attributes,
-					pageSize: self.state.pageSize, links: self.state.links
-				});
+				self.loadFromServer(self.state.pageSize);
 			})
 		},
 		// end::delete[]
@@ -66,14 +57,19 @@ define(function (require) {
 		onNavigate: function(navUri) {
 			var self = this;
 			client({method: 'GET', path: navUri}).done(function(response) {
-				self.setState({employees: response.entity._embedded.employees, attributes: self.state.attributes,
-					links: response.entity._links});
+				self.setState({
+					employees: response.entity._embedded.employees,
+					attributes: self.state.attributes,
+					links: response.entity._links
+				});
 			});
 		},
 		// end::navigate[]
 		// tag::update-page-size[]
 		updatePageSize: function (pageSize) {
-			this.loadFromServer(pageSize);
+			if (pageSize !== this.state.pageSize) {
+				this.loadFromServer(pageSize);
+			}
 		},
 		// end::update-page-size[]
 		getInitialState: function () {
@@ -143,6 +139,7 @@ define(function (require) {
 	// end::create-dialog[]
 
 	var EmployeeList = React.createClass({
+		// tag::handle-page-size-updates[]
 		handleInput: function (e) {
 			e.preventDefault();
 			var pageSize = React.findDOMNode(this.refs.pageSize).value;
@@ -152,6 +149,8 @@ define(function (require) {
 				React.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
 			}
 		},
+		// end::handle-page-size-updates[]
+		// tag::handle-nav[]
 		handleNavFirst: function(e){
 			e.preventDefault();
 			this.props.onNavigate(this.props.links.first.href);
@@ -168,6 +167,8 @@ define(function (require) {
 			e.preventDefault();
 			this.props.onNavigate(this.props.links.last.href);
 		},
+		// end::handle-nav[]
+		// tag::employee-list-render[]
 		render: function () {
 			var self = this;
 			var employees = this.props.employees.map(function (employee) {
@@ -192,7 +193,7 @@ define(function (require) {
 
 			return (
 				<div>
-					<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}></input>
+					<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>
 					<table>
 						<tr>
 							<th>First Name</th>
@@ -208,6 +209,7 @@ define(function (require) {
 				</div>
 			)
 		}
+		// end::employee-list-render[]
 	})
 
 	// tag::employee[]

@@ -1,9 +1,12 @@
 = Building a web app with React.js and Spring Data REST
+Greg L. Turnquist <gturnquist@pivotal.io>
+2015-07-30
+:toc: right
 
-This is a collection of apps that use Spring Data REST and its powerful backend functionality combined with React's sophisticated features to build a UI.
+This series shows a collection of apps that use Spring Data REST and its powerful backend functionality combined with React's sophisticated features to build an easy-to-grok UI.
 
-* https://www.youtube.com/watch?v=TgCr7v9tdKM[Spring Data REST] provides a fast way to build hypermedia-powered repositories
-* http://facebook.github.io/react/index.html[React] is Facebook's solution to efficient, fast, and easy-to-use views in the land of JavaScript
+* https://www.youtube.com/watch?v=TgCr7v9tdKM[Spring Data REST] provides a fast way to build hypermedia-powered repositories.
+* http://facebook.github.io/react/index.html[React] is Facebook's solution to efficient, fast, and easy-to-use views in the land of JavaScript.
 
 include::basic/README.adoc[leveloffset=+1]
 include::hypermedia/README.adoc[leveloffset=+1]

@@ -1,4 +1,6 @@
+[[react-and-spring-data-rest-part-1]]
 = React.js and Spring Data REST: Part 1 - Basic Features
+:next_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/hypermedia
 
 In this section, you will see how to get a bare-bones Spring Data REST set up and running quickly. Then you will build a simply UI on top of it using Facebook's React tools.
 
@@ -40,7 +42,7 @@ include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 
 This entity is used to track employee information. In this case, their name and job description.
 
-=== Defining the repository
+== Defining the repository
 
 Another key piece of a Spring Data REST application is to create a corresponding repository definition.
 
@@ -54,7 +56,7 @@ include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=co
 
 That is all that is needed! In fact, you don't even have to annotate this invisible if its top-level and visible. If you use your IDE and open up `CrudRepository`, you'll find a fist full of pre-built methods already defined.
 
-=== Pre-loading the demo
+== Pre-loading the demo
 
 To build up an application, you need to pre-load it with some data like this:
 
@@ -73,7 +75,7 @@ One of the biggest, most powerful tools that Spring Data brings is the ability t
 
 That is how we can write an empty interface and inherit already build save, find, and delete operations.
 
-=== Adjusting the root URI
+== Adjusting the root URI
 
 By default, Spring Data REST hosts a root collection of links at `/`. If you plan to also host a web UI at the same path (which this session does), you can change the root URI with a single setting.
 
@@ -82,7 +84,7 @@ By default, Spring Data REST hosts a root collection of links at `/`. If you pla
 include::src/main/resources/application.properties[]
 ----
 
-=== Launching the backend
+== Launching the backend
 
 For the last step towards an operation application, you just need a `public static void main` using Spring Boot:
 
@@ -96,7 +98,7 @@ Assuming the previous class as well as your Maven build file were generated from
 
 NOTE: If you aren't up-to-date in Spring Boot and how it works, you should consider watch one of https://www.youtube.com/watch?v=sbPSjI4tt10[Josh Long's introduction to Spring Boot]. With that out of the way, press on!
 
-=== Touring your REST service
+== Touring your REST service
 
 With the app running, you can check things out on the command line using http://curl.haxx.se/[cURL] (or any other tool you like).
 
@@ -182,7 +184,7 @@ $ curl -X POST localhost:8080/api/employees -d '{"firstName": "Bilbo", "lastName
 
 You can also PUT, PATCH, and DELETE as shown in https://spring.io/guides/gs/accessing-data-rest/[this related guide]. But let's not dig into that. You have already spent way too much time interacting with this REST service manually. Instead, don't you want to build a slick UI instead?
 
-=== Setting up a custom UI controller
+== Setting up a custom UI controller
 
 Spring Boot makes it super simple to stand up a custom web page. First, you need a Spring MVC controller.
 
@@ -196,7 +198,7 @@ include::src/main/java/com/greglturnquist/payroll/HomeController.java[tag=code]
 * `@RequestMapping` flags the `index()` method to support the `/` route.
 * It returns `index` as the name of the template, which Spring Boot's autoconfigured view resolver, will map to `src/main/resources/templates/index.html`.
 
-=== Defining an HTML template
+== Defining an HTML template
 
 We are using Thymeleaf, although we won't really use many of its key features.
 
@@ -208,7 +210,7 @@ include::src/main/resources/templates/index.html[]
 
 The key part is the `<div id="react"></div>` component in the middle. It is where we will have React plug in its rendered output.
 
-=== Loading JavaScript modules
+== Loading JavaScript modules
 
 This tutorial won't go into extensive detail on how it uses requirejs to load JavaScript modules. But thanks to the *frontend-maven-plugin*, you don't HAVE to install any of the NodeJS tools to build and run the code.
 
@@ -234,7 +236,7 @@ include::src/main/resources/static/app.jsx[tag=vars]
 * `React` is the main library from Facebook for building this app.
 * `client` is some custom code that configures restjs to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/gregturn/react-and-spring-data-rest/blob/master/basic/src/main/resources/static/client.js[read the code here].
 
-=== Diving into React
+== Diving into React
 
 React is based on defining components. Oftentimes, one component can hold multiple instances of another in a parent-child relationship. It's easy for this concept to extend several layers. 
 
@@ -351,7 +353,7 @@ image::basic/images/basic-2.png[]
 
 And now you can see both of them listed on the web site.
 
-=== Review
+== Review
 
 In this session:
 
@@ -365,4 +367,4 @@ Issues?
 * The web page didn't use any of the hypermedia controls or metadata. Instead, it was hardcoded to fetch data from `/api/employees`.
 * It's read only. While you can alter records using cURL, the web page offers none of that.
 
-These are things we can address in the next session. Until then, happy coding!
+These are things we can address in the {next_session}[next session]. Until then, happy coding!
