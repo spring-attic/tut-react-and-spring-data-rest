@@ -10,3 +10,4 @@ This series shows a collection of apps that use Spring Data REST and its powerfu
 
 include::basic/README.adoc[leveloffset=+1]
 include::hypermedia/README.adoc[leveloffset=+1]
+include::events/README.adoc[leveloffset=+1]
