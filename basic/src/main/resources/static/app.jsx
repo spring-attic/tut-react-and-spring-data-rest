@@ -12,10 +12,9 @@ define(function (require) {
 			return ({employees: []});
 		},
 		componentDidMount: function () {
-			var self = this;
-			client({method: 'GET', path: '/api/employees'}).done(function (response) {
-				self.setState({employees: response.entity._embedded.employees});
-			})
+			client({method: 'GET', path: '/api/employees'}).done(response => {
+				this.setState({employees: response.entity._embedded.employees});
+			});
 		},
 		render: function () {
 			return (
@@ -28,11 +27,9 @@ define(function (require) {
 	// tag::employee-list[]
 	var EmployeeList = React.createClass({
 		render: function () {
-			var employees = this.props.employees.map(function (employee) {
-				return (
-					<Employee key={employee._links.self.href} employee={employee}/>
-				)
-			});
+			var employees = this.props.employees.map(employee =>
+				<Employee key={employee._links.self.href} employee={employee}/>
+			);
 			return (
 				<table>
 					<tr>
