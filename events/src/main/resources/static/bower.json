@@ -29,8 +29,8 @@
   "dependencies": {
     "requirejs": "~2.1.20",
     "rest": "~1.3.1",
-    "jsx-requirejs-plugin": "~0.6.2",
     "sockjs-client": "~1.0.3",
-    "stomp-websocket": "~2.3.4"
+    "stomp-websocket": "~2.3.4",
+    "requirejs-react-jsx": "~0.14.2"
   }
 }

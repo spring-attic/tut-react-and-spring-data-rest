@@ -19,7 +19,9 @@
     "url": "https://github.com/gregturn/reactjs-and-spring-data-rest/issues"
   },
   "homepage": "https://github.com/gregturn/reactjs-and-spring-data-rest",
-  "dependencies": {},
+  "dependencies": {
+    "react-tools": "^0.13.3"
+  },
   "devDependencies": {
     "bower": "^1.3.12"
   }

@@ -11,14 +11,14 @@ define(function (require) {
 
 	var App = React.createClass({
 		loadFromServer: function (pageSize) {
-			var self = this;
 			follow(client, root, [
-				{rel: 'employees', params: {size: pageSize}}]).done(function (employeeCollection) {
+				{rel: 'employees', params: {size: pageSize}}]
+			).done(employeeCollection => {
 				client({
 					method: 'GET',
 					path: employeeCollection.entity._links.self.href + '/schema'
-				}).done(function (response) {
-					self.setState({
+				}).done(response => {
+					this.setState({
 						page: employeeCollection.entity.page,
 						employees: employeeCollection.entity._embedded.employees,
 						attributes: Object.keys(response.entity.properties),
@@ -30,8 +30,7 @@ define(function (require) {
 		},
 		// tag::on-create[]
 		onCreate: function (newEmployee) {
-			var self = this;
-			follow(client, root, ['employees']).done(function (response) {
+			follow(client, root, ['employees']).done(response => {
 				client({
 					method: 'POST',
 					path: response.entity._links.self.href,
@@ -53,12 +52,11 @@ define(function (require) {
 			client({method: 'DELETE', path: employee._links.self.href});
 		},
 		onNavigate: function (navUri) {
-			var self = this;
-			client({method: 'GET', path: navUri}).done(function (response) {
-				self.setState({
+			client({method: 'GET', path: navUri}).done(response => {
+				this.setState({
 					page: response.entity.page,
 					employees: response.entity._embedded.employees,
-					attributes: self.state.attributes,
+					attributes: this.state.attributes,
 					links: response.entity._links
 				});
 			});
@@ -70,27 +68,25 @@ define(function (require) {
 		},
 		// tag::websocket-handlers[]
 		refreshAndGoToLastPage: function (message) {
-			var self = this;
 			follow(client, root, [{
 				rel: 'employees',
 				params: {size: this.state.pageSize}
-			}]).done(function (response) {
-				self.onNavigate(response.entity._links.last.href);
+			}]).done(response => {
+				this.onNavigate(response.entity._links.last.href);
 			})
 		},
 
 		refreshCurrentPage: function (message) {
-			var self = this;
 			follow(client, root, [{
 				rel: 'employees',
 				params: {
 					size: this.state.pageSize,
 					page: this.state.page.number}
-			}]).done(function (response) {
-				self.setState({
+			}]).done(response => {
+				this.setState({
 					page: response.entity.page,
 					employees: response.entity._embedded.employees,
-					attributes: self.state.attributes,
+					attributes: this.state.attributes,
 					links: response.entity._links
 				});
 			})
@@ -131,22 +127,19 @@ define(function (require) {
 		handleSubmit: function (e) {
 			e.preventDefault();
 			var newEmployee = {};
-			var self = this;
-			this.props.attributes.forEach(function (attribute) {
-				newEmployee[attribute] = React.findDOMNode(self.refs[attribute]).value.trim();
+			this.props.attributes.forEach(attribute => {
+				newEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
 			});
 			this.props.onCreate(newEmployee);
-			this.props.attributes.forEach(function (attribute) {
-				React.findDOMNode(self.refs[attribute]).value = ''; // clear out the dialog's inputs
+			this.props.attributes.forEach(attribute => {
+				React.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
 			});
 			window.location = "#";
 		},
 		render: function () {
-			var inputs = this.props.attributes.map(function (attribute) {
-				return (
-					<input key={attribute} type="text" placeholder={attribute} ref={attribute}/>
-				)
-			})
+			var inputs = this.props.attributes.map(attribute =>
+				<input key={attribute} type="text" placeholder={attribute} ref={attribute}/>
+			);
 			return (
 				<div>
 					<a href="#createEmployee">Create</a>
@@ -172,24 +165,20 @@ define(function (require) {
 		handleSubmit: function (e) {
 			e.preventDefault();
 			var updatedEmployee = {};
-			var self = this;
-			this.props.attributes.forEach(function (attribute) {
-				updatedEmployee[attribute] = React.findDOMNode(self.refs[attribute]).value.trim();
+			this.props.attributes.forEach(attribute => {
+				updatedEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
 			});
 			this.props.onUpdate(this.props.employee, updatedEmployee);
-			this.props.attributes.forEach(function (attribute) {
-				React.findDOMNode(self.refs[attribute]).value = ''; // clear out the dialog's inputs
+			this.props.attributes.forEach(attribute => {
+				React.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
 			});
 			window.location = "#";
 		},
 		render: function () {
-			var self = this;
-			var inputs = this.props.attributes.map(function (attribute) {
-				return (
-					<input key={attribute} type="text" placeholder={attribute}
-						   defaultValue={self.props.employee[attribute]} ref={attribute}/>
-				)
-			})
+			var inputs = this.props.attributes.map(attribute =>
+				<input key={attribute} type="text" placeholder={attribute}
+					   defaultValue={this.props.employee[attribute]} ref={attribute}/>
+			)
 			return (
 				<div>
 					<a href={"#updateEmployee-" + this.props.employee._links.self.href}>Update</a>
@@ -238,20 +227,16 @@ define(function (require) {
 			this.props.onNavigate(this.props.links.last.href);
 		},
 		render: function () {
-			var self = this;
-
 			var pageInfo = this.props.page.hasOwnProperty("number") ?
 				<h3>Employees - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
 
-			var employees = this.props.employees.map(function (employee) {
-				return (
-					<Employee key={employee._links.self.href}
-							  employee={employee}
-							  attributes={self.props.attributes}
-							  onUpdate={self.props.onUpdate}
-							  onDelete={self.props.onDelete}/>
-				)
-			});
+			var employees = this.props.employees.map(employee =>
+				<Employee key={employee._links.self.href}
+						  employee={employee}
+						  attributes={this.props.attributes}
+						  onUpdate={this.props.onUpdate}
+						  onDelete={this.props.onDelete}/>
+			);
 
 			var navLinks = [];
 			if ("first" in this.props.links) {
