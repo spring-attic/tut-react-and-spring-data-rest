@@ -56,6 +56,7 @@ define(function (require) {
 				this.setState({
 					employees: response.entity._embedded.employees,
 					attributes: this.state.attributes,
+					pageSize: this.state.pageSize,
 					links: response.entity._links
 				});
 			});
