@@ -12,8 +12,7 @@ define(function (require) {
 		// tag::follow-2[]
 		loadFromServer: function (pageSize) {
 			follow(client, root, [
-				{rel: 'employees', params: {size: pageSize}}]
-			).done(employeeCollection => {
+				{rel: 'employees', params: {size: pageSize}}]).done(employeeCollection => {
 				client({
 					method: 'GET',
 					path: employeeCollection.entity._links.self.href + '/schema'
@@ -56,6 +55,7 @@ define(function (require) {
 				this.setState({
 					employees: response.entity._embedded.employees,
 					attributes: this.state.attributes,
+					pageSize: this.state.pageSize,
 					links: response.entity._links
 				});
 			});

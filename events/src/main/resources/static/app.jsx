@@ -12,8 +12,7 @@ define(function (require) {
 	var App = React.createClass({
 		loadFromServer: function (pageSize) {
 			follow(client, root, [
-				{rel: 'employees', params: {size: pageSize}}]
-			).done(employeeCollection => {
+				{rel: 'employees', params: {size: pageSize}}]).done(employeeCollection => {
 				client({
 					method: 'GET',
 					path: employeeCollection.entity._links.self.href + '/schema'
@@ -56,6 +55,7 @@ define(function (require) {
 				this.setState({
 					page: response.entity.page,
 					employees: response.entity._embedded.employees,
+					pageSize: this.state.pageSize,
 					attributes: this.state.attributes,
 					links: response.entity._links
 				});
@@ -86,6 +86,7 @@ define(function (require) {
 				this.setState({
 					page: response.entity.page,
 					employees: response.entity._embedded.employees,
+					pageSize: this.state.pageSize,
 					attributes: this.state.attributes,
 					links: response.entity._links
 				});
