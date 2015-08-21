@@ -69,7 +69,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>0.0.20</version>
+                <version>0.0.24</version>
                 <configuration>
                     <workingDirectory>src/main/resources/static</workingDirectory>
                 </configuration>

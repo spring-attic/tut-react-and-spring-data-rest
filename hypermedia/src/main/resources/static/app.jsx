@@ -11,14 +11,13 @@ define(function (require) {
 	var App = React.createClass({
 		// tag::follow-2[]
 		loadFromServer: function (pageSize) {
-			var self = this;
 			follow(client, root, [
-				{rel: 'employees', params: {size: pageSize}}]).done(function (employeeCollection) {
+				{rel: 'employees', params: {size: pageSize}}]).done(employeeCollection => {
 				client({
 					method: 'GET',
 					path: employeeCollection.entity._links.self.href + '/schema'
-				}).done(function (response) {
-					self.setState({
+				}).done(response => {
+					this.setState({
 						employees: employeeCollection.entity._embedded.employees,
 						attributes: Object.keys(response.entity.properties),
 						pageSize: pageSize,
@@ -30,36 +29,34 @@ define(function (require) {
 		// end::follow-2[]
 		// tag::create[]
 		onCreate: function (newEmployee) {
-			var self = this;
-			follow(client, root, ['employees']).then(function (response) {
+			follow(client, root, ['employees']).then(response => {
 				return client({
 					method: 'POST',
 					path: response.entity._links.self.href,
 					entity: newEmployee,
 					headers: {'Content-Type': 'application/json'}
 				})
-			}).then(function (response) {
-				return follow(client, root, [{rel: 'employees', params: {'size': self.state.pageSize}}]);
-			}).done(function (response) {
-				self.onNavigate(response.entity._links.last.href);
+			}).then(response => {
+				return follow(client, root, [{rel: 'employees', params: {'size': this.state.pageSize}}]);
+			}).done(response => {
+				this.onNavigate(response.entity._links.last.href);
 			})
 		},
 		// end::create[]
 		// tag::delete[]
 		onDelete: function (employee) {
-			var self = this;
-			client({method: 'DELETE', path: employee._links.self.href}).done(function (response) {
-				self.loadFromServer(self.state.pageSize);
+			client({method: 'DELETE', path: employee._links.self.href}).done(response => {
+				this.loadFromServer(this.state.pageSize);
 			})
 		},
 		// end::delete[]
 		// tag::navigate[]
 		onNavigate: function(navUri) {
-			var self = this;
-			client({method: 'GET', path: navUri}).done(function(response) {
-				self.setState({
+			client({method: 'GET', path: navUri}).done(response => {
+				this.setState({
 					employees: response.entity._embedded.employees,
-					attributes: self.state.attributes,
+					attributes: this.state.attributes,
+					pageSize: this.state.pageSize,
 					links: response.entity._links
 				});
 			});
@@ -100,18 +97,17 @@ define(function (require) {
 		handleSubmit: function (e) {
 			e.preventDefault();
 			var newEmployee = {};
-			var self = this;
-			this.props.attributes.forEach(function (attribute) {
-				newEmployee[attribute] = React.findDOMNode(self.refs[attribute]).value.trim();
+			this.props.attributes.forEach(attribute => {
+				newEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
 			});
 			this.props.onCreate(newEmployee);
-			this.props.attributes.forEach(function (attribute) {
-				React.findDOMNode(self.refs[attribute]).value = ''; // clear out the dialog's inputs
+			this.props.attributes.forEach(attribute => {
+				React.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
 			});
 			window.location = "#";
 		},
 		render: function () {
-			var inputs = this.props.attributes.map(function (attribute) {
+			var inputs = this.props.attributes.map(attribute => {
 				return (
 					<input key={attribute} type="text" placeholder={attribute} ref={attribute} />
 				)
@@ -170,10 +166,9 @@ define(function (require) {
 		// end::handle-nav[]
 		// tag::employee-list-render[]
 		render: function () {
-			var self = this;
-			var employees = this.props.employees.map(function (employee) {
+			var employees = this.props.employees.map(employee => {
 				return (
-					<Employee key={employee._links.self.href} employee={employee} onDelete={self.props.onDelete}/>
+					<Employee key={employee._links.self.href} employee={employee} onDelete={this.props.onDelete}/>
 				)
 			});
 
