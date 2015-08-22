@@ -111,7 +111,7 @@ define(function (require) {
 		},
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
-				<input key={attribute} type="text" placeholder={attribute} ref={attribute} />
+				<p key={attribute}><input type="text" placeholder={attribute} ref={attribute} /></p>
 			);
 			return (
 				<div>

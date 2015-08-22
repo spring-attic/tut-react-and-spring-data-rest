@@ -1,10 +1,12 @@
-[[react-and-spring-data-rest-part-3]]
-= React.js and Spring Data REST: Part 3 - Events
-:prev_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/hypermedia
+[[react-and-spring-data-rest-part-4]]
+= React.js and Spring Data REST: Part 4 - Events
+:prev_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/conditional
 
-In the {prev_session}[previous session], you found out how to add hypermedia controls provided by Spring Data REST and make the UI dynamically resize. You also added the ability to create and delete employees and have the pages adjust appropriately.
+In the {prev_session}[previous session], you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
 
-That's great if you are the only one viewing the data. But what about other people? In this session you'll learn how to use Spring Data REST's built in event system and publish updates to ALL users through Spring's WebSocket support. Then you'll be able to dynamically adjust clients as the data updates.
+That's good. But do you know what's even better? Having the UI dynamically respond when other people update the resources.
+
+In this session you'll learn how to use Spring Data REST's built in event system and publish updates to ALL users through Spring's WebSocket support. Then you'll be able to dynamically adjust clients as the data updates.
 
 == Step 0 - Setting up your environment
 

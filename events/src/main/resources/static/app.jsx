@@ -192,7 +192,9 @@ define(function (require) {
 		},
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
-				<input key={attribute} type="text" placeholder={attribute} ref={attribute}/>
+					<p key={attribute}>
+						<input type="text" placeholder={attribute} ref={attribute} className="field" />
+					</p>
 			);
 			return (
 				<div>
@@ -216,6 +218,7 @@ define(function (require) {
 	})
 
 	var UpdateDialog = React.createClass({
+
 		handleSubmit: function (e) {
 			e.preventDefault();
 			var updatedEmployee = {};
@@ -225,16 +228,23 @@ define(function (require) {
 			this.props.onUpdate(this.props.employee, updatedEmployee);
 			window.location = "#";
 		},
+
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
-				<input key={this.props.employee.entity[attribute]} type="text" placeholder={attribute}
-					   defaultValue={this.props.employee.entity[attribute]} ref={attribute}/>
-			)
+					<p key={this.props.employee.entity[attribute]}>
+						<input type="text" placeholder={attribute}
+							   defaultValue={this.props.employee.entity[attribute]}
+							   ref={attribute} className="field" />
+					</p>
+			);
+
+			var dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
+
 			return (
 				<div>
-					<a href={"#updateEmployee-" + this.props.employee.entity._links.self.href}>Update</a>
+					<a href={"#" + dialogId}>Update</a>
 
-					<div id={"updateEmployee-" + this.props.employee.entity._links.self.href} className="modalDialog">
+					<div id={dialogId} className="modalDialog">
 						<div>
 							<a href="#" title="Close" className="close">X</a>
 
@@ -249,7 +259,8 @@ define(function (require) {
 				</div>
 			)
 		}
-	})
+
+	});
 
 	var EmployeeList = React.createClass({
 		handleInput: function (e) {

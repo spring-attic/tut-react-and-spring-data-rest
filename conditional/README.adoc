@@ -1,0 +1,130 @@
+[[react-and-spring-data-rest-part-3]]
+= React.js and Spring Data REST: Part 3 - Conditional Operations
+:prev_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/hypermedia
+
+In the {prev_session}[previous session], you found out how to add hypermedia controls provided by Spring Data REST and make the UI dynamically resize. You also added the ability to create and delete employees and have the pages adjust appropriately.
+
+== Step 0 - Setting up your environment
+
+To get off the ground, you can either grab the code from this repository, or you can do it yourself, by hand. This project is based on the previous session with more modifications coming.
+
+== To PUT or not to PUT, that is the question
+
+When building services, a common situation developers commonly run into involves scaling. There are many factors involved, but the use case this session will tackle are conditional operations when multiple developers are attempting to interact with the same resource.
+
+When you fetch a resource, thte risk is that it might go stale if someone else, on another page, updates it. To deal with this, Spring Data REST integrates two technologies: versioning of resources and ETags.
+
+By versioning resources on the backend and using ETags in the frontend, it is possible to conditially PUT a change. In other words, it's possible to detect that the resource has changed and block a PUT (or a PATCH) from being executed. Let's dive into that.
+
+== Versioning REST resources
+
+To support versioning of resources, you have to define a version attribute for your domain objects that need this type of protection.
+
+.src/main/java/com/greglturnquist/payroll/Employee.java
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
+----
+
+With this update to your domain model, a version field if provided. In this example, you are using JPA. JPA will automatically take a `javax.persistence.Version` field and apply a version property to the table. Then it will update this field with a new, unique value everytime the row is updated.
+
+When fetching an individual resource (not a collection resource), Spring Data REST will automatically add an http://tools.ietf.org/html/rfc7232#section-2.3[ETag response header] if it sees a `@Version` tagged field and plug the stored value into the header. The value is what is stored in the data store. With JPA, the value is managed for you. With other data stores, you have to supply it yourself.
+
+== Fetching individual resources and their headers
+
+In the {prev_session}[previous session] you used the collection resource to populate the table. With Spring Data REST, the *_embedded* data set is considered a type of preview. To get headers like ETags, you need to fetch each resource. In this version, `loadFromServer` is updated to fetch the collection and then use the URIs to fetch each individual resource.
+
+.src/main/resources/static/app.jsx - Fetching each resource
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=follow-2]
+----
+
+The beginning of the code is the same as last time. But about half way down, it shifts. Instead, `employeeCollection.entity._embedded.employees.map` is used to generate a list of GET requests against each *self* URI of the collection:
+
+[source,javascript]
+----
+return employeeCollection.entity._embedded.employees.map(employee =>
+        client({
+            method: 'GET',
+            path: employee._links.self.href
+        })
+);
+
+----
+Because `client({method: 'GET'...)` always returns a promise, this actually produces an array of promises. 
+
+How do you resolve a stack of pending requests? Simple! `when.all(employeePromises)` delivers a single promise that only executes when every promise in the collection is done. The results of `when.all` is array of employee objects. 
+
+With this, you can then update the state of the UI.
+
+NOTE: Up through the last section, you have received a nice embedded set of data from the collection resource. In this session, you are getting individual resources. This includes not only the HAL data, but headers as well. Hence, the structure of `this.props.employee` in the other React components is slightly different.
+
+This functionality is implement in other places as well. For example, `onNavigate()`, used to jump to different pages, has been updated as well to fetch individual resources. Since it's mostly the same as what's shown above, it's been left out of this session.
+
+== Updating existing resources
+
+In this session, you are adding an `UpdateDialog` React component.
+
+.src/main/resources/static/app.jsx - UpdateDialog component
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=update-dialog]
+----
+
+The `UpdatedDialog` is a *<div>* that is either hidden or visible depending on the context. It has an `id` connected the resource's self URI ensuring each dialog is unique. By clicking on the anchor tag, the CSS causes the related dialog to become visible. Navigating away it (`window.location = "#"`) causes it to hide itself again.
+
+In the `render()` function, the JSON Schema metadata fetched early on is used to dynamically create an array of `<input>` elements followed by a submit button.
+
+The submit button is linked to the component's `handleSubmit` function. This handily uses `React.findDOMNode()` to extract the details of the pop-up using http://facebook.github.io/react/docs/more-about-refs.html[React refs]. 
+
+After the details extracted and loaded into the `updatedEmployee` object, the top-level `onUpdate()` method is invoked. This continues React's style of one-way binding where the functions to call are pushed from upper level components into the lower level ones. This way, state is still managed at the top.
+
+== Conditional PUT
+
+So you've gone to all this effort to embed versioning in the data model. Spring Data REST has served up that value as an ETag response header. Here is where you get to put it to good use:
+
+.src/main/resources/static/app.jsx - onUpdate function
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=update]
+----
+
+PUT with an http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.24[If-Match request header] will cause Spring Data REST to check the value against the current version. If the incoming ETag value plugged into *If-Match* doesn't match the data store's version value, Spring Data REST will fail with an *HTTP 412 Precondition Failed*.
+
+NOTE: The spec for https://promisesaplus.com/[Promises/A+] actually defines their API as `then(successFunction, errorFunction)`. So far, you've only seen it used with success functions. In the code fragment above, there are two functions. The success function invokes `loadFromServer` while the error function displays a browser alert about the stale data.
+
+== Putting it all together
+
+With your `UpdateDialog` React component defined and nicely linked to the top-level `onUpdate` function, the last step is to wire it into the existing layout of components.
+
+The `CreateDialog` created in the previous session was put at the top of the `EmployeeList` because there is only one instance. However, `UpdateDialog` is tied directly to specific employees. So you can see it plugged in below in the `Employee` React component:
+
+.src/main/resources/static/app.jsx - Employee with UpdateDialog
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=employee]
+----
+
+For starters, you'll notice that the fields of the employee are now found at `self.props.employee.entity`, such as `firstName`, `lastName`, and `description`. That's so we also have access to `self.props.employee.headers` where we can find ETags. There are other headers supported by Spring Data REST (like http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.29[Last-Modified]) which aren't part of this series. So structuring our data this way is handy.
+
+NOTE: It's important to understand the structure of `.entity` and `.headers` is a side effect of using https://github.com/cujojs/rest[rest.js] as our REST invoking library of choice. If you build your own app using a different library, you'll have to adapt as is necessary.
+
+== Review
+
+In this session:
+
+* You configured your domain model with an `@Version` field for JPA-based optimistic locking.
+* You adjust the frontend to fetch individual resources.
+* You plugged the ETag header from an individual resource into an *If-Match* request header to make PUTs conditional.
+* You coded a new UpdateDialog for each employee shown on the list.
+
+With this plugged in, it's easy to avoid colliding with other users, or simply overwriting their edits.
+
+Issues?
+
+It's certainly nice to know when you're editing a bad record. But is it best to wait until you click "Submit" to find out?
+
+The logic to fetch resources is very similar in both `loadFromServer` and `onNavigate`. Do you see ways to avoid duplicate code?
+
+You put the JSON Schema metadata to good use in building up the `CreateDialog` and the `UpdateDialog` inputs. Do you see other places to use the metadata to makes things more generic? Imagine you wanted to add five more fields to `Employee.java`. What would it take to update the UI?

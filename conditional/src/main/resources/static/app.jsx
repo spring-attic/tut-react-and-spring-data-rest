@@ -58,6 +58,7 @@ define(function (require) {
 			});
 		},
 		// end::create[]
+		// tag::update[]
 		onUpdate: function (employee, updatedEmployee) {
 			client({
 				method: 'PUT',
@@ -75,6 +76,7 @@ define(function (require) {
 				}
 			});
 		},
+		// end::update[]
 		// tag::delete[]
 		onDelete: function (employee) {
 			client({method: 'DELETE', path: employee.entity._links.self.href}).done(response => {
@@ -156,7 +158,9 @@ define(function (require) {
 		},
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
-				<input key={attribute} type="text" placeholder={attribute} ref={attribute} />
+				<p key={attribute}>
+					<input type="text" placeholder={attribute} ref={attribute} className="field" />
+				</p>
 			);
 			return (
 				<div>
@@ -180,7 +184,9 @@ define(function (require) {
 	});
 	// end::create-dialog[]
 
+	// tag::update-dialog[]
 	var UpdateDialog = React.createClass({
+
 		handleSubmit: function (e) {
 			e.preventDefault();
 			var updatedEmployee = {};
@@ -190,16 +196,22 @@ define(function (require) {
 			this.props.onUpdate(this.props.employee, updatedEmployee);
 			window.location = "#";
 		},
+
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
-					<input key={this.props.employee.entity[attribute]} type="text" placeholder={attribute}
-						   defaultValue={this.props.employee.entity[attribute]} ref={attribute}/>
-			)
-			return (
-				<div>
-					<a href={"#updateEmployee-" + this.props.employee.entity._links.self.href}>Update</a>
+					<p key={this.props.employee.entity[attribute]}>
+						<input type="text" placeholder={attribute}
+							   defaultValue={this.props.employee.entity[attribute]}
+							   ref={attribute} className="field" />
+					</p>
+			);
 
-					<div id={"updateEmployee-" + this.props.employee.entity._links.self.href} className="modalDialog">
+			var dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
+
+			return (
+				<div key={this.props.employee.entity._links.self.href}>
+					<a href={"#" + dialogId}>Update</a>
+					<div id={dialogId} className="modalDialog">
 						<div>
 							<a href="#" title="Close" className="close">X</a>
 
@@ -214,7 +226,9 @@ define(function (require) {
 				</div>
 			)
 		}
-	})
+
+	});
+	// end::update-dialog[]
 
 
 	var EmployeeList = React.createClass({
