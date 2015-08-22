@@ -12,17 +12,21 @@ define(function (require) {
 		// tag::follow-2[]
 		loadFromServer: function (pageSize) {
 			follow(client, root, [
-				{rel: 'employees', params: {size: pageSize}}]).done(employeeCollection => {
-				client({
+				{rel: 'employees', params: {size: pageSize}}]
+			).then(employeeCollection => {
+				return client({
 					method: 'GET',
 					path: employeeCollection.entity._links.self.href + '/schema'
-				}).done(response => {
-					this.setState({
-						employees: employeeCollection.entity._embedded.employees,
-						attributes: Object.keys(response.entity.properties),
-						pageSize: pageSize,
-						links: employeeCollection.entity._links});
+				}).then(schema => {
+					this.schema = schema.entity;
+					return employeeCollection;
 				});
+			}).done(employeeCollection => {
+				this.setState({
+					employees: employeeCollection.entity._embedded.employees,
+					attributes: Object.keys(this.schema.properties),
+					pageSize: pageSize,
+					links: employeeCollection.entity._links});
 			});
 		},
 		// end::follow-2[]
@@ -51,12 +55,12 @@ define(function (require) {
 		// end::delete[]
 		// tag::navigate[]
 		onNavigate: function(navUri) {
-			client({method: 'GET', path: navUri}).done(response => {
+			client({method: 'GET', path: navUri}).done(employeeCollection => {
 				this.setState({
-					employees: response.entity._embedded.employees,
+					employees: employeeCollection.entity._embedded.employees,
 					attributes: this.state.attributes,
 					pageSize: this.state.pageSize,
-					links: response.entity._links
+					links: employeeCollection.entity._links
 				});
 			});
 		},
