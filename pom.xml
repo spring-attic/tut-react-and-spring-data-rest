@@ -16,21 +16,7 @@
 		<module>hypermedia</module>
 		<module>conditional</module>
 		<module>events</module>
+		<module>security</module>
 	</modules>
-
-	<build>
-		<plugins>
-
-			<plugin>
-				<groupId>com.rimerosolutions.maven.plugins</groupId>
-				<artifactId>wrapper-maven-plugin</artifactId>
-				<version>0.0.4</version>
-				<configuration>
-					<mavenVersion>3.3.3</mavenVersion>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
 
 </project>
