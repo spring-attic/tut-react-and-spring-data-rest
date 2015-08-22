@@ -10,6 +10,71 @@ To get off the ground, you can either https://github.com/gregturn/react-and-spri
 
 == TBD
 
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/Manager.java[tag=code]
+----
+
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/ManagerRepository.java[tag=code]
+----
+
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
+----
+
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=code]
+----
+
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/SpringDataJpaUserDetailsService.java[tag=code]
+----
+
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/SecurityConfiguration.java[tag=code]
+----
+
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/SpringDataRestEventHandler.java[tag=code]
+----
+
+[source,java]
+----
+include::src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[tag=code]
+----
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=employee]
+----
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=json-schema-filter]
+----
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=on-update]
+----
+
+[source,javascript,indent=0]
+----
+include::src/main/resources/static/app.jsx[tag=on-delete]
+----
+
+[source,html,indent=0]
+----
+include::src/main/resources/templates/index.html[tag=logout]
+----
+
 == Review
 
 In this session:
