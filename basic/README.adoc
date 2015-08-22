@@ -6,7 +6,7 @@ In this section, you will see how to get a bare-bones Spring Data REST set up an
 
 == Step 0 - Setting up your environment
 
-To get off the ground, you can either grab the code from this repository, or you can do it yourself, by hand.
+To get off the ground, you can either https://github.com/gregturn/react-and-spring-data-rest/tree/master/basic[grab the code] from this repository, or you can do it yourself, by hand.
 
 If you want to do it yourself, visit http://start.spring.io and pick these items:
 

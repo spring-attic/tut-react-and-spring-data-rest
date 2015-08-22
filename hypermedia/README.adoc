@@ -6,7 +6,7 @@ In the {prev_session}[previous session], you found out how to stand up a backend
 
 == Step 0 - Setting up your environment
 
-To get off the ground, you can either grab the code from this repository, or you can do it yourself, by hand. This project is based on the previous session with more modifications coming.
+To get off the ground, you can either https://github.com/gregturn/react-and-spring-data-rest/tree/master/hypermedia[grab the code] from this repository, or you can do it yourself, by hand. This project is based on the previous session with more modifications coming.
 
 
 == ...and then there was REST

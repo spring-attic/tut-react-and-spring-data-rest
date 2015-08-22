@@ -2,11 +2,11 @@
 = React.js and Spring Data REST: Part 3 - Conditional Operations
 :prev_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/hypermedia
 
-In the {prev_session}[previous session], you found out how to add hypermedia controls provided by Spring Data REST and make the UI dynamically resize. You also added the ability to create and delete employees and have the pages adjust appropriately.
+In the {prev_session}[previous session], you found out how to add hypermedia controls provided by Spring Data REST and make the UI dynamically resize. You also added the ability to create and delete employees and have the pages adjust appropriately. But no solution is complete with taking into consideration updates made by other users on possibly the same bit of data you are currently editing.
 
 == Step 0 - Setting up your environment
 
-To get off the ground, you can either grab the code from this repository, or you can do it yourself, by hand. This project is based on the previous session with more modifications coming.
+To get off the ground, you can either https://github.com/gregturn/react-and-spring-data-rest/tree/master/conditional[grab the code] from this repository, or you can do it yourself, by hand. This project is based on the previous session with more modifications coming.
 
 == To PUT or not to PUT, that is the question
 

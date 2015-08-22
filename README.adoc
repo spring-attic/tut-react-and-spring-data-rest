@@ -1,6 +1,6 @@
 = Building a web app with React.js and Spring Data REST
 Greg L. Turnquist <gturnquist@pivotal.io>
-2015-07-30
+2015-08-21
 :toc: right
 
 This series shows a collection of apps that use Spring Data REST and its powerful backend functionality combined with React's sophisticated features to build an easy-to-grok UI.
@@ -12,3 +12,4 @@ include::basic/README.adoc[leveloffset=+1]
 include::hypermedia/README.adoc[leveloffset=+1]
 include::conditional/README.adoc[leveloffset=+1]
 include::events/README.adoc[leveloffset=+1]
+include::security/README.adoc[leveloffset=+1]
