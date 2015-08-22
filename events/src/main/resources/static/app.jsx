@@ -68,7 +68,7 @@ define(function (require) {
 				/* Let the websocket handler update the state */
 			}, response => {
 				if (response.status.code === 412) {
-					alert('Unable to update ' + employee.entity._links.self.href + '. Your copy is stale.');
+					alert('DENIED: Unable to update ' + employee.entity._links.self.href + '. Your copy is stale.');
 				}
 			});
 		},
