@@ -2,6 +2,7 @@ define(function (require) {
 	'use strict';
 
 	var React = require('react');
+	var when = require('when');
 	var client = require('./client');
 	var follow = require('./follow');
 
@@ -12,19 +13,34 @@ define(function (require) {
 	var App = React.createClass({
 		loadFromServer: function (pageSize) {
 			follow(client, root, [
-				{rel: 'employees', params: {size: pageSize}}]).done(employeeCollection => {
-				client({
-					method: 'GET',
-					path: employeeCollection.entity._links.self.href + '/schema'
-				}).done(response => {
-					this.setState({
-						page: employeeCollection.entity.page,
-						employees: employeeCollection.entity._embedded.employees,
-						attributes: Object.keys(response.entity.properties),
-						pageSize: pageSize,
-						links: employeeCollection.entity._links
+					{rel: 'employees', params: {size: pageSize}}]
+			).then(employeeCollection => {
+					return client({
+						method: 'GET',
+						path: employeeCollection.entity._links.self.href + '/schema'
+					}).then(schema => {
+						this.schema = schema.entity;
+						this.links = employeeCollection.entity._links;
+						return employeeCollection;
 					});
-				})
+			}).then(employeeCollection => {
+				this.page = employeeCollection.entity.page;
+				return employeeCollection.entity._embedded.employees.map(employee =>
+						client({
+							method: 'GET',
+							path: employee._links.self.href
+						})
+				);
+			}).then(employeePromises => {
+				return when.all(employeePromises);
+			}).done(employees => {
+				this.setState({
+					page: this.page,
+					employees: employees,
+					attributes: Object.keys(this.schema.properties),
+					pageSize: pageSize,
+					links: this.links
+				});
 			});
 		},
 		// tag::on-create[]
@@ -42,22 +58,46 @@ define(function (require) {
 		onUpdate: function (employee, updatedEmployee) {
 			client({
 				method: 'PUT',
-				path: employee._links.self.href,
+				path: employee.entity._links.self.href,
 				entity: updatedEmployee,
-				headers: {'Content-Type': 'application/json'}
+				headers: {
+					'Content-Type': 'application/json',
+					'If-Match': employee.headers.Etag
+				}
+			}).done(response => {
+				/* Let the websocket handler update the state */
+			}, response => {
+				if (response.status.code === 412) {
+					alert('Unable to update ' + employee.entity._links.self.href + '. Your copy is stale.');
+				}
 			});
 		},
 		onDelete: function (employee) {
-			client({method: 'DELETE', path: employee._links.self.href});
+			client({method: 'DELETE', path: employee.entity._links.self.href});
 		},
 		onNavigate: function (navUri) {
-			client({method: 'GET', path: navUri}).done(response => {
+			client({
+				method: 'GET',
+				path: navUri
+			}).then(employeeCollection => {
+				this.links = employeeCollection.entity._links;
+				this.page = employeeCollection.entity.page;
+
+				return employeeCollection.entity._embedded.employees.map(employee =>
+						client({
+							method: 'GET',
+							path: employee._links.self.href
+						})
+				);
+			}).then(employeePromises => {
+				return when.all(employeePromises);
+			}).done(employees => {
 				this.setState({
-					page: response.entity.page,
-					employees: response.entity._embedded.employees,
+					page: this.page,
+					employees: employees,
+					attributes: Object.keys(this.schema.properties),
 					pageSize: this.state.pageSize,
-					attributes: this.state.attributes,
-					links: response.entity._links
+					links: this.links
 				});
 			});
 		},
@@ -81,16 +121,29 @@ define(function (require) {
 				rel: 'employees',
 				params: {
 					size: this.state.pageSize,
-					page: this.state.page.number}
-			}]).done(response => {
-				this.setState({
-					page: response.entity.page,
-					employees: response.entity._embedded.employees,
-					pageSize: this.state.pageSize,
-					attributes: this.state.attributes,
-					links: response.entity._links
+					page: this.state.page.number
+				}
+			}]).then(employeeCollection => {
+				this.links = employeeCollection.entity._links;
+				this.page = employeeCollection.entity.page;
+
+				return employeeCollection.entity._embedded.employees.map(employee => {
+					return client({
+						method: 'GET',
+						path: employee._links.self.href
+					})
 				});
-			})
+			}).then(employeePromises => {
+				return when.all(employeePromises);
+			}).then(employees => {
+				this.setState({
+					page: this.page,
+					employees: employees,
+					attributes: Object.keys(this.schema.properties),
+					pageSize: this.state.pageSize,
+					links: this.links
+				});
+			});
 		},
 		// end::websocket-handlers[]
 		getInitialState: function () {
@@ -170,21 +223,18 @@ define(function (require) {
 				updatedEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
 			});
 			this.props.onUpdate(this.props.employee, updatedEmployee);
-			this.props.attributes.forEach(attribute => {
-				React.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
-			});
 			window.location = "#";
 		},
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
-				<input key={attribute} type="text" placeholder={attribute}
-					   defaultValue={this.props.employee[attribute]} ref={attribute}/>
+				<input key={this.props.employee.entity[attribute]} type="text" placeholder={attribute}
+					   defaultValue={this.props.employee.entity[attribute]} ref={attribute}/>
 			)
 			return (
 				<div>
-					<a href={"#updateEmployee-" + this.props.employee._links.self.href}>Update</a>
+					<a href={"#updateEmployee-" + this.props.employee.entity._links.self.href}>Update</a>
 
-					<div id={"updateEmployee-" + this.props.employee._links.self.href} className="modalDialog">
+					<div id={"updateEmployee-" + this.props.employee.entity._links.self.href} className="modalDialog">
 						<div>
 							<a href="#" title="Close" className="close">X</a>
 
@@ -232,7 +282,7 @@ define(function (require) {
 				<h3>Employees - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
 
 			var employees = this.props.employees.map(employee =>
-				<Employee key={employee._links.self.href}
+				<Employee key={employee.entity._links.self.href}
 						  employee={employee}
 						  attributes={this.props.attributes}
 						  onUpdate={this.props.onUpdate}
@@ -282,9 +332,9 @@ define(function (require) {
 		render: function () {
 			return (
 				<tr>
-					<td>{this.props.employee.firstName}</td>
-					<td>{this.props.employee.lastName}</td>
-					<td>{this.props.employee.description}</td>
+					<td>{this.props.employee.entity.firstName}</td>
+					<td>{this.props.employee.entity.lastName}</td>
+					<td>{this.props.employee.entity.description}</td>
 					<td>
 						<UpdateDialog employee={this.props.employee}
 									  attributes={this.props.attributes}

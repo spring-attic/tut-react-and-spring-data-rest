@@ -18,8 +18,11 @@ package com.greglturnquist.payroll;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 import lombok.Data;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Greg Turnquist
@@ -33,6 +36,8 @@ public class Employee {
 	private String firstName;
 	private String lastName;
 	private String description;
+
+	private @Version @JsonIgnore Long version;
 
 	private Employee() {}
 
