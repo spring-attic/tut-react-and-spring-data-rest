@@ -24,7 +24,7 @@ In the beginning there was data. And it was good. But then people wanted to acce
 Spring Data REST addresses how simple this problem can be if some assumptions are made:
 
 * The developer is using a Spring Data project that supports the repository model.
-* Pick on some well accepted, industry standard protocols, like HTTP verbs, formats, standardize media types, and IANA-approved link names.
+* Pick on some well accepted, industry standard protocols, like HTTP verbs, formats, standardized media types, and IANA-approved link names.
 
 === Declaring your domain
 
