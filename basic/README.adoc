@@ -377,4 +377,4 @@ Issues?
 * The web page didn't use any hypermedia controls or metadata. Instead, it was hardcoded to fetch data from `/api/employees`.
 * It's read only. While you can alter records using cURL, the web page offers none of that.
 
-These are things we can address in the {next_session}[next session]. Until then, happy coding!
+These are things we can address in the next session. Until then, happy coding!
