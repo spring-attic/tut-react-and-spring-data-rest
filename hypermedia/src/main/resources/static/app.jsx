@@ -32,15 +32,16 @@ define(function (require) {
 		// end::follow-2[]
 		// tag::create[]
 		onCreate: function (newEmployee) {
-			follow(client, root, ['employees']).then(response => {
+			follow(client, root, ['employees']).then(employeeCollection => {
 				return client({
 					method: 'POST',
-					path: response.entity._links.self.href,
+					path: employeeCollection.entity._links.self.href,
 					entity: newEmployee,
 					headers: {'Content-Type': 'application/json'}
 				})
 			}).then(response => {
-				return follow(client, root, [{rel: 'employees', params: {'size': this.state.pageSize}}]);
+				return follow(client, root, [
+					{rel: 'employees', params: {'size': this.state.pageSize}}]);
 			}).done(response => {
 				this.onNavigate(response.entity._links.last.href);
 			});
@@ -104,14 +105,20 @@ define(function (require) {
 				newEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
 			});
 			this.props.onCreate(newEmployee);
+
+			// clear out the dialog's inputs
 			this.props.attributes.forEach(attribute => {
-				React.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
+				React.findDOMNode(this.refs[attribute]).value = '';
 			});
+
+			// Navigate away from the dialog to hide it.
 			window.location = "#";
 		},
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
-				<p key={attribute}><input type="text" placeholder={attribute} ref={attribute} /></p>
+				<p key={attribute}>
+					<input type="text" placeholder={attribute} ref={attribute} />
+				</p>
 			);
 			return (
 				<div>
@@ -143,7 +150,8 @@ define(function (require) {
 			if (/^[0-9]+$/.test(pageSize)) {
 				this.props.updatePageSize(pageSize);
 			} else {
-				React.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+				React.findDOMNode(this.refs.pageSize).value =
+					pageSize.substring(0, pageSize.length - 1);
 			}
 		},
 		// end::handle-page-size-updates[]
