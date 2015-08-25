@@ -346,7 +346,7 @@ include::src/main/resources/static/app.jsx[tag=render]
 
 With all this in place, re-run the application (`mvn spring-boot:run`) and visit http://localhost:8080.
 
-image::basic/images/basic-1.png[]
+image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/basic/images/basic-1.png[]
 
 You can see the initial employee loaded up by the system.
 
@@ -358,7 +358,7 @@ curl -X POST localhost:8080/api/employees -d '{"firstName": "Bilbo", "lastName":
 
 Refresh the browser, and you should see the new entry:
 
-image::basic/images/basic-2.png[]
+image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/basic/images/basic-2.png[]
 
 And now you can see both of them listed on the web site.
 
