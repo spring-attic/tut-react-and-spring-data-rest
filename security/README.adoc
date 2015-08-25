@@ -4,77 +4,293 @@
 
 In the {prev_session}[previous session], you made the app dynamically response to updates from other users via Spring Data REST's built in event handlers and the Spring Framework's WebSocket support. But no application is complete without securing the whole thing so that only proper users have access to the UI and the resources behind it.
 
-== Step 0 - Setting up your environment
+Feel free to https://github.com/gregturn/react-and-spring-data-rest/tree/master/security[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
 
-To get off the ground, you can either https://github.com/gregturn/react-and-spring-data-rest/tree/master/security[grab the code] from this repository, or you can do it yourself, by hand. This project is based on the previous session with more modifications coming.
+== Adding Spring Security to the project
 
-== TBD
+Before getting underway, you need to add a couple dependencies to your project's pom.xml file:
+
+[source,xml,indent=0]
+----
+include::pom.xml[tag=security]
+----
+
+This bring in Spring Boot's Spring Security starter as well as some extra Thymeleaf tags to do security look ups in the web page.
+
+== Defining the security model
+
+In the past session, you have worked with a nice payroll system. It's handy to declare things on the backend and let Spring Data REST do the heavy lifting. The next step is to model a system where security controls need to be instituted.
+
+If this is a payroll system, then only managers would be accessing it. So kick things off by modeling a `Manager` object:
 
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/Manager.java[tag=code]
 ----
 
+* `PASSWORD_ENCODER` is the means to encrypt new passwords or to take password inputs and encrypt them before comparison.
+* `id`, `name`, `password`, and `roles` define the parameters needed to restrict access.
+* The customized `setPassword()` ensures that passwords are never stored in the clear.
+
+There is a key thing to keep in mind when designing your security layer. Secure the right bits of data (like passwords) and do NOT let them get printed to console, into logs, or exported via JSON serialization. 
+
+* `@ToString(exclude = "password")` ensures that the Lombok-generated toString() method will NOT print out the password.
+* `@JsonIgnore` applied to the password field protects from Jackson serializing this field.
+
+== Creating a manager's repository
+
+Spring Data is so good at managing entities. Why not create a repository to handle these managers?
+
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/ManagerRepository.java[tag=code]
 ----
+
+Instead of extending the usual `CrudRepository`, you don't know so many methods. Instead, you need to save data (which is also used for updates) and you need to look up existing users. Hence, you can use Spring Data Common's minimal `Repository` marker interface. It comes with no predefined operations.
+
+Spring Data REST, by default, will export any repository it finds. You do NOT want this repository exposed for REST operations! Apply the `@RepositoryRestResource(exported = false)` annotation to block it from export. This prevents the repository from being served up as well as any metadata.
+
+== Linking employees with their managers
+
+The last bit of modeling security is to associate employees with a manager. In this domain, an employee can have one manager while a manager can have multiple employees:
 
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 ----
 
+* The manager attribute is linked via JPA's `@ManyToOne`. Manager doesn't need the `@OneToMany` because you haven't defined the need to look that up.
+* The utility constructor call is updated to support initialization.
+
+== Securing employees to their managers
+
+Spring Security supports a multitude of options when it comes to defining security policies. In this session, you want to restrict things such that ONLY managers can view employee payroll data, and that saving, updating, and deleting operations are confined to the employee's manager. In other words, any manager can log in and view the data, but only a given employee's manager can make any changes.
+
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=code]
 ----
+
+`@PreAuthorize` at the top of the interface restricts access to people with *ROLE_MANAGER*.
+
+On `save()`, either the employee's manager is null (initial creation of a new employee when no manager has been assigned), or the employee's manager's name matches the currently authenticated user's name. Here you are using http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-access[Spring Security's SpEL expressions] to define access. It comes with a handy "?." property navigator to handle null checks. It's also important to note using the `@Param(...)` on the arguments to link HTTP operations with the methods.
+
+On `delete()`, the method either has access to the employee, or in the event it only has an id, then it must find the *employeeRepository* in the application context, perform a `findOne(id)`, and then check the manager against the currently authenticated user.
+
+== Writing a `UserDetails` service
+
+A common point of integration with security is to define a `UserDetailsService`. This is the way to connect your user's data store into a Spring Security interface. Spring Security needs a way to look up users for security checks, and this is the bridge. Thankfully with Spring Data, the effort is quite minimal:
 
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/SpringDataJpaUserDetailsService.java[tag=code]
 ----
 
+`SpringDataJpaUserDetailsService` implements Spring Security's `UserDetailsService`. The interface has one method: `loadByUsername()`. This method is meant to return a `UserDetails` object so Spring Security can interrogate the user's information.
+
+Because you have a `ManagerRepository`, there is no need to write any SQL or JPA expressions to fetch this needed data. In this class, it is autowired by constructor injection.
+
+`loadByUsername()` taps into the custom finder you write a moment ago, `findByName()`. It then populates a Spring Security `User` instance, which implements the `UserDetails` interface. You are also using Spring Securiy's `AuthorityUtils` to transition from an array of string-based roles into a Java `List` of `GrantedAuthority`.
+
+== Wiring up your security policy
+
+The `@PreAuthorize` expressions applied to your repository are *access rules*. These rules are for nought without a security policy.
+
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/SecurityConfiguration.java[tag=code]
 ----
+
+This code has a lot of complexity in it, so let's walk through it, first talking about the annotations and APIs. Then we'll discuss the security policy it defines.
+
+* `@EnableWebSecurity` tells Spring Boot to drop its autoconfigured security policy and use this one instead. For quick demos, autoconfigured security is okay. But for anything real, you should write the policy yourself.
+* `@EnableGlobalMethodSecurity` turns on method-level security with Spring Security's sophisticated http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-pre-post-annotations[@Pre and @Post annotations].
+* It extends `WebSecsurityConfigurerAdapter`, a handy base class to write policy.
+* It autowired the `SpringDataJpaUserDetailsService` by field inject and then plugs it in via the `configure(AuthenticationManagerBuilder)` method. The `PASSWORD_ENCODER` from `Manager` is also setup.
+* The pivotal security policy is written in pure Java with the `configure(HttpSecurity)`.
+
+The security policy says to authorize all requests using the access rules defined earlier.
+
+* The paths listed in `antMatchers()` are granted unconditional access since there is no reason to block static web resources.
+* Anything that doesn't match that falls into `anyRequest().authenticated()` meaning it requires authentication.
+* With those access rules setup, Spring Security is told to use form-based authentication, defaulting to "/" upon success, and to grant access to the login page.
+* BASIC login is also configured with CSRF disabled. This is mostly for demonstrations and not recommended for production systems without careful analysis.
+* Logout is configured to take the user to "/".
+
+WARNING: BASIC authentication is handy when you are experimenting with curl. Using curl to access a form-based system is daunting. It's important to recognize that authenticting with any mechanism over HTTP (not HTTPS) puts you at risk of credentials being sniffed over the wire. CSRF is a good protocol to leave intact. It is simply disabled to make interaction with BASIC and curl easier. In production, it's best to leave it on.
+
+== Adding security details automatically
+
+A good user experience is when the application can automatically apply context. In this example, if a logged in manager creates a new employee record, it makes sense for that manager to own it. With Spring Data REST's event handlers, there is no need for the user to explicitly link it. It also ensures the user doesn't accidentally records to the wrong manager.
 
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/SpringDataRestEventHandler.java[tag=code]
 ----
 
+`@RepositoryEventHandler(Employee.class)` flags this event handler as only applied to `Employee` objects. The `@HandleBeforeCreate` annotation gives you a chance to alter the incoming `Employee` record before it gets written to the database.
+
+In this sitation, you lookup the current user's security context to get the user's name. Then look up the associated manager using `findByName()` and apply it to the manager. There is a little extra glue code to create a new manager if he or she doesn't exist in the system yet. But that is mostly to support initialization of the database. In a real production system, that code should be removed and instead depend on the DBAs or Security Ops team to properly maintain the user data store.
+
+== Pre-loading manager data
+
+Loading managers and linking employees to these managers is rather straight forward:
+
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[tag=code]
 ----
+
+The one wrinkle is that Spring Security is active with access rules in full force when this loader runs. Thus to save employee data, you must use Spring Security's `setAuthentication()` API to authenticate this loader with the proper name and role. At the end, the security context is cleared out.
+
+== Touring your secured REST service
+
+With all these mods in place, you can fire up the application (`./mvnw spring-boot:run`) and check out the mods using cURL.
+
+----
+$ curl -v -u greg:turnquist localhost:8080/api/employees/1
+*   Trying ::1...
+* Connected to localhost (::1) port 8080 (#0)
+* Server auth using Basic with user 'greg'
+> GET /api/employees/1 HTTP/1.1
+> Host: localhost:8080
+> Authorization: Basic Z3JlZzp0dXJucXVpc3Q=
+> User-Agent: curl/7.43.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: Apache-Coyote/1.1
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block
+< Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+< Pragma: no-cache
+< Expires: 0
+< X-Frame-Options: DENY
+< Set-Cookie: JSESSIONID=E27F929C1836CC5BABBEAB78A548DF8C; Path=/; HttpOnly
+< ETag: "0"
+< Content-Type: application/hal+json;charset=UTF-8
+< Transfer-Encoding: chunked
+< Date: Tue, 25 Aug 2015 15:57:34 GMT
+< 
+{
+  "firstName" : "Frodo",
+  "lastName" : "Baggins",
+  "description" : "ring bearer",
+  "manager" : {
+    "name" : "greg",
+    "roles" : [ "ROLE_MANAGER" ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/api/employees/1"
+    }
+  }
+}
+----
+
+This shows a lot more details than during the first session. First of all, Spring Security turns on several HTTP protocols to protect against various attack vectors (Pragma, Expires, X-Frame-Options, etc.). You are also issuing BASIC credentials with `-u greg:turnquist` which renders the Authorization header.
+
+Amidst all the headers, you can see the *ETag* header from your versioned resource.
+
+Finally, inside the data itself, you can see a new attribute: *manager*. You can see that it includes the name and roles, but NOT the password. That is due to using `@JsonIgnore` on that field. Because Spring Data REST didn't export that repository, it's values are inlined in this resource. You'll put that to good use as you update the UI in the next section.
+
+== Displaying manager info on the UI
+
+With all these mods in the backend, you can now shift to updating things in the frontend. First of all, show an employee's manager inside the `<Employee /> ` React component:
 
 [source,javascript,indent=0]
 ----
 include::src/main/resources/static/app.jsx[tag=employee]
 ----
 
+This merely adds a column for `this.props.employee.entity.manager.name`.
+
+== Filtering out JSON Schema metadata
+
+If a field is shown in the data output, it is safe to assume it has an entry in the JSON Schema metadata. You can see it in the following excerpt:
+
+----
+{
+	...
+    "manager" : {
+      "readOnly" : false,
+      "$ref" : "#/descriptors/manager"
+    },
+    ...
+  },
+  ...
+  "$schema" : "http://json-schema.org/draft-04/schema#"
+}
+----
+
+The manager field isn't something you want people to edit directly. Since it's inlined, it should be viewed as a read only attribute. To filter it out inlined entries from the `CreateDialog` and `UpdatDialog`, just delete such entries after fetching the JSON Schema metadata.
+
 [source,javascript,indent=0]
 ----
 include::src/main/resources/static/app.jsx[tag=json-schema-filter]
 ----
+
+This code trims out both URI relations as well as $ref entries.
+
+== Trapping for unauthorized access
+
+With security checks configured on the backend, add a handler in case someone tries to update a record without authorization:
 
 [source,javascript,indent=0]
 ----
 include::src/main/resources/static/app.jsx[tag=on-update]
 ----
 
+You had code to catch an HTTP 412 error. This traps an HTTP 403 status code and provides a suitable alert.
+
+Do the same for delete operations:
+
 [source,javascript,indent=0]
 ----
 include::src/main/resources/static/app.jsx[tag=on-delete]
 ----
+
+This is coded similarly with a tailored error messages.
+
+== Add some security details to the UI
+
+The last thing to crown this version of the app is to display who is logged in as well providing a logout button.
 
 [source,html,indent=0]
 ----
 include::src/main/resources/templates/index.html[tag=logout]
 ----
 
+== Putting it all together
+
+With these changes in the frontend, restart the application and navigate to http://localhost:8080.
+
+You are immediately redirected to a login form. This form is supplied by Spring Security, though you can https://spring.io/guides/gs/securing-web/[create your own] if you wish. Login as greg / turnquist.
+
+image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/security/images/security-1.png[]
+
+You can see the newly added manager column. Go through a couple pages until you find employees owned by *oliver*.
+
+image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/security/images/security-2.png[]
+
+Click on *Update*, make some changes, and then hit *Update*. It should fail with the following pop-up:
+
+image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/security/images/security-3.png[]
+
+If you try *Delete*, it should fail with a similar message. Create a new employee, and it should be assigned to you.
+
 == Review
 
 In this session:
+
+* You defined the model of manager and linked it to an employee via a 1-to-many relationship.
+* You created a repository for managers and told Spring Data REST to not export.
+* You wrote a set of access rules for the empoyee repository and also write a security policy.
+* You wrote another Spring Data REST event handler to trap creation events before they happen so they current user could be assigned as the employee's manager.
+* You updated the UI to show an employee's manager and also display error pop-ups when unauthorized actions are taken.
+
+Issues?
+
+The webpage has become quite sophisticated. But what about managing relationships and inlined data? The create/update dialogs aren't really suited for that. It might require some custom written forms.
+
+Managers have access to employee data. Should employees have access? If you were to add more details like phone numbers and addresses, how would you model it? How would you grant employees access to the system so they could update those specific fields? Are there more hypermedia controls that would be handy to put on the page?
