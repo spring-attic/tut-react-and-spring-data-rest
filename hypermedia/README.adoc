@@ -209,6 +209,7 @@ This new component has both a `handleSubmit()` function as well as the expected 
 
 Let's dig into these functions in reverse order, and first look at the `render()` function.
 
+[[hypermedia-rendering]]
 === Rendering
 
 Your code maps over the JSON Schema data found in the *attributes* property and converts it into an array of `<p><input></p>` elements.
@@ -355,6 +356,20 @@ include::src/main/resources/static/app.jsx[tag=update-page-size]
 
 Because a new page size causes changes to all the navigation links, it's best to refetch the data and start from the beginning. 
 
+== Putting it all together
+
+With all these nice additions, you now have a really vamped up UI.
+
+image::hypermedia/images/hypermedia-1.png[]
+
+You can see the page size setting at the top, the delete buttons on each row, and the navigational buttons at the bottom. The navigational buttons illustrate a powerful feature of hypermedia controls.
+
+Down below, you can see the `CreateDialog` with the metadata plugged into the HTML input placeholders.
+
+image::hypermedia/images/hypermedia-2.png[]
+
+This really shows the power of using hypermedia coupled with domain-driven metadata (JSON Schema). The web page doesn't have to know which field is which. Instead, the user can _see_ it and know how to use it. If you added another field to the `Employee` domain object, this pop-up would automatically display it.
+
 == Review
 
 In this session:
@@ -367,7 +382,7 @@ In this session:
 
 Issues?
 
-While the web page is now very dynamic, try opening another browser and point it at the same app. Changes in one browser won't update anything in the other.
+You made the webpage dynamic. But open another browser tab and point it at the same app. Changes in one tab won't update anything in the other.
 
 That is something we can address in the next session. Until then, happy coding!
 

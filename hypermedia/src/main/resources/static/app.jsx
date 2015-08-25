@@ -98,6 +98,7 @@ define(function (require) {
 
 	// tag::create-dialog[]
 	var CreateDialog = React.createClass({
+
 		handleSubmit: function (e) {
 			e.preventDefault();
 			var newEmployee = {};
@@ -114,12 +115,14 @@ define(function (require) {
 			// Navigate away from the dialog to hide it.
 			window.location = "#";
 		},
+
 		render: function () {
 			var inputs = this.props.attributes.map(attribute =>
 				<p key={attribute}>
-					<input type="text" placeholder={attribute} ref={attribute} />
+					<input type="text" placeholder={attribute} ref={attribute} className="field" />
 				</p>
 			);
+
 			return (
 				<div>
 					<a href="#createEmployee">Create</a>
@@ -139,6 +142,7 @@ define(function (require) {
 				</div>
 			)
 		}
+
 	});
 	// end::create-dialog[]
 
