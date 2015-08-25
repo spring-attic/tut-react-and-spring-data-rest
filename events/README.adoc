@@ -10,6 +10,17 @@ In this session you'll learn how to use Spring Data REST's built in event system
 
 Feel free to https://github.com/gregturn/react-and-spring-data-rest/tree/master/events[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
 
+== Adding Spring WebSocket support to the project
+
+Before getting underway, you need to add a dependency to your project's pom.xml file:
+
+[source,xml,indent=0]
+----
+include::pom.xml[tag=websocket]
+----
+
+This bring in Spring Boot's WebSocket starter.
+
 == Configuring WebSockets with Spring
 
 http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#websocket[Spring comes with powerful WebSocket support]. One thing to recognize is that a WebSocket is a very low level protocol. It does little more than offer the means to transmit data between client and server. The recommendation is to use a sub-protocol (STOMP for this session) to actually encode data and routes.
