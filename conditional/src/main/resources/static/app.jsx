@@ -72,7 +72,8 @@ define(function (require) {
 				this.loadFromServer(this.state.pageSize);
 			}, response => {
 				if (response.status.code === 412) {
-					alert('DENIED: Unable to update ' + employee.entity._links.self.href + '. Your copy is stale.');
+					alert('DENIED: Unable to update ' +
+						employee.entity._links.self.href + '. Your copy is stale.');
 				}
 			});
 		},
@@ -293,6 +294,7 @@ define(function (require) {
 							<th>First Name</th>
 							<th>Last Name</th>
 							<th>Description</th>
+							<th></th>
 							<th></th>
 						</tr>
 						{employees}
