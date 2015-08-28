@@ -1,8 +1,9 @@
 [[react-and-spring-data-rest-part-1]]
 = React.js and Spring Data REST: Part 1 - Basic Features
-:next_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/hypermedia
 
-In this section, you will see how to get a bare-bones Spring Data REST application up and running quickly. Then you will build a simple UI on top of it using Facebook's React.js toolset.
+Welcome Spring community,
+
+This is the first of several blog entries. In this session, you will see how to get a bare-bones Spring Data REST application up and running quickly. Then you will build a simple UI on top of it using Facebook's React.js toolset.
 
 == Step 0 - Setting up your environment
 
