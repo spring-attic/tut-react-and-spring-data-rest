@@ -345,7 +345,7 @@ include::src/main/resources/static/app.jsx[tag=render]
 
 `React.render()` accepts two arguments: a React component you defined as well as a DOM node to inject it into. Remember how you saw the `<div id="react"></div>` item earlier from the HTML page? This is where it gets picked up and plugged in.
 
-With all this in place, re-run the application (`mvn spring-boot:run`) and visit http://localhost:8080.
+With all this in place, re-run the application (`./mvnw spring-boot:run`) and visit http://localhost:8080.
 
 image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/basic/images/basic-1.png[]
 
