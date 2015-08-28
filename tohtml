@@ -1,18 +1,18 @@
 #!/bin/bash
 
-asciidoctor -a linkcss -s -a data-uri README.adoc
+asciidoctor -a linkcss -s README.adoc
 
 cd basic
-asciidoctor -a linkcss -s -a data-uri README.adoc
+asciidoctor -a linkcss -s README.adoc
 
 cd ../hypermedia
-asciidoctor -a linkcss -s -a data-uri README.adoc
+asciidoctor -a linkcss -s README.adoc
 
 cd ../conditional
-asciidoctor -a linkcss -s -a data-uri README.adoc
+asciidoctor -a linkcss -s README.adoc
 
 cd ../events
-asciidoctor -a linkcss -s -a data-uri README.adoc
+asciidoctor -a linkcss -s README.adoc
 
 cd ../security
-asciidoctor -a linkcss -s -a data-uri README.adoc
+asciidoctor -a linkcss -s README.adoc
