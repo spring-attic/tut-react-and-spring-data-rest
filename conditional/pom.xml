@@ -20,7 +20,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<spring-data-releasetrain.version>Gosling-RELEASE</spring-data-releasetrain.version>
+		<spring-data-releasetrain.version>Gosling-RC1</spring-data-releasetrain.version>
+		<spring-hateoas.version>0.17.0.RELEASE</spring-hateoas.version>
 	</properties>
 
 	<dependencies>
