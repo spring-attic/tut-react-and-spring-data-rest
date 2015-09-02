@@ -17,7 +17,8 @@ define(function (require) {
 			).then(employeeCollection => {
 					return client({
 						method: 'GET',
-						path: employeeCollection.entity._links.self.href + '/schema'
+						path: employeeCollection.entity._links.profile.href,
+						headers: {'Accept': 'application/schema+json'}
 					}).then(schema => {
 						this.schema = schema.entity;
 						this.links = employeeCollection.entity._links;
