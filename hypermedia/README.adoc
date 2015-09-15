@@ -118,7 +118,7 @@ $ curl "http://localhost:8080/api/employees?page=1&size=2"
 ...
 ----
 
-NOTE: When using "&" in URL query parameters, the command line things it's a line break. Wrap the whole URL with quotation marks to bypass that.
+NOTE: When using "&" in URL query parameters, the command line thinks it's a line break. Wrap the whole URL with quotation marks to bypass that.
 
 That looks neat, but it will be even better when you update the frontend to take advantage of that.
 
