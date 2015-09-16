@@ -163,35 +163,38 @@ Sometimes, a rel by itself isn't enough. In this fragment of code, it also plugs
 
 == Grabbing JSON Schema metadata
 
-After navigating to *employees* with the size-based query, the *employeeCollection* is at your fingertips. In the previous session, we called it day and displayed that data inside `<EmployeeList />`. Today, you are performing another call to grab some http://json-schema.org/[JSON Schema metadata] found a `/api/employees/schema`.
+After navigating to *employees* with the size-based query, the *employeeCollection* is at your fingertips. In the previous session, we called it day and displayed that data inside `<EmployeeList />`. Today, you are performing another call to grab some http://json-schema.org/[JSON Schema metadata] found at `/api/profile/employees/`.
 
 You can see the data yourself:
 
 ----
-$ curl http://localhost:8080/api/employees/schema
+$ curl http://localhost:8080/api/profile/employees -H 'Accept:application/schema+json'
 {
-  "title" : "com.greglturnquist.payroll.Employee",
+  "title" : "Employee",
   "properties" : {
     "firstName" : {
+      "title" : "First name",
       "readOnly" : false,
       "type" : "string"
     },
     "lastName" : {
+      "title" : "Last name",
       "readOnly" : false,
       "type" : "string"
     },
     "description" : {
+      "title" : "Description",
       "readOnly" : false,
       "type" : "string"
     }
   },
-  "descriptors" : { },
+  "definitions" : { },
   "type" : "object",
   "$schema" : "http://json-schema.org/draft-04/schema#"
 }
 ----
 
-NOTE: Navigating to the JSON Schema metadata requires hand editing the URI. There are plans underway to add a navigable link in the future to Spring Data REST to best use hypermedia concepts.
+NOTE: The default form of metadata at /profile/employees is ALPS. In this case, though, you are using content negotation to fetch JSON Schema.
 
 By capturing this information in the`<App />` component's state, you can make good use of it later on when building input forms.
 
