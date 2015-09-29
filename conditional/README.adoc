@@ -41,7 +41,7 @@ include::src/main/resources/static/app.jsx[tag=follow-2]
 . The `follow()` function goes to the *employees* collection resource.
 . The `then(employeeCollection => ...)` clause creates a call to fetch JSON Schema data. This has a sub-then clause to store the metadata and navigational links in the `<App/>` component. 
 * Notice that this embedded promise returns the employeeCollection. That way, the collection can be passed onto the next call while letting you grab the metadata along the way.
-. The second `then(employeeCollection => ...)` clause converts the collection of employees into an array of GET promises to fetch each individual resource. *This is what you need to an ETag header for each employee.*
+. The second `then(employeeCollection => ...)` clause converts the collection of employees into an array of GET promises to fetch each individual resource. *This is what you need to fetch an ETag header for each employee.*
 . The `then(employeePromises => ...)` clause takes the array of GET promises and merges them into a single promise with `when.all()`, resolved when all the GET promises are resolved.
 . `loadFromServer` wraps up with `done(employees => ...)` where the UI state is updated using this amalgamation of data.
 
