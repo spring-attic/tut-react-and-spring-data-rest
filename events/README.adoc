@@ -51,7 +51,7 @@ include::src/main/java/com/greglturnquist/payroll/EventHandler.java[tag=code]
 
 * `@RepositoryEventHandler(Employee.class)` flags this class to trap events based on *employees*.
 * `SimpMessagingTemplate` and `EntityLinks` are autowired from the application context.
-* The `@Handler` annotations flag the methods that need to listen to. These methods must be public.
+* The `@HandleXYZ` annotations flag the methods that need to listen to. These methods must be public.
 
 Each of these handler methods invokes `SimpMessagingTemplate.convertAndSend()` to transmit a message over the WebSocket. This is a pub-sub approach so that one message is relayed to every attached consumer.
 
@@ -65,10 +65,14 @@ In essense, you are listening for create, update, and delete events, and after t
 
 == Configuring a JavaScript WebSocket
 
+Next step is to write some client-side code to consume WebSocket events. The follow chunk in them main app pulls in a module.
+
 [source,javascript]
 ----
 var stompClient = require('./websocket-listener')
 ----
+
+That module is shown below:
 
 [source,javascript]
 ----
