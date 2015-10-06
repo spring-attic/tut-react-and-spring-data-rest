@@ -1,6 +1,6 @@
 [[react-and-spring-data-rest-part-4]]
 = React.js and Spring Data REST: Part 4 - Events
-:prev_session: https://github.com/gregturn/react-and-spring-data-rest/tree/master/conditional
+:prev_session: https://spring.io/blog/2015/09/29/react-js-and-spring-data-rest-part-3-conditional-operations
 
 In the {prev_session}[previous session], you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
 
