@@ -1,6 +1,6 @@
 [[react-and-spring-data-rest-part-3]]
 = Part 3 - Conditional Operations
-:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
+:sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
 In the <<react-and-spring-data-rest-part-2,previous section>>, you found out how to turn on Spring Data REST's hypermedia controls, have the UI navigate by paging, and dynamically resize based on changing the page size. You added the ability to create and delete employees and have the pages adjust. But no solution is complete with taking into consideration updates made by other users on the same bit of data you are currently editing.
 

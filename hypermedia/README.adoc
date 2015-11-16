@@ -1,6 +1,6 @@
 [[react-and-spring-data-rest-part-2]]
 = Part 2 - Hypermedia Controls
-:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
+:sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
 In the <<react-and-spring-data-rest-part-1,previous section>>, you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard coded the path to find data.
 

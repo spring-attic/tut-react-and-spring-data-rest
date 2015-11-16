@@ -1,6 +1,6 @@
 [[react-and-spring-data-rest-part-5]]
 = Part 5 - Securing the UI and the API
-:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
+:sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
 In the <<react-and-spring-data-rest-part-4,previous section>>, you made the app dynamically response to updates from other users via Spring Data REST's built in event handlers and the Spring Framework's WebSocket support. But no application is complete without securing the whole thing so that only proper users have access to the UI and the resources behind it.
 

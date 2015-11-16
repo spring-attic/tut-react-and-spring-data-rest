@@ -6,7 +6,6 @@ projects: [spring-data-rest,spring-data-jpa,spring-hateoas,spring-security,sprin
 :icons: font
 :source-highlighter: prettify
 :image-width: 500
-:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
 = React.js and Spring Data REST
 

@@ -1,6 +1,6 @@
 [[react-and-spring-data-rest-part-1]]
 = Part 1 - Basic Features
-:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
+:sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
 Welcome Spring community,
 
