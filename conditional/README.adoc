@@ -2,9 +2,9 @@
 = Part 3 - Conditional Operations
 :sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
-In the <<react-and-spring-data-rest-part-2,previous session>>, you found out how to turn on Spring Data REST's hypermedia controls, have the UI navigate by paging, and dynamically resize based on changing the page size. You added the ability to create and delete employees and have the pages adjust. But no solution is complete with taking into consideration updates made by other users on the same bit of data you are currently editing.
+In the <<react-and-spring-data-rest-part-2,previous section>>, you found out how to turn on Spring Data REST's hypermedia controls, have the UI navigate by paging, and dynamically resize based on changing the page size. You added the ability to create and delete employees and have the pages adjust. But no solution is complete with taking into consideration updates made by other users on the same bit of data you are currently editing.
 
-Feel free to {sourcedir}/conditional[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
+Feel free to {sourcedir}/conditional[grab the code] from this repository and follow along. This section is based on the previous section's app with extra things added.
 
 == To PUT or not to PUT, that is the question
 
@@ -28,7 +28,7 @@ When fetching an individual resource (not a collection resource), Spring Data RE
 
 == Fetching individual resources and their headers
 
-In the <<react-and-spring-data-rest-part-2,previous session>> you used the collection resource to gather data and populate the UI's HTML table. With Spring Data REST, the *_embedded* data set is considered a preview of data. While useful for glancing at data, to get headers like ETags, you need to fetch each resource individually. 
+In the <<react-and-spring-data-rest-part-2,previous section>> you used the collection resource to gather data and populate the UI's HTML table. With Spring Data REST, the *_embedded* data set is considered a preview of data. While useful for glancing at data, to get headers like ETags, you need to fetch each resource individually. 
 
 In this version, `loadFromServer` is updated to fetch the collection and then use the URIs to retrieve each individual resource.
 
@@ -45,11 +45,11 @@ include::src/main/resources/static/app.jsx[tag=follow-2]
 . The `then(employeePromises => ...)` clause takes the array of GET promises and merges them into a single promise with `when.all()`, resolved when all the GET promises are resolved.
 . `loadFromServer` wraps up with `done(employees => ...)` where the UI state is updated using this amalgamation of data.
 
-This chain is implemented in other places as well. For example, `onNavigate()`, which is used to jump to different pages, has been updated to fetch individual resources. Since it's mostly the same as what's shown above, it's been left out of this session.
+This chain is implemented in other places as well. For example, `onNavigate()`, which is used to jump to different pages, has been updated to fetch individual resources. Since it's mostly the same as what's shown above, it's been left out of this section.
 
 == Updating existing resources
 
-In this session, you are adding an `UpdateDialog` React component to edit existing employee records.
+In this section, you are adding an `UpdateDialog` React component to edit existing employee records.
 
 .src/main/resources/static/app.jsx - UpdateDialog component
 [source,javascript,indent=0]
@@ -63,7 +63,7 @@ Let's dig into these functions in reverse order, and first look at the `render()
 
 === Rendering
 
-This component uses the same CSS/HTML tactics to show and hide the dialog as the `<CreateDialog />` from the previous session.
+This component uses the same CSS/HTML tactics to show and hide the dialog as the `<CreateDialog />` from the previous section.
 
 It converts the array of JSON Schema attributes into an array of HTML inputs, wrapped in paragraph elements for styling. This is also the same as the `<CreateDialog />` with one difference: the fields are loaded with *this.props.employee*. In the CreateDialog component, the fields are empty.
 
@@ -93,7 +93,7 @@ NOTE: The spec for https://promisesaplus.com/[Promises/A+] actually defines thei
 
 With your `UpdateDialog` React component defined and nicely linked to the top-level `onUpdate` function, the last step is to wire it into the existing layout of components.
 
-The `CreateDialog` created in the previous session was put at the top of the `EmployeeList` because there is only one instance. However, `UpdateDialog` is tied directly to specific employees. So you can see it plugged in below in the `Employee` React component:
+The `CreateDialog` created in the previous section was put at the top of the `EmployeeList` because there is only one instance. However, `UpdateDialog` is tied directly to specific employees. So you can see it plugged in below in the `Employee` React component:
 
 .src/main/resources/static/app.jsx - Employee with UpdateDialog
 [source,javascript,indent=0]
@@ -101,7 +101,7 @@ The `CreateDialog` created in the previous session was put at the top of the `Em
 include::src/main/resources/static/app.jsx[tag=employee]
 ----
 
-In this session, you switch from using the collection resource to individual resources. The fields for an employee record are now found at `this.props.employee.entity`. It gives us access to `this.props.employee.headers` where we can find ETags. 
+In this section, you switch from using the collection resource to individual resources. The fields for an employee record are now found at `this.props.employee.entity`. It gives us access to `this.props.employee.headers` where we can find ETags. 
 
 There are other headers supported by Spring Data REST (like http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.29[Last-Modified]) which aren't part of this series. So structuring your data this way is handy.
 
@@ -127,7 +127,7 @@ With these mods, you have increased data integrity by avoiding collisions.
 
 == Review
 
-In this session:
+In this section:
 
 * You configured your domain model with an `@Version` field for JPA-based optimistic locking.
 * You adjusted the frontend to fetch individual resources.

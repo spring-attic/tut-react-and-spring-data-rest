@@ -2,13 +2,13 @@
 = Part 4 - Events
 :sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
-In the <<react-and-spring-data-rest-part-3,previous session>>, you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
+In the <<react-and-spring-data-rest-part-3,previous section>>, you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
 
 That's good. But do you know what's even better? Having the UI dynamically respond when other people update the resources.
 
-In this session you'll learn how to use Spring Data REST's built in event system to detect changes in the backend and publish updates to ALL users through Spring's WebSocket support. Then you'll be able to dynamically adjust clients as the data updates.
+In this section you'll learn how to use Spring Data REST's built in event system to detect changes in the backend and publish updates to ALL users through Spring's WebSocket support. Then you'll be able to dynamically adjust clients as the data updates.
 
-Feel free to {sourcedir}/events[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
+Feel free to {sourcedir}/events[grab the code] from this repository and follow along. This section is based on the previous section's app with extra things added.
 
 == Adding Spring WebSocket support to the project
 
@@ -23,7 +23,7 @@ This bring in Spring Boot's WebSocket starter.
 
 == Configuring WebSockets with Spring
 
-http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#websocket[Spring comes with powerful WebSocket support]. One thing to recognize is that a WebSocket is a very low level protocol. It does little more than offer the means to transmit data between client and server. The recommendation is to use a sub-protocol (STOMP for this session) to actually encode data and routes.
+http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#websocket[Spring comes with powerful WebSocket support]. One thing to recognize is that a WebSocket is a very low level protocol. It does little more than offer the means to transmit data between client and server. The recommendation is to use a sub-protocol (STOMP for this section) to actually encode data and routes.
 
 The follow code is used to configure WebSocket support on the server side:
 
@@ -61,7 +61,7 @@ The route of each message is different, allowing multiple messages to be sent to
 
 NOTE: `EntityLinks` comes with several utility methods to programmatically find the paths of various resources, whether single or for collections.
 
-In essense, you are listening for create, update, and delete events, and after they are completed, sending notice of them to all clients. It's also possible to intercept such operations BEFORE they happen, and perhaps log them, block them for some reason, or decorate the domain objects with extra information. (In the next session, we'll see a VERY handy use for this!)
+In essense, you are listening for create, update, and delete events, and after they are completed, sending notice of them to all clients. It's also possible to intercept such operations BEFORE they happen, and perhaps log them, block them for some reason, or decorate the domain objects with extra information. (In the next section, we'll see a VERY handy use for this!)
 
 == Configuring a JavaScript WebSocket
 
@@ -114,7 +114,7 @@ The following chunk of code contains the two callbacks used to update UI state w
 include::src/main/resources/static/app.jsx[tag=websocket-handlers]
 ----
 
-`refreshAndGoToLastPage()` uses the familiar `follow()` function to navigate to the *employees* link with the *size* parameter applied, plugging in `this.state.pageSize`. When the response is received, you then invoke the same `onNavigate()` function from the last session, and jump to the *last* page, the one where the new record will be found.
+`refreshAndGoToLastPage()` uses the familiar `follow()` function to navigate to the *employees* link with the *size* parameter applied, plugging in `this.state.pageSize`. When the response is received, you then invoke the same `onNavigate()` function from the last section, and jump to the *last* page, the one where the new record will be found.
 
 `refreshCurrentPage()` also uses the `follow()` function but applies `this.state.pageSize` to *size* and `this.state.page.number` to *page*. This fetches the same page you are currently looking at and updates the state accordingly.
 
@@ -126,7 +126,7 @@ Before you finish this section, there is something to recognize. You just added 
 
 To simplify your code's management of state, it simplifies things if you remove the old way. In other words, submit your *POST*, *PUT*, and *DELETE* calls, but don't use their results to update the UI's state. Instead, wait for the WebSocket event to circle back and then do the update.
 
-The follow chunk of code shows the same `onCreate()` function as the previous session, only simplified:
+The follow chunk of code shows the same `onCreate()` function as the previous section, only simplified:
 
 [source,javascript,indent=0]
 ----
@@ -139,11 +139,11 @@ Here, the `follow()` function is used to get to the *employees* link, and then t
 
 With all these mods in place, fire up the app (`./mvnw spring-boot:run`) and poke around with it. Open up two browser tabs and resize so you can see them both. Start making updates in one and see how they instantly update the other tab. Open up your phone and visit the same page. Find a friend and ask him or her to do the same thing. You might find this type of dynamic updating more keen.
 
-Want a challenge? Try the exercise from the previous session where you open the same record in two different browser tabs. Try to update it in one and NOT see it update in the other. If it's possible, the conditional PUT code should still protect you. But it may be trickier to pull that off!
+Want a challenge? Try the exercise from the previous section where you open the same record in two different browser tabs. Try to update it in one and NOT see it update in the other. If it's possible, the conditional PUT code should still protect you. But it may be trickier to pull that off!
 
 == Review
 
-In this session:
+In this section:
 
 * You configured Spring's WebSocket suport with SockJS fallback.
 * You subscribed for create, update, and delete events from Spring Data REST to dynamically update the UI.

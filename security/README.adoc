@@ -2,9 +2,9 @@
 = Part 5 - Securing the UI and the API
 :sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
-In the <<react-and-spring-data-rest-part-4,previous session>>, you made the app dynamically response to updates from other users via Spring Data REST's built in event handlers and the Spring Framework's WebSocket support. But no application is complete without securing the whole thing so that only proper users have access to the UI and the resources behind it.
+In the <<react-and-spring-data-rest-part-4,previous section>>, you made the app dynamically response to updates from other users via Spring Data REST's built in event handlers and the Spring Framework's WebSocket support. But no application is complete without securing the whole thing so that only proper users have access to the UI and the resources behind it.
 
-Feel free to {sourcedir}/security[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
+Feel free to {sourcedir}/security[grab the code] from this repository and follow along. This section is based on the previous section's app with extra things added.
 
 == Adding Spring Security to the project
 
@@ -19,7 +19,7 @@ This bring in Spring Boot's Spring Security starter as well as some extra Thymel
 
 == Defining the security model
 
-In the past session, you have worked with a nice payroll system. It's handy to declare things on the backend and let Spring Data REST do the heavy lifting. The next step is to model a system where security controls need to be instituted.
+In the past section, you have worked with a nice payroll system. It's handy to declare things on the backend and let Spring Data REST do the heavy lifting. The next step is to model a system where security controls need to be instituted.
 
 If this is a payroll system, then only managers would be accessing it. So kick things off by modeling a `Manager` object:
 
@@ -64,7 +64,7 @@ include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 
 == Securing employees to their managers
 
-Spring Security supports a multitude of options when it comes to defining security policies. In this session, you want to restrict things such that ONLY managers can view employee payroll data, and that saving, updating, and deleting operations are confined to the employee's manager. In other words, any manager can log in and view the data, but only a given employee's manager can make any changes.
+Spring Security supports a multitude of options when it comes to defining security policies. In this section, you want to restrict things such that ONLY managers can view employee payroll data, and that saving, updating, and deleting operations are confined to the employee's manager. In other words, any manager can log in and view the data, but only a given employee's manager can make any changes.
 
 [source,java]
 ----
@@ -188,7 +188,7 @@ $ curl -v -u greg:turnquist localhost:8080/api/employees/1
 }
 ----
 
-This shows a lot more details than during the first session. First of all, Spring Security turns on several HTTP protocols to protect against various attack vectors (Pragma, Expires, X-Frame-Options, etc.). You are also issuing BASIC credentials with `-u greg:turnquist` which renders the Authorization header.
+This shows a lot more details than during the first section. First of all, Spring Security turns on several HTTP protocols to protect against various attack vectors (Pragma, Expires, X-Frame-Options, etc.). You are also issuing BASIC credentials with `-u greg:turnquist` which renders the Authorization header.
 
 Amidst all the headers, you can see the *ETag* header from your versioned resource.
 
@@ -281,7 +281,7 @@ If you try *Delete*, it should fail with a similar message. Create a new employe
 
 == Review
 
-In this session:
+In this section:
 
 * You defined the model of manager and linked it to an employee via a 1-to-many relationship.
 * You created a repository for managers and told Spring Data REST to not export.

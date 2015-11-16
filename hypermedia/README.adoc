@@ -2,9 +2,9 @@
 = Part 2 - Hypermedia Controls
 :sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
-In the <<react-and-spring-data-rest-part-1,previous session>>, you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard coded the path to find data.
+In the <<react-and-spring-data-rest-part-1,previous section>>, you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard coded the path to find data.
 
-Feel free to {sourcedir}/hypermedia[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
+Feel free to {sourcedir}/hypermedia[grab the code] from this repository and follow along. This section is based on the previous section's app with extra things added.
 
 
 == In the beginning there was data...and then there was REST
@@ -28,7 +28,7 @@ These are standardized HTTP verbs with well written specs. By picking up and usi
 
 Another constraint of REST is to use media types to define the format of data. Instead of everyone writing their own dialect for the exchange of information, it would be prudent to develop some media types. One of the most popular ones to be accepted is HAL, media type application/hal+json. It is Spring Data REST's default media type. A keen value is that there is no centralized, single media type for REST. Instead, people can develop media types and plug them in. Try them out. As different needs become available, the industry can flexibly move.
 
-A key feature of REST is to include links to relevant resources. For example, if you were looking at an order, a RESTful API would include a link to the related customer, links to the catalog of items, and perhaps a link to the store from which the order was placed. In this session, you will introduce paging, and see how to also use navigational paging links.
+A key feature of REST is to include links to relevant resources. For example, if you were looking at an order, a RESTful API would include a link to the related customer, links to the catalog of items, and perhaps a link to the store from which the order was placed. In this section, you will introduce paging, and see how to also use navigational paging links.
 
 == Turning on paging from the backend
 
@@ -128,7 +128,7 @@ That's it! No more changes are needed on the backend to start using the hypermed
 
 NOTE: It's important to point out, this application isn't "Spring Data REST-specific." Instead, it uses http://stateless.co/hal_specification.html[HAL], https://tools.ietf.org/html/rfc6570[URI Templates], and other standards. That's how using rest.js is a snap: that library comes with HAL support.
 
-In the previous session, you hardcoded the path to `/api/employees`. Instead, the ONLY path you should hardcode is the root.
+In the previous section, you hardcoded the path to `/api/employees`. Instead, the ONLY path you should hardcode is the root.
 
 [source,javascript]
 ----
@@ -144,14 +144,14 @@ With a handy little https://github.com/gregturn/react-and-spring-data-rest/blob/
 include::src/main/resources/static/app.jsx[tag=follow-1]
 ----
 
-In the previous session, the loading was done directly inside `componentDidMount()`. In this session, we are making it possible to reload the entire list of employees when the page size is updated. To do so, we have moved things into `loadFromServer()`.
+In the previous section, the loading was done directly inside `componentDidMount()`. In this section, we are making it possible to reload the entire list of employees when the page size is updated. To do so, we have moved things into `loadFromServer()`.
 
 [source,javascript,indent=0]
 ----
 include::src/main/resources/static/app.jsx[tag=follow-2]
 ----
 
-`loadFromServer` is very similar the previous session, but instead if uses `follow()`:
+`loadFromServer` is very similar the previous section, but instead if uses `follow()`:
 
 * The first argument to the follow() function is the `client` object used to make REST calls.
 * The second argument is the root URI to start from.
@@ -163,7 +163,7 @@ Sometimes, a rel by itself isn't enough. In this fragment of code, it also plugs
 
 == Grabbing JSON Schema metadata
 
-After navigating to *employees* with the size-based query, the *employeeCollection* is at your fingertips. In the previous session, we called it day and displayed that data inside `<EmployeeList />`. Today, you are performing another call to grab some http://json-schema.org/[JSON Schema metadata] found at `/api/profile/employees/`.
+After navigating to *employees* with the size-based query, the *employeeCollection* is at your fingertips. In the previous section, we called it day and displayed that data inside `<EmployeeList />`. Today, you are performing another call to grab some http://json-schema.org/[JSON Schema metadata] found at `/api/profile/employees/`.
 
 You can see the data yourself:
 
@@ -303,7 +303,7 @@ Now conditionally display the controls based on which links appear in the hyperm
 include::src/main/resources/static/app.jsx[tag=employee-list-render]
 ----
 
-As in the previous session, it still transforms `this.props.employees` into an array of `<Element />` components. Then it builds up an array of `navLinks`, an array of HTML buttons.
+As in the previous section, it still transforms `this.props.employees` into an array of `<Element />` components. Then it builds up an array of `navLinks`, an array of HTML buttons.
 
 NOTE: Because React is based on XML, you can't put "<" inside the `<button>` element. You must instead use the encoded version.
 
@@ -375,7 +375,7 @@ This really shows the power of using hypermedia coupled with domain-driven metad
 
 == Review
 
-In this session:
+In this section:
 
 * You turned on Spring Data REST's paging feature.
 * You threw out hardcoded URI paths and started using the root URI combined with relationship names or "rels". 
@@ -387,5 +387,5 @@ Issues?
 
 You made the webpage dynamic. But open another browser tab and point it at the same app. Changes in one tab won't update anything in the other.
 
-That is something we can address in the next session. Until then, happy coding!
+That is something we can address in the next section. 
 

@@ -4,7 +4,7 @@
 
 Welcome Spring community,
 
-This is the first of several blog entries. In this session, you will see how to get a bare-bones Spring Data REST application up and running quickly. Then you will build a simple UI on top of it using Facebook's React.js toolset.
+In this section, you will see how to get a bare-bones Spring Data REST application up and running quickly. Then you will build a simple UI on top of it using Facebook's React.js toolset.
 
 == Step 0 - Setting up your environment
 
@@ -17,7 +17,7 @@ If you want to do it yourself, visit http://start.spring.io and pick these items
 * JPA
 * H2
 
-This demo uses Java 8, Maven Project, and the latest stable release of Spring Boot. This will give you a clean, empty project. From there, you can add the various files shown explicitly in this session, and/or borrow from the repository listed above.
+This demo uses Java 8, Maven Project, and the latest stable release of Spring Boot. This will give you a clean, empty project. From there, you can add the various files shown explicitly in this section, and/or borrow from the repository listed above.
 
 == In the beginning...
 
@@ -30,7 +30,7 @@ Spring Data REST addresses how simple this problem can be if some assumptions ar
 
 === Declaring your domain
 
-The cornerstone of any Spring Data REST-based application are the domain objects. For this session, you will build an application to track the employees for a company. Kick that off by creating a data type like this:
+The cornerstone of any Spring Data REST-based application are the domain objects. For this section, you will build an application to track the employees for a company. Kick that off by creating a data type like this:
 
 .src/main/java/com/greglturnquist/payroll/Employee.java
 [source,java]
@@ -126,7 +126,7 @@ When you ping the root node, you get back a collection of links wrapped up in a 
 
 * *_links* is a the collection of links available.
 * *employees* points to an aggregate root for the employee objects defined by the `EmployeeRepository` interface.
-* *profile* is an IANA-standard relation and points to discoverable metadata about the entire service. We'll explore this in a later session.
+* *profile* is an IANA-standard relation and points to discoverable metadata about the entire service. We'll explore this in a later section.
 
 You can further dig into this service by navigating the *employees* link.
 
@@ -366,7 +366,7 @@ And now you can see both of them listed on the web site.
 
 == Review
 
-In this session:
+In this section:
 
 * You defined a domain object and a corresponding repository.
 * You let Spring Data REST export it with full blown hypermedia controls. 
@@ -379,4 +379,4 @@ Issues?
 * The web page didn't use any hypermedia controls or metadata. Instead, it was hardcoded to fetch data from `/api/employees`.
 * It's read only. While you can alter records using cURL, the web page offers none of that.
 
-These are things we can address in the next session. Until then, happy coding!
+These are things we can address in the next section.
