@@ -267,15 +267,15 @@ With these changes in the frontend, restart the application and navigate to http
 
 You are immediately redirected to a login form. This form is supplied by Spring Security, though you can https://spring.io/guides/gs/securing-web/[create your own] if you wish. Login as greg / turnquist.
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/security/images/security-1.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/security/images/security-1.png[]
 
 You can see the newly added manager column. Go through a couple pages until you find employees owned by *oliver*.
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/security/images/security-2.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/security/images/security-2.png[]
 
 Click on *Update*, make some changes, and then hit *Update*. It should fail with the following pop-up:
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/security/images/security-3.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/security/images/security-3.png[]
 
 If you try *Delete*, it should fail with a similar message. Create a new employee, and it should be assigned to you.
 

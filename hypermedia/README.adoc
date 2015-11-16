@@ -40,7 +40,7 @@ To get underway with using frontend hypermedia controls, you need to turn on som
 include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=code]
 ----
 
-Your interface now extends `PagingAndSortingRepository` which adds extra options to set page size, and also adds navigational links to hop from page to page. The rest of the backend is the same (exception for some https://github.com/gregturn/react-and-spring-data-rest/blob/master/hypermedia/src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[extra pre-loaded data] to make things interesting).
+Your interface now extends `PagingAndSortingRepository` which adds extra options to set page size, and also adds navigational links to hop from page to page. The rest of the backend is the same (exception for some https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[extra pre-loaded data] to make things interesting).
 
 Restart the application (`./mvnw spring-boot:run`) and see how it works.
 
@@ -137,7 +137,7 @@ var root = '/api';
 ...
 ----
 
-With a handy little https://github.com/gregturn/react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/follow.js[`follow()` function], you can now start from the root and navigate to where you need!
+With a handy little https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/follow.js[`follow()` function], you can now start from the root and navigate to where you need!
 
 [source,javascript,indent=0]
 ----
@@ -224,7 +224,7 @@ Your code maps over the JSON Schema data found in the *attributes* property and 
 
 This represents the dynamic nature of the component, driven by loading data from the server.
 
-Inside this component's top-level `<div>` is an anchor tag and another `<div>`. The anchor tag is the button to open the dialog. And the nested `<div>` is the hidden dialog itself. In this example, you are use pure HTML5 and CSS3. No JavaScript at all! You can https://github.com/gregturn/react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/main.css[see the CSS code] used to show/hide the dialog. We won't dive into that here.
+Inside this component's top-level `<div>` is an anchor tag and another `<div>`. The anchor tag is the button to open the dialog. And the nested `<div>` is the hidden dialog itself. In this example, you are use pure HTML5 and CSS3. No JavaScript at all! You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/main.css[see the CSS code] used to show/hide the dialog. We won't dive into that here.
 
 Nestled inside `<div id="createEmployee">` is a form where your dynamic list of input fields are injected followed by the *Create* button. That button has an `onClick={this.handleSubmit}` event handler. This is the React way of registering an event handler.
 
@@ -363,13 +363,13 @@ Because a new page size causes changes to all the navigation links, it's best to
 
 With all these nice additions, you now have a really vamped up UI.
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/hypermedia/images/hypermedia-1.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/hypermedia/images/hypermedia-1.png[]
 
 You can see the page size setting at the top, the delete buttons on each row, and the navigational buttons at the bottom. The navigational buttons illustrate a powerful feature of hypermedia controls.
 
 Down below, you can see the `CreateDialog` with the metadata plugged into the HTML input placeholders.
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/hypermedia/images/hypermedia-2.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/hypermedia/images/hypermedia-2.png[]
 
 This really shows the power of using hypermedia coupled with domain-driven metadata (JSON Schema). The web page doesn't have to know which field is which. Instead, the user can _see_ it and know how to use it. If you added another field to the `Employee` domain object, this pop-up would automatically display it.
 

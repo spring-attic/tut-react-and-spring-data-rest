@@ -112,16 +112,16 @@ IMPORTANT: The structure of `.entity` and `.headers` is only pertinent when usin
 . Start up the app (`./mvnw spring-boot:run`).
 . Open up a tab and navigate to http://localhost:8080.
 +
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/conditional/images/conditional-1.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/conditional/images/conditional-1.png[]
 +
 . Pull up the edit dialog for Frodo.
 . Open another tab in your browser and pull up the same record.
 . Make a change to the record in the first tab.
 . Try to make a change in the second tab.
 +
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/conditional/images/conditional-2.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/conditional/images/conditional-2.png[]
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/conditional/images/conditional-3.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/conditional/images/conditional-3.png[]
 
 With these mods, you have increased data integrity by avoiding collisions.
 

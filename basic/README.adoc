@@ -227,7 +227,7 @@ The following JavaScript modules will be used:
 * rest.js
 * requirejs-react-js
 
-If you're interested, the paths for the JavaScript moodules are defined in https://github.com/gregturn/react-and-spring-data-rest/blob/master/basic/src/main/resources/static/run.js[run.js]. The main JavaScript app is loaded by the web page through https://github.com/gregturn/react-and-spring-data-rest/blob/master/basic/src/main/resources/static/main.js[main.js]. 
+If you're interested, the paths for the JavaScript moodules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/run.js[run.js]. The main JavaScript app is loaded by the web page through https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/main.js[main.js]. 
 
 With all that in place, you can focus on the React bits which are fetched after the DOM is loaded. It's broken down into parts as below:
 
@@ -240,7 +240,7 @@ include::src/main/resources/static/app.jsx[tag=vars]
 ----
 
 * `React` is the main library from Facebook for building this app.
-* `client` is custom code that configures rest.js to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/gregturn/react-and-spring-data-rest/blob/master/basic/src/main/resources/static/client.js[read the code here].
+* `client` is custom code that configures rest.js to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/client.js[read the code here].
 
 == Diving into React
 
@@ -348,7 +348,7 @@ include::src/main/resources/static/app.jsx[tag=render]
 
 With all this in place, re-run the application (`./mvnw spring-boot:run`) and visit http://localhost:8080.
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/basic/images/basic-1.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/basic/images/basic-1.png[]
 
 You can see the initial employee loaded up by the system.
 
@@ -360,7 +360,7 @@ curl -X POST localhost:8080/api/employees -d '{"firstName": "Bilbo", "lastName":
 
 Refresh the browser, and you should see the new entry:
 
-image::https://github.com/gregturn/react-and-spring-data-rest/raw/master/basic/images/basic-2.png[]
+image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/basic/images/basic-2.png[]
 
 And now you can see both of them listed on the web site.
 
