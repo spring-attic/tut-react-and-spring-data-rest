@@ -1,14 +1,14 @@
 [[react-and-spring-data-rest-part-4]]
-= React.js and Spring Data REST: Part 4 - Events
-:prev_session: https://spring.io/blog/2015/09/29/react-js-and-spring-data-rest-part-3-conditional-operations
+= Part 4 - Events
+:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
-In the {prev_session}[previous session], you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
+In the <<react-and-spring-data-rest-part-3,previous session>>, you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
 
 That's good. But do you know what's even better? Having the UI dynamically respond when other people update the resources.
 
 In this session you'll learn how to use Spring Data REST's built in event system to detect changes in the backend and publish updates to ALL users through Spring's WebSocket support. Then you'll be able to dynamically adjust clients as the data updates.
 
-Feel free to https://github.com/gregturn/react-and-spring-data-rest/tree/master/events[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
+Feel free to {sourcedir}/events[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
 
 == Adding Spring WebSocket support to the project
 

@@ -1,10 +1,10 @@
 [[react-and-spring-data-rest-part-5]]
-= React.js and Spring Data REST: Part 5 - Securing the UI and the API
-:prev_session: https://spring.io/blog/2015/10/13/react-js-and-spring-data-rest-part-4-events
+= Part 5 - Securing the UI and the API
+:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
-In the {prev_session}[previous session], you made the app dynamically response to updates from other users via Spring Data REST's built in event handlers and the Spring Framework's WebSocket support. But no application is complete without securing the whole thing so that only proper users have access to the UI and the resources behind it.
+In the <<react-and-spring-data-rest-part-4,previous session>>, you made the app dynamically response to updates from other users via Spring Data REST's built in event handlers and the Spring Framework's WebSocket support. But no application is complete without securing the whole thing so that only proper users have access to the UI and the resources behind it.
 
-Feel free to https://github.com/gregturn/react-and-spring-data-rest/tree/master/security[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
+Feel free to {sourcedir}/security[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
 
 == Adding Spring Security to the project
 

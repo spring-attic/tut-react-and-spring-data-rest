@@ -1,10 +1,10 @@
 [[react-and-spring-data-rest-part-2]]
-= React.js and Spring Data REST: Part 2 - Hypermedia Controls
-:prev_session: https://spring.io/blog/2015/09/01/react-js-and-spring-data-rest-part-1-basic-features
+= Part 2 - Hypermedia Controls
+:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
-In the {prev_session}[previous session], you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard coded the path to find data.
+In the <<react-and-spring-data-rest-part-1,previous session>>, you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard coded the path to find data.
 
-Feel free to https://github.com/gregturn/react-and-spring-data-rest/tree/master/hypermedia[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
+Feel free to {sourcedir}/hypermedia[grab the code] from this repository and follow along. This session is based on the previous session's app with extra things added.
 
 
 == In the beginning there was data...and then there was REST

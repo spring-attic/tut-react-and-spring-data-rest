@@ -1,5 +1,6 @@
 [[react-and-spring-data-rest-part-1]]
-= React.js and Spring Data REST: Part 1 - Basic Features
+= Part 1 - Basic Features
+:sourcedir: https://github.com/gregturn/react-and-spring-data-rest/tree/master
 
 Welcome Spring community,
 
@@ -7,7 +8,7 @@ This is the first of several blog entries. In this session, you will see how to 
 
 == Step 0 - Setting up your environment
 
-Feel free to https://github.com/gregturn/react-and-spring-data-rest/tree/master/basic[grab the code] from this repository and follow along.
+Feel free to {sourcedir}/basic[grab the code] from this repository and follow along.
 
 If you want to do it yourself, visit http://start.spring.io and pick these items:
 
