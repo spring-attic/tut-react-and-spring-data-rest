@@ -17,7 +17,7 @@ If you want to do it yourself, visit http://start.spring.io and pick these items
 * JPA
 * H2
 
-This demo uses Java 8, Maven Project, and the latest stable release of Spring Boot. This will give you a clean, empty project. From there, you can add the various files shown explicitly in this section, and/or borrow from the repository listed above.
+This demo uses Java 8, Maven Project, and the latest stable release of Spring Boot. It also uses React.js coded in http://es6-features.org/[ES6]. This will give you a clean, empty project. From there, you can add the various files shown explicitly in this section, and/or borrow from the repository listed above.
 
 == In the beginning...
 
@@ -223,14 +223,17 @@ This tutorial won't go into extensive detail on how it uses https://webpack.gith
 The following JavaScript modules will be used:
 
 * webpack
+* babel
 * react.js
 * rest.js
+
+With the power of babel, the JavaScript is written in ES6.
 
 If you're interested, the paths for the JavaScript moodules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
 
 With all that in place, you can focus on the React bits which are fetched after the DOM is loaded. It's broken down into parts as below:
 
-Since you are using require.js to load things, go ahead and fetch the modules you need:
+Since you are using webpack to assemble things, go ahead and fetch the modules you need:
 
 .src/main/resources/static/app.js
 [source,javascript,indent=0]
@@ -253,8 +256,7 @@ To start things off, it's very handy to have a top level container for all compo
 include::src/main/resources/static/app.js[tag=app]
 ----
 
-* `React.createClass({...})` is the method to create a React component.
-* `getInitialState` is the API to initialize state data (data that is expected to vary).
+* `class Foo extends React.Component{...}` is the method to create a React component.
 * `componentDidMount` is the API invoked after React renders a component in the DOM.
 * `render` is the API to "draw" the component on the screen.
 
@@ -268,7 +270,7 @@ React components have two types of data: *state* and *properties*.
 
 *State* is data that the component is expected to handle itself. It is also data that can fluctuate and change. To read the state, you use `this.state`. To update it, you use `this.setState()`. Every time `this.setState()` is called, React updates the state, calculates a diff between the previous state and the new state, and injects a set of changes to the DOM on the page. This results a fast and efficient updates to your UI. 
 
-The common convention is to initialize state with all your attributes empty in `getInitialState`. Then you lookup data from the server using `componentDidMount` and populate your attributes. From there on, updates can be driven by user action or other events.
+The common convention is to initialize state with all your attributes empty in the constructor. Then you lookup data from the server using `componentDidMount` and populate your attributes. From there on, updates can be driven by user action or other events.
 
 *Properties* encompass data that is passed into the component. Properties do NOT change but are instead fixed values. To set them, you assign them to attributes when creating a new component and you'll soon see.
 
@@ -316,7 +318,7 @@ This simple layout of state, properties, and HTML shows how React lets you decla
 
 [[NOTE]]
 ====
-Does this code contain both HTML _and_ JavaScript? Yes. If you noticed the file extension, this is https://facebook.github.io/js/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse.
+Does this code contain both HTML _and_ JavaScript? Yes, this is https://facebook.github.io/js/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse. Thanks to rapid work on the Babel.js, the transpiler provides both JSX and ES6 support all at once
 
 JSX also includes bits and pieces of http://es6-features.org/#Constants[ES6]. The one used in the code is the http://es6-features.org/#ExpressionBodies[arrow function]. It avoids creating a nested function() with its own scoped *this*, and avoids needing a http://stackoverflow.com/a/962040/28214[*self* variable].
 
