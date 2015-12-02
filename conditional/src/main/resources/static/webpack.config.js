@@ -1,7 +1,6 @@
 var path = require('path');
-var BowerWebpackPlugin = require("bower-webpack-plugin");
 
-var bower_dir = __dirname + '/bower_components';
+var node_dir = __dirname + '/node_modules';
 
 module.exports = {
     entry: './app.js',
@@ -10,12 +9,7 @@ module.exports = {
     debug: true,
     resolve: {
         alias: {
-            'rest/interceptor/defaultRequest': bower_dir + '/rest/interceptor/defaultRequest.js',
-            'rest/interceptor/mime': bower_dir + '/rest/interceptor/mime.js',
-            'rest/interceptor/errorCode': bower_dir + '/rest/interceptor/errorCode.js',
-            'rest/mime/registry': bower_dir + '/rest/mime/registry.js',
-            'rest/mime/type/application/hal': bower_dir + '/rest/mime/type/application/hal.js',
-            'rest/interceptor': bower_dir + '/rest/interceptor.js'
+            'when': node_dir + '/rest/node_modules/when/when.js'
         }
     },
     output: {
@@ -26,10 +20,9 @@ module.exports = {
         loaders: [
             {
                 test: path.join(__dirname, '.'),
-                exclude: /(node_modules|bower_components)/,
+                exclude: /(node_modules)/,
                 loader: 'babel-loader'
             }
         ]
-    },
-    plugins: [new BowerWebpackPlugin()]
+    }
 };

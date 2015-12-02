@@ -102,16 +102,6 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>bower install</id>
-                        <goals>
-                            <goal>bower</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
 					<execution>
 						<id>webpack build</id>
 						<goals>

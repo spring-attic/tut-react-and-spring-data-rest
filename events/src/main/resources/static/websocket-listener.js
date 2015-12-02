@@ -1,7 +1,7 @@
 'use strict';
 
 var SockJS = require('sockjs-client'); // <1>
-require('stomp-websocket'); // <2>
+require('stompjs'); // <2>
 
 function register(registrations) {
 	var socket = SockJS('/payroll'); // <3>
@@ -13,7 +13,5 @@ function register(registrations) {
 	});
 }
 
-module.exports = {
-	register: register
-};
+module.exports.register = register;
 
