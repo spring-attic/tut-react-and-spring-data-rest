@@ -218,25 +218,24 @@ The key part in this template is the `<div id="react"></div>` component in the m
 
 == Loading JavaScript modules
 
-This tutorial won't go into extensive detail on how it uses require.js to load JavaScript modules. But thanks to the *frontend-maven-plugin*, you don't _have_ to install any of the node.js tools to build and run the code.
+This tutorial won't go into extensive detail on how it uses https://webpack.github.io/[webpack] to load JavaScript modules. But thanks to the *frontend-maven-plugin*, you don't _have_ to install any of the node.js tools to build and run the code.
 
 The following JavaScript modules will be used:
 
-* require.js
+* webpack
 * react.js
 * rest.js
-* requirejs-react-js
 
-If you're interested, the paths for the JavaScript moodules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/run.js[run.js]. The main JavaScript app is loaded by the web page through https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/main.js[main.js]. 
+If you're interested, the paths for the JavaScript moodules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
 
 With all that in place, you can focus on the React bits which are fetched after the DOM is loaded. It's broken down into parts as below:
 
 Since you are using require.js to load things, go ahead and fetch the modules you need:
 
-.src/main/resources/static/app.jsx
+.src/main/resources/static/app.js
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=vars]
+include::src/main/resources/static/app.js[tag=vars]
 ----
 
 * `React` is the main library from Facebook for building this app.
@@ -248,10 +247,10 @@ React is based on defining components. Oftentimes, one component can hold multip
 
 To start things off, it's very handy to have a top level container for all components. (This will become more evident as you expand upon the code throughout this series.) Right now, you only have the employee list. But you might need some other related components later on, so let's start with this:
 
-.src/main/resources/static/app.jsx - App component
+.src/main/resources/static/app.js - App component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=app]
+include::src/main/resources/static/app.js[tag=app]
 ----
 
 * `React.createClass({...})` is the method to create a React component.
@@ -282,10 +281,10 @@ When the state is updated, the `render()` function is invoked by the framework. 
 
 Below is the definition for an `EmployeeList`.
 
-.src/main/resources/static/app.jsx - EmployeeList component
+.src/main/resources/static/app.js - EmployeeList component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=employee-list]
+include::src/main/resources/static/app.js[tag=employee-list]
 ----
 
 Using JavaScript's map function, `this.props.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you'll see a little further down). 
@@ -317,7 +316,7 @@ This simple layout of state, properties, and HTML shows how React lets you decla
 
 [[NOTE]]
 ====
-Does this code contain both HTML _and_ JavaScript? Yes. If you noticed the file extension, this is https://facebook.github.io/jsx/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse.
+Does this code contain both HTML _and_ JavaScript? Yes. If you noticed the file extension, this is https://facebook.github.io/js/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse.
 
 JSX also includes bits and pieces of http://es6-features.org/#Constants[ES6]. The one used in the code is the http://es6-features.org/#ExpressionBodies[arrow function]. It avoids creating a nested function() with its own scoped *this*, and avoids needing a http://stackoverflow.com/a/962040/28214[*self* variable].
 
@@ -326,10 +325,10 @@ Worried about mixing logic with your structure? React's APIs encourage nice, dec
 
 Next, you need to actually define what an `<Employee />` is.
 
-.src/main/resources/static/app.jsx - Employee component
+.src/main/resources/static/app.js - Employee component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=employee]
+include::src/main/resources/static/app.js[tag=employee]
 ----
 
 This component is very simple. It has a single HTML table row wrapped around the employee's three properties. The property itself is `this.props.employee`. Notice how passing in a JavaScript object makes it easy to pass along data fetched from the server?
@@ -338,10 +337,10 @@ Because this component doesn't manage any state nor does it deal with user input
 
 The last step is to render the whole thing.
 
-.src/main/resources/static/app.jsx - rendering code
+.src/main/resources/static/app.js - rendering code
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=render]
+include::src/main/resources/static/app.js[tag=render]
 ----
 
 `React.render()` accepts two arguments: a React component you defined as well as a DOM node to inject it into. Remember how you saw the `<div id="react"></div>` item earlier from the HTML page? This is where it gets picked up and plugged in.

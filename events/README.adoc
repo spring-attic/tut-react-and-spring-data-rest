@@ -92,7 +92,7 @@ In React, a component's `componentDidMount()` is the function that gets called a
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=register-handlers]
+include::src/main/resources/static/app.js[tag=register-handlers]
 ----
 
 The first line is the same as before, where all the employees are fetched from the server using page size. The second line shows an array of JavaScript objects being registered for WebSocket events, each with a `route` and a `callback`.
@@ -111,7 +111,7 @@ The following chunk of code contains the two callbacks used to update UI state w
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=websocket-handlers]
+include::src/main/resources/static/app.js[tag=websocket-handlers]
 ----
 
 `refreshAndGoToLastPage()` uses the familiar `follow()` function to navigate to the *employees* link with the *size* parameter applied, plugging in `this.state.pageSize`. When the response is received, you then invoke the same `onNavigate()` function from the last section, and jump to the *last* page, the one where the new record will be found.
@@ -130,7 +130,7 @@ The follow chunk of code shows the same `onCreate()` function as the previous se
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=on-create]
+include::src/main/resources/static/app.js[tag=on-create]
 ----
 
 Here, the `follow()` function is used to get to the *employees* link, and then the *POST* operation is applied. Notice how `client({method: 'GET' ...})` has no `then()` or `done()` like before? The event handler to listen for updates is now found in `refreshAndGoToLastPage()` which you just looked at.

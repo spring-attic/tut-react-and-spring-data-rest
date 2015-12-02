@@ -141,14 +141,14 @@ With a handy little https://github.com/spring-guides/tut-react-and-spring-data-r
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=follow-1]
+include::src/main/resources/static/app.js[tag=follow-1]
 ----
 
 In the previous section, the loading was done directly inside `componentDidMount()`. In this section, we are making it possible to reload the entire list of employees when the page size is updated. To do so, we have moved things into `loadFromServer()`.
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=follow-2]
+include::src/main/resources/static/app.js[tag=follow-2]
 ----
 
 `loadFromServer` is very similar the previous section, but instead if uses `follow()`:
@@ -205,7 +205,7 @@ Equipped with this metadata, you can now add some extra controls to the UI. Crea
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=create-dialog]
+include::src/main/resources/static/app.js[tag=create-dialog]
 ----
 
 This new component has both a `handleSubmit()` function as well as the expected `render()` function.
@@ -240,7 +240,7 @@ After iterating over every input and building up the `newEmployee` object, we in
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=create]
+include::src/main/resources/static/app.js[tag=create]
 ----
 
 Once again, use the `follow()` function to navigate to the *employees* resource where POST operations are performed. In this case, there was no need to apply any parameters, so the string-based array of rels is fine. In this situation, the POST call is returned. This allows the next `then()` clause to handle processing the outcome of the POST.
@@ -284,14 +284,14 @@ First, let's check out the `onNavigate()` function you used.
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=navigate]
+include::src/main/resources/static/app.js[tag=navigate]
 ----
 
 This is defined at the top, inside `App.onNavigate`. Again, this is to allow managing the state of the UI in the top component. After passing `onNavigate()` down to the `<EmployeeList />` React component, the following handlers are coded up to handle clicking on some buttons:
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=handle-nav]
+include::src/main/resources/static/app.js[tag=handle-nav]
 ----
 
 Each of these functions intercepts the default event and stops it from bubbling up. Then it invokes the `onNavigate()` function with the proper hypermedia link. 
@@ -300,7 +300,7 @@ Now conditionally display the controls based on which links appear in the hyperm
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=employee-list-render]
+include::src/main/resources/static/app.js[tag=employee-list-render]
 ----
 
 As in the previous section, it still transforms `this.props.employees` into an array of `<Element />` components. Then it builds up an array of `navLinks`, an array of HTML buttons.
@@ -315,7 +315,7 @@ Deleting entries is much easier. Get a hold of its HAL-based record and apply *D
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=employee]
+include::src/main/resources/static/app.js[tag=employee]
 ----
 
 This updated version of the Employee component shows an extra entry at the end of the row, a delete button. It is registered to invoke `this.handleDelete` when clicked upon. The `handleDelete()` function can then invoke the callback passed down while supplying the contextually important `this.props.employee` record.
@@ -326,7 +326,7 @@ Tracing the `onDelete()` function back to the top at `App.onDelete`, you can see
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=delete]
+include::src/main/resources/static/app.js[tag=delete]
 ----
 
 The behavior to apply after deleting a record with a page-based UI is a bit tricky. In this case, it reloads the whole data from the server, applying the same page size. Then it shows the first page.
@@ -345,7 +345,7 @@ There is an HTML element at the top of `ElementList.render`: `<input ref="pageSi
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=handle-page-size-updates]
+include::src/main/resources/static/app.js[tag=handle-page-size-updates]
 ----
 
 It stops the event from bubbling up. Then it uses the *ref* attribute of the `<input>` to find the DOM node and extract its value, all through React's `findDOMNode()` helper function. It tests if the input is really a number by checking if it's a string of digits. If so, it invokes the callback, sending the new page size to the `App` React component. If not, the character just entered is stripped off the input.
@@ -354,7 +354,7 @@ What does `App` do when it gets a `updatePageSize()`? Check it out:
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=update-page-size]
+include::src/main/resources/static/app.js[tag=update-page-size]
 ----
 
 Because a new page size causes changes to all the navigation links, it's best to refetch the data and start from the beginning. 

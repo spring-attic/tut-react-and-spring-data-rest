@@ -200,7 +200,7 @@ With all these mods in the backend, you can now shift to updating things in the 
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=employee]
+include::src/main/resources/static/app.js[tag=employee]
 ----
 
 This merely adds a column for `this.props.employee.entity.manager.name`.
@@ -227,7 +227,7 @@ The manager field isn't something you want people to edit directly. Since it's i
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=json-schema-filter]
+include::src/main/resources/static/app.js[tag=json-schema-filter]
 ----
 
 This code trims out both URI relations as well as $ref entries.
@@ -238,7 +238,7 @@ With security checks configured on the backend, add a handler in case someone tr
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=on-update]
+include::src/main/resources/static/app.js[tag=on-update]
 ----
 
 You had code to catch an HTTP 412 error. This traps an HTTP 403 status code and provides a suitable alert.
@@ -247,7 +247,7 @@ Do the same for delete operations:
 
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.jsx[tag=on-delete]
+include::src/main/resources/static/app.js[tag=on-delete]
 ----
 
 This is coded similarly with a tailored error messages.
