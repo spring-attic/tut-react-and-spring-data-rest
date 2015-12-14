@@ -16,6 +16,7 @@ If you want to do it yourself, visit http://start.spring.io and pick these items
 * Thymeleaf
 * JPA
 * H2
+* Lombok (May want to ensure your IDE has support for this as well.)
 
 This demo uses Java 8, Maven Project, and the latest stable release of Spring Boot. It also uses React.js coded in http://es6-features.org/[ES6]. This will give you a clean, empty project. From there, you can add the various files shown explicitly in this section, and/or borrow from the repository listed above.
 
