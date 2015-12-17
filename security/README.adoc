@@ -46,7 +46,7 @@ Spring Data is so good at managing entities. Why not create a repository to hand
 include::src/main/java/com/greglturnquist/payroll/ManagerRepository.java[tag=code]
 ----
 
-Instead of extending the usual `CrudRepository`, you don't know so many methods. Instead, you need to save data (which is also used for updates) and you need to look up existing users. Hence, you can use Spring Data Common's minimal `Repository` marker interface. It comes with no predefined operations.
+Instead of extending the usual `CrudRepository`, you don't need so many methods. Instead, you need to save data (which is also used for updates) and you need to look up existing users. Hence, you can use Spring Data Common's minimal `Repository` marker interface. It comes with no predefined operations.
 
 Spring Data REST, by default, will export any repository it finds. You do NOT want this repository exposed for REST operations! Apply the `@RepositoryRestResource(exported = false)` annotation to block it from export. This prevents the repository from being served up as well as any metadata.
 
@@ -86,11 +86,11 @@ A common point of integration with security is to define a `UserDetailsService`.
 include::src/main/java/com/greglturnquist/payroll/SpringDataJpaUserDetailsService.java[tag=code]
 ----
 
-`SpringDataJpaUserDetailsService` implements Spring Security's `UserDetailsService`. The interface has one method: `loadByUsername()`. This method is meant to return a `UserDetails` object so Spring Security can interrogate the user's information.
+`SpringDataJpaUserDetailsService` implements Spring Security's `UserDetailsService`. The interface has one method: `loadUserByUsername()`. This method is meant to return a `UserDetails` object so Spring Security can interrogate the user's information.
 
 Because you have a `ManagerRepository`, there is no need to write any SQL or JPA expressions to fetch this needed data. In this class, it is autowired by constructor injection.
 
-`loadByUsername()` taps into the custom finder you write a moment ago, `findByName()`. It then populates a Spring Security `User` instance, which implements the `UserDetails` interface. You are also using Spring Securiy's `AuthorityUtils` to transition from an array of string-based roles into a Java `List` of `GrantedAuthority`.
+`loadUserByUsername()` taps into the custom finder you write a moment ago, `findByName()`. It then populates a Spring Security `User` instance, which implements the `UserDetails` interface. You are also using Spring Securiy's `AuthorityUtils` to transition from an array of string-based roles into a Java `List` of `GrantedAuthority`.
 
 == Wiring up your security policy
 
@@ -105,7 +105,7 @@ This code has a lot of complexity in it, so let's walk through it, first talking
 
 * `@EnableWebSecurity` tells Spring Boot to drop its autoconfigured security policy and use this one instead. For quick demos, autoconfigured security is okay. But for anything real, you should write the policy yourself.
 * `@EnableGlobalMethodSecurity` turns on method-level security with Spring Security's sophisticated http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-pre-post-annotations[@Pre and @Post annotations].
-* It extends `WebSecsurityConfigurerAdapter`, a handy base class to write policy.
+* It extends `WebSecurityConfigurerAdapter`, a handy base class to write policy.
 * It autowired the `SpringDataJpaUserDetailsService` by field inject and then plugs it in via the `configure(AuthenticationManagerBuilder)` method. The `PASSWORD_ENCODER` from `Manager` is also setup.
 * The pivotal security policy is written in pure Java with the `configure(HttpSecurity)`.
 
@@ -196,7 +196,7 @@ Finally, inside the data itself, you can see a new attribute: *manager*. You can
 
 == Displaying manager info on the UI
 
-With all these mods in the backend, you can now shift to updating things in the frontend. First of all, show an employee's manager inside the `<Employee /> ` React component:
+With all these mods in the backend, you can now shift to updating things in the frontend. First of all, show an employee's manager inside the `<Employee />` React component:
 
 [source,javascript,indent=0]
 ----
@@ -223,7 +223,7 @@ If a field is shown in the data output, it is safe to assume it has an entry in 
 }
 ----
 
-The manager field isn't something you want people to edit directly. Since it's inlined, it should be viewed as a read only attribute. To filter it out inlined entries from the `CreateDialog` and `UpdatDialog`, just delete such entries after fetching the JSON Schema metadata.
+The manager field isn't something you want people to edit directly. Since it's inlined, it should be viewed as a read only attribute. To filter it out inlined entries from the `CreateDialog` and `UpdateDialog`, just delete such entries after fetching the JSON Schema metadata in `loadFromServer()`.
 
 [source,javascript,indent=0]
 ----
@@ -254,7 +254,7 @@ This is coded similarly with a tailored error messages.
 
 == Add some security details to the UI
 
-The last thing to crown this version of the app is to display who is logged in as well providing a logout button.
+The last thing to crown this version of the app is to display who is logged in as well providing a logout button by including this new `<div>` in the index.html file ahead of the `react` `<div>`:
 
 [source,html,indent=0]
 ----

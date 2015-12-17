@@ -22,7 +22,7 @@ To support versioning of resources, define a version attribute for your domain o
 include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 ----
 
-* The *version* field is annoated with `javax.persistence.Version`. It causes a value to be automatically stored and updated everytime a row is inserted and updated.
+* The *version* field is annotated with `javax.persistence.Version`. It causes a value to be automatically stored and updated everytime a row is inserted and updated.
 
 When fetching an individual resource (not a collection resource), Spring Data REST will automatically add an http://tools.ietf.org/html/rfc7232#section-2.3[ETag response header] with the value of this field.
 
