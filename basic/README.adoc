@@ -40,7 +40,7 @@ include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 ----
 
 * `@Entity` is a JPA annotation that denotes the whole class for storage in a relational table.
-* `@Id` and `@GeneratedValue` are JPA annotation to note the primary key and that is generated automatically when needed.
+* `@Id` and `@GeneratedValue` are JPA annotations to note the primary key and that is generated automatically when needed.
 * `@Data` and `@RequiredArgsConstructor` are Project Lombok annotations to autogenerate getters, setters, constructors, toString, hash, equals, and other things. It cuts down on the boilerplate.
 
 This entity is used to track employee information. In this case, their name and job description.
@@ -59,7 +59,7 @@ include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=co
 
 * The repository extends Spring Data Commons' `CrudRepository` and plugs in the type of the domain object and its primary key
 
-That is all that is needed! In fact, you don't even have to annotate this invisible if its top-level and visible. If you use your IDE and open up `CrudRepository`, you'll find a fist full of pre-built methods already defined.
+That is all that is needed! In fact, you don't even have to annotate this if it's top-level and visible. If you use your IDE and open up `CrudRepository`, you'll find a fist full of pre-built methods already defined.
 
 NOTE: You can define http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.definition[your own repository] if you wish. Spring Data REST supports that as well.
 
