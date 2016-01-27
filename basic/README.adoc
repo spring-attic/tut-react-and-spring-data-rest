@@ -65,7 +65,7 @@ NOTE: You can define http://docs.spring.io/spring-data/jpa/docs/current/referenc
 
 == Pre-loading the demo
 
-To work this this application, you need to pre-load it with some data like this:
+To work with this application, you need to pre-load it with some data like this:
 
 .src/main/java/com/greglturnquist/payroll/DatabaseLoader.java
 [source,java]
