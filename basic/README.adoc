@@ -78,7 +78,7 @@ include::src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[tag=code]
 * It uses constructor injection and autowiring to get Spring Data's automatically created `EmployeeRepository`.
 * The `run()` method is invoked with command line arguments, loading up your data.
 
-One of the biggest, most powerful features Spring Data is its ability to write JPA queries for you. This not only cuts down on your development time, but also reduces the risk of bugs and errors. Spring Data http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details[looks at the name of methods] in a repository class and figures out the operation you need including saving, deleting, and finding.
+One of the biggest, most powerful features of Spring Data is its ability to write JPA queries for you. This not only cuts down on your development time, but also reduces the risk of bugs and errors. Spring Data http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details[looks at the name of methods] in a repository class and figures out the operation you need including saving, deleting, and finding.
 
 That is how we can write an empty interface and inherit already build save, find, and delete operations.
 
