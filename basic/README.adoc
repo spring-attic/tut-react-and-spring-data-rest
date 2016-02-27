@@ -41,7 +41,7 @@ include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 
 * `@Entity` is a JPA annotation that denotes the whole class for storage in a relational table.
 * `@Id` and `@GeneratedValue` are JPA annotations to note the primary key and that is generated automatically when needed.
-* `@Data` and `@RequiredArgsConstructor` are Project Lombok annotations to autogenerate getters, setters, constructors, toString, hash, equals, and other things. It cuts down on the boilerplate.
+* `@Data` is a Project Lombok annotation to autogenerate getters, setters, constructors, toString, hash, equals, and other things. It cuts down on the boilerplate.
 
 This entity is used to track employee information. In this case, their name and job description.
 
