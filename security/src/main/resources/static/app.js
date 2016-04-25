@@ -164,7 +164,11 @@ class App extends React.Component {
 			rel: 'employees',
 			params: {size: this.state.pageSize}
 		}]).done(response => {
-			this.onNavigate(response.entity._links.last.href);
+			if (response.entity._links.last !== undefined) {
+				this.onNavigate(response.entity._links.last.href);
+			} else {
+				this.onNavigate(response.entity._links.self.href);
+			}
 		})
 	}
 
