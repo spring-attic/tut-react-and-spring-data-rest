@@ -9,7 +9,7 @@ module.exports = {
     debug: true,
     resolve: {
         alias: {
-            'when': node_dir + '/rest/node_modules/when/when.js'
+            'when': node_dir + '/when/when.js'
         }
     },
     output: {
