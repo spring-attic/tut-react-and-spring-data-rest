@@ -14,7 +14,7 @@
     "react"
   ],
   "author": "Greg L. Turnquist",
-  "license": "ASLv2",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/spring-guides/tut-react-and-spring-data-rest/issues"
   },
