@@ -7,11 +7,6 @@ module.exports = {
     devtool: 'sourcemaps',
     cache: true,
     debug: true,
-    resolve: {
-        alias: {
-            'when': node_dir + '/rest/node_modules/when/when.js'
-        }
-    },
     output: {
         path: __dirname,
         filename: './built/bundle.js'
