@@ -2,6 +2,7 @@
 
 // tag::vars[]
 const React = require('react');
+const ReactDOM = require('react-dom')
 const client = require('./client');
 // end::vars[]
 
@@ -35,12 +36,14 @@ class EmployeeList extends React.Component{
 		);
 		return (
 			<table>
-				<tr>
-					<th>First Name</th>
-					<th>Last Name</th>
-					<th>Description</th>
-				</tr>
-				{employees}
+				<tbody>
+					<tr>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Description</th>
+					</tr>
+					{employees}
+				</tbody>
 			</table>
 		)
 	}
@@ -62,7 +65,7 @@ class Employee extends React.Component{
 // end::employee[]
 
 // tag::render[]
-React.render(
+ReactDOM.render(
 	<App />,
 	document.getElementById('react')
 )
