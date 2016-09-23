@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom')
 const client = require('./client');
 
 const follow = require('./follow'); // function to hop multiple links by "rel"
@@ -234,13 +235,15 @@ class EmployeeList extends React.Component {
 			<div>
 				<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>
 				<table>
-					<tr>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>Description</th>
-						<th></th>
-					</tr>
-					{employees}
+					<tbody>
+						<tr>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Description</th>
+							<th></th>
+						</tr>
+						{employees}
+					</tbody>
 				</table>
 				<div>
 					{navLinks}
@@ -278,7 +281,7 @@ class Employee extends React.Component {
 }
 // end::employee[]
 
-React.render(
+ReactDOM.render(
 	<App />,
 	document.getElementById('react')
 )

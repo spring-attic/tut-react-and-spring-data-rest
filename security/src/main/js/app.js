@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const ReactDOM = require('react-dom')
 const when = require('when');
 const client = require('./client');
 
@@ -28,15 +29,31 @@ class App extends React.Component {
 		follow(client, root, [
 				{rel: 'employees', params: {size: pageSize}}]
 		).then(employeeCollection => {
-				return client({
-					method: 'GET',
-					path: employeeCollection.entity._links.profile.href,
-					headers: {'Accept': 'application/schema+json'}
-				}).then(schema => {
-					this.schema = schema.entity;
-					this.links = employeeCollection.entity._links;
-					return employeeCollection;
+			return client({
+				method: 'GET',
+				path: employeeCollection.entity._links.profile.href,
+				headers: {'Accept': 'application/schema+json'}
+			}).then(schema => {
+				// tag::json-schema-filter[]
+				/**
+				 * Filter unneeded JSON Schema properties, like uri references and
+				 * subtypes ($ref).
+				 */
+				Object.keys(schema.entity.properties).forEach(function (property) {
+					if (schema.entity.properties[property].hasOwnProperty('format') &&
+						schema.entity.properties[property].format === 'uri') {
+						delete schema.entity.properties[property];
+					}
+					if (schema.entity.properties[property].hasOwnProperty('$ref')) {
+						delete schema.entity.properties[property];
+					}
 				});
+
+				this.schema = schema.entity;
+				this.links = employeeCollection.entity._links;
+				return employeeCollection;
+				// end::json-schema-filter[]
+			});
 		}).then(employeeCollection => {
 			this.page = employeeCollection.entity.page;
 			return employeeCollection.entity._embedded.employees.map(employee =>
@@ -71,6 +88,7 @@ class App extends React.Component {
 	}
 	// end::on-create[]
 
+	// tag::on-update[]
 	onUpdate(employee, updatedEmployee) {
 		client({
 			method: 'PUT',
@@ -83,15 +101,30 @@ class App extends React.Component {
 		}).done(response => {
 			/* Let the websocket handler update the state */
 		}, response => {
+			if (response.status.code === 403) {
+				alert('ACCESS DENIED: You are not authorized to update ' +
+					employee.entity._links.self.href);
+			}
 			if (response.status.code === 412) {
-				alert('DENIED: Unable to update ' + employee.entity._links.self.href + '. Your copy is stale.');
+				alert('DENIED: Unable to update ' + employee.entity._links.self.href +
+					'. Your copy is stale.');
 			}
 		});
 	}
+	// end::on-update[]
 
+	// tag::on-delete[]
 	onDelete(employee) {
-		client({method: 'DELETE', path: employee.entity._links.self.href});
+		client({method: 'DELETE', path: employee.entity._links.self.href}
+		).done(response => {/* let the websocket handle updating the UI */},
+		response => {
+			if (response.status.code === 403) {
+				alert('ACCESS DENIED: You are not authorized to delete ' +
+					employee.entity._links.self.href);
+			}
+		});
 	}
+	// end::on-delete[]
 
 	onNavigate(navUri) {
 		client({
@@ -369,14 +402,17 @@ class EmployeeList extends React.Component {
 				{pageInfo}
 				<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>
 				<table>
-					<tr>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>Description</th>
-						<th></th>
-						<th></th>
-					</tr>
-					{employees}
+					<tbody>
+						<tr>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Description</th>
+							<th>Manager</th>
+							<th></th>
+							<th></th>
+						</tr>
+						{employees}
+					</tbody>
 				</table>
 				<div>
 					{navLinks}
@@ -386,6 +422,7 @@ class EmployeeList extends React.Component {
 	}
 }
 
+// tag::employee[]
 class Employee extends React.Component {
 
 	constructor(props) {
@@ -403,6 +440,7 @@ class Employee extends React.Component {
 				<td>{this.props.employee.entity.firstName}</td>
 				<td>{this.props.employee.entity.lastName}</td>
 				<td>{this.props.employee.entity.description}</td>
+				<td>{this.props.employee.entity.manager.name}</td>
 				<td>
 					<UpdateDialog employee={this.props.employee}
 								  attributes={this.props.attributes}
@@ -415,8 +453,10 @@ class Employee extends React.Component {
 		)
 	}
 }
+// end::employee[]
 
-React.render(
+ReactDOM.render(
 	<App />,
 	document.getElementById('react')
 )
+

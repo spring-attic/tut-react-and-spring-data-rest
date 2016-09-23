@@ -3,18 +3,13 @@ var path = require('path');
 var node_dir = __dirname + '/node_modules';
 
 module.exports = {
-    entry: './app.js',
+    entry: './src/main/js/app.js',
     devtool: 'sourcemaps',
     cache: true,
     debug: true,
-    resolve: {
-        alias: {
-            'stompjs': node_dir + '/stompjs/lib/stomp.js',
-        }
-    },
     output: {
         path: __dirname,
-        filename: './built/bundle.js'
+        filename: './src/main/resources/static/built/bundle.js'
     },
     module: {
         loaders: [
