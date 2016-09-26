@@ -172,11 +172,11 @@ class CreateDialog extends React.Component {
 		e.preventDefault();
 		var newEmployee = {};
 		this.props.attributes.forEach(attribute => {
-			newEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
+			newEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
 		});
 		this.props.onCreate(newEmployee);
 		this.props.attributes.forEach(attribute => {
-			React.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
+			ReactDOM.findDOMNode(this.refs[attribute]).value = ''; // clear out the dialog's inputs
 		});
 		window.location = "#";
 	}
@@ -221,7 +221,7 @@ class UpdateDialog extends React.Component {
 		e.preventDefault();
 		var updatedEmployee = {};
 		this.props.attributes.forEach(attribute => {
-			updatedEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
+			updatedEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
 		});
 		this.props.onUpdate(this.props.employee, updatedEmployee);
 		window.location = "#";
@@ -275,11 +275,11 @@ class EmployeeList extends React.Component {
 	// tag::handle-page-size-updates[]
 	handleInput(e) {
 		e.preventDefault();
-		var pageSize = React.findDOMNode(this.refs.pageSize).value;
+		var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
 		if (/^[0-9]+$/.test(pageSize)) {
 			this.props.updatePageSize(pageSize);
 		} else {
-			React.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
+			ReactDOM.findDOMNode(this.refs.pageSize).value = pageSize.substring(0, pageSize.length - 1);
 		}
 	}
 	// end::handle-page-size-updates[]

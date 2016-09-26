@@ -122,13 +122,13 @@ class CreateDialog extends React.Component {
 		e.preventDefault();
 		var newEmployee = {};
 		this.props.attributes.forEach(attribute => {
-			newEmployee[attribute] = React.findDOMNode(this.refs[attribute]).value.trim();
+			newEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
 		});
 		this.props.onCreate(newEmployee);
 
 		// clear out the dialog's inputs
 		this.props.attributes.forEach(attribute => {
-			React.findDOMNode(this.refs[attribute]).value = '';
+			ReactDOM.findDOMNode(this.refs[attribute]).value = '';
 		});
 
 		// Navigate away from the dialog to hide it.
@@ -179,11 +179,11 @@ class EmployeeList extends React.Component {
 	// tag::handle-page-size-updates[]
 	handleInput(e) {
 		e.preventDefault();
-		var pageSize = React.findDOMNode(this.refs.pageSize).value;
+		var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
 		if (/^[0-9]+$/.test(pageSize)) {
 			this.props.updatePageSize(pageSize);
 		} else {
-			React.findDOMNode(this.refs.pageSize).value =
+			ReactDOM.findDOMNode(this.refs.pageSize).value =
 				pageSize.substring(0, pageSize.length - 1);
 		}
 	}
