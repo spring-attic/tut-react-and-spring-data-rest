@@ -24,6 +24,7 @@
     "babel-loader": "^5.3.2",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
+    "rest": "^1.3.1",
     "sockjs-client": "^1.0.3",
     "stompjs": "^2.3.3",
     "webpack": "^1.12.2"
