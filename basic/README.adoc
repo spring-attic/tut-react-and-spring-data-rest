@@ -230,9 +230,9 @@ The following JavaScript modules will be used:
 
 With the power of babel, the JavaScript is written in ES6.
 
-If you're interested, the paths for the JavaScript moodules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
+If you're interested, the paths for the JavaScript moodules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
 
-NOTE: Want to see your JavaScript changes automatically? Move into the `src/main/resource/static`, and run `npm run-script watch` to put webpack into watch mode. It will regenerate bundle.js as you edit the source. Assuming you've http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-hotswapping[setup your IDE properly], *spring-boot-devtools* combined with this should speed up changes.
+NOTE: Want to see your JavaScript changes automatically? Run `npm run-script watch` to put webpack into watch mode. It will regenerate bundle.js as you edit the source.
 
 With all that in place, you can focus on the React bits which are fetched after the DOM is loaded. It's broken down into parts as below:
 
@@ -245,7 +245,7 @@ include::src/main/js/app.js[tag=vars]
 ----
 
 * `React` is the main library from Facebook for building this app.
-* `client` is custom code that configures rest.js to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/resources/static/client.js[read the code here].
+* `client` is custom code that configures rest.js to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/js/client.js[read the code here].
 
 == Diving into React
 

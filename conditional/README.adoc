@@ -32,10 +32,10 @@ In the <<react-and-spring-data-rest-part-2,previous section>> you used the colle
 
 In this version, `loadFromServer` is updated to fetch the collection and then use the URIs to retrieve each individual resource.
 
-.src/main/resources/static/app.js - Fetching each resource
+.src/main/js/app.js - Fetching each resource
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=follow-2]
+include::src/main/js/app.js[tag=follow-2]
 ----
 
 . The `follow()` function goes to the *employees* collection resource.
@@ -51,10 +51,10 @@ This chain is implemented in other places as well. For example, `onNavigate()`, 
 
 In this section, you are adding an `UpdateDialog` React component to edit existing employee records.
 
-.src/main/resources/static/app.js - UpdateDialog component
+.src/main/js/app.js - UpdateDialog component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=update-dialog]
+include::src/main/js/app.js[tag=update-dialog]
 ----
 
 This new component has both a `handleSubmit()` function as well as the expected `render()` function, similar to the `<CreateDialog />` component.
@@ -79,10 +79,10 @@ After the input values are extracted and loaded into the `updatedEmployee` objec
 
 So you've gone to all this effort to embed versioning in the data model. Spring Data REST has served up that value as an ETag response header. Here is where you get to put it to good use!
 
-.src/main/resources/static/app.js - onUpdate function
+.src/main/js/app.js - onUpdate function
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=update]
+include::src/main/js/app.js[tag=update]
 ----
 
 PUT with an http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.24[If-Match request header] causes Spring Data REST to check the value against the current version. If the incoming *If-Match* value doesn't match the data store's version value, Spring Data REST will fail with an *HTTP 412 Precondition Failed*.
@@ -95,10 +95,10 @@ With your `UpdateDialog` React component defined and nicely linked to the top-le
 
 The `CreateDialog` created in the previous section was put at the top of the `EmployeeList` because there is only one instance. However, `UpdateDialog` is tied directly to specific employees. So you can see it plugged in below in the `Employee` React component:
 
-.src/main/resources/static/app.js - Employee with UpdateDialog
+.src/main/js/app.js - Employee with UpdateDialog
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=employee]
+include::src/main/js/app.js[tag=employee]
 ----
 
 In this section, you switch from using the collection resource to individual resources. The fields for an employee record are now found at `this.props.employee.entity`. It gives us access to `this.props.employee.headers` where we can find ETags. 
