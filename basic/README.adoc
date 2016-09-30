@@ -238,10 +238,10 @@ With all that in place, you can focus on the React bits which are fetched after 
 
 Since you are using webpack to assemble things, go ahead and fetch the modules you need:
 
-.src/main/resources/static/app.js
+.src/main/js/app.js
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=vars]
+include::src/main/js/app.js[tag=vars]
 ----
 
 * `React` is the main library from Facebook for building this app.
@@ -253,10 +253,10 @@ React is based on defining components. Oftentimes, one component can hold multip
 
 To start things off, it's very handy to have a top level container for all components. (This will become more evident as you expand upon the code throughout this series.) Right now, you only have the employee list. But you might need some other related components later on, so let's start with this:
 
-.src/main/resources/static/app.js - App component
+.src/main/js/app.js - App component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=app]
+include::src/main/js/app.js[tag=app]
 ----
 
 * `class Foo extends React.Component{...}` is the method to create a React component.
@@ -286,10 +286,10 @@ When the state is updated, the `render()` function is invoked by the framework. 
 
 Below is the definition for an `EmployeeList`.
 
-.src/main/resources/static/app.js - EmployeeList component
+.src/main/js/app.js - EmployeeList component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=employee-list]
+include::src/main/js/app.js[tag=employee-list]
 ----
 
 Using JavaScript's map function, `this.props.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you'll see a little further down). 
@@ -330,10 +330,10 @@ Worried about mixing logic with your structure? React's APIs encourage nice, dec
 
 Next, you need to actually define what an `<Employee />` is.
 
-.src/main/resources/static/app.js - Employee component
+.src/main/js/app.js - Employee component
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=employee]
+include::src/main/js/app.js[tag=employee]
 ----
 
 This component is very simple. It has a single HTML table row wrapped around the employee's three properties. The property itself is `this.props.employee`. Notice how passing in a JavaScript object makes it easy to pass along data fetched from the server?
@@ -342,10 +342,10 @@ Because this component doesn't manage any state nor does it deal with user input
 
 The last step is to render the whole thing.
 
-.src/main/resources/static/app.js - rendering code
+.src/main/js/app.js - rendering code
 [source,javascript,indent=0]
 ----
-include::src/main/resources/static/app.js[tag=render]
+include::src/main/js/app.js[tag=render]
 ----
 
 `React.render()` accepts two arguments: a React component you defined as well as a DOM node to inject it into. Remember how you saw the `<div id="react"></div>` item earlier from the HTML page? This is where it gets picked up and plugged in.
