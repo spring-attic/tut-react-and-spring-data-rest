@@ -230,7 +230,7 @@ The following JavaScript modules will be used:
 
 With the power of babel, the JavaScript is written in ES6.
 
-If you're interested, the paths for the JavaScript moodules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
+If you're interested, the paths for the JavaScript modules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
 
 NOTE: Want to see your JavaScript changes automatically? Run `npm run-script watch` to put webpack into watch mode. It will regenerate bundle.js as you edit the source.
 
