@@ -168,7 +168,7 @@ After navigating to *employees* with the size-based query, the *employeeCollecti
 You can see the data yourself:
 
 ----
-$ curl http://localhost:8080/api/profile/employees -H 'Accept:application/schema+json'
+$ curl http://localhost:8080/api/profile/employees -H "Accept:application/schema+json"
 {
   "title" : "Employee",
   "properties" : {

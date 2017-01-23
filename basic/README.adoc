@@ -176,7 +176,7 @@ Little change here, except that there is no need for the *_embedded* wrapper sin
 That's all and good, but you are probably itching to create some new entries.
 
 ----
-$ curl -X POST localhost:8080/api/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
+$ curl -X POST localhost:8080/api/employees -d "{\"firstName\": \"Bilbo\", \"lastName\": \"Baggins\", \"description\": \"burglar\"}" -H "Content-Type:application/json"
 {
   "firstName" : "Bilbo",
   "lastName" : "Baggins",
@@ -359,7 +359,7 @@ You can see the initial employee loaded up by the system.
 Remember using cURL to create new entries? Do that again.
 
 ----
-curl -X POST localhost:8080/api/employees -d '{"firstName": "Bilbo", "lastName": "Baggins", "description": "burglar"}' -H 'Content-Type:application/json'
+curl -X POST localhost:8080/api/employees -d "{\"firstName\": \"Bilbo\", \"lastName\": \"Baggins\", \"description\": \"burglar\"}" -H "Content-Type:application/json"
 ----
 
 Refresh the browser, and you should see the new entry:
