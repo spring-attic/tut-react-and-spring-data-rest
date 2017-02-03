@@ -44,7 +44,7 @@ class App extends React.Component {
 						schema.entity.properties[property].format === 'uri') {
 						delete schema.entity.properties[property];
 					}
-					if (schema.entity.properties[property].hasOwnProperty('$ref')) {
+					else if (schema.entity.properties[property].hasOwnProperty('$ref')) {
 						delete schema.entity.properties[property];
 					}
 				});
