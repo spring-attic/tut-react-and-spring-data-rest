@@ -45,7 +45,7 @@ Your interface now extends `PagingAndSortingRepository` which adds extra options
 Restart the application (`./mvnw spring-boot:run`) and see how it works.
 
 ----
-$ curl localhost:8080/api/employees?size=2
+$ curl "localhost:8080/api/employees?size=2"
 {
   "_links" : {
     "first" : {
