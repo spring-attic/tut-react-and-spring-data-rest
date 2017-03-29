@@ -68,7 +68,11 @@ class App extends React.Component {
 		}).then(response => {
 			return follow(client, root, [{rel: 'employees', params: {'size': self.state.pageSize}}]);
 		}).done(response => {
-			self.onNavigate(response.entity._links.last.href);
+			if (typeof response.entity._links.last != "undefined") {
+				this.onNavigate(response.entity._links.last.href);
+			} else {
+				this.onNavigate(response.entity._links.self.href);
+			}
 		});
 	}
 	// end::create[]
