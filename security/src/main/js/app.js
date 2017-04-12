@@ -91,7 +91,7 @@ class App extends React.Component {
 	// tag::on-update[]
 	onUpdate(employee, updatedEmployee) {
 		client({
-			method: 'PUT',
+			method: 'PATCH',
 			path: employee.entity._links.self.href,
 			entity: updatedEmployee,
 			headers: {
