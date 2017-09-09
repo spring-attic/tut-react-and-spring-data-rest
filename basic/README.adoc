@@ -280,7 +280,7 @@ The common convention is to initialize state with all your attributes empty in t
 WARNING: JavaScript doesn't lock down data structures like other languages. You can try to subvert properties by assigning values, but this doesn't work with React's differential engine and should be avoided.
 ====
 
-In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] instance of rest.js. When it is done retrieving from `/api/employees`, it then invokes the function inside `done()` and set's the state based on it's HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /api/employees` <<Touring your REST service,earlier>> and see how it maps onto this structure.
+In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] instance of rest.js. When it is done retrieving from `/api/employees`, it then invokes the function inside `then()` and set's the state based on it's HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /api/employees` <<Touring your REST service,earlier>> and see how it maps onto this structure.
 
 When the state is updated, the `render()` function is invoked by the framework. The employee state data is included in creation of the `<EmployeeList />` React component as an input parameter.
 
