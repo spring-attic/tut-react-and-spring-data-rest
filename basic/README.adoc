@@ -230,7 +230,7 @@ The following JavaScript modules will be used:
 
 With the power of babel, the JavaScript is written in ES6.
 
-If you're interested, the paths for the JavaScript modules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
+If you're interested, the paths for the JavaScript modules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template.
 
 NOTE: Want to see your JavaScript changes automatically? Run `npm run-script watch` to put webpack into watch mode. It will regenerate bundle.js as you edit the source.
 
@@ -249,7 +249,7 @@ include::src/main/js/app.js[tag=vars]
 
 == Diving into React
 
-React is based on defining components. Oftentimes, one component can hold multiple instances of another in a parent-child relationship. It's easy for this concept to extend several layers. 
+React is based on defining components. Oftentimes, one component can hold multiple instances of another in a parent-child relationship. It's easy for this concept to extend several layers.
 
 To start things off, it's very handy to have a top level container for all components. (This will become more evident as you expand upon the code throughout this series.) Right now, you only have the employee list. But you might need some other related components later on, so let's start with this:
 
@@ -269,9 +269,9 @@ In the *App* component, an array of employees is fetched from the Spring Data RE
 
 [[NOTE]]
 ====
-React components have two types of data: *state* and *properties*. 
+React components have two types of data: *state* and *properties*.
 
-*State* is data that the component is expected to handle itself. It is also data that can fluctuate and change. To read the state, you use `this.state`. To update it, you use `this.setState()`. Every time `this.setState()` is called, React updates the state, calculates a diff between the previous state and the new state, and injects a set of changes to the DOM on the page. This results a fast and efficient updates to your UI. 
+*State* is data that the component is expected to handle itself. It is also data that can fluctuate and change. To read the state, you use `this.state`. To update it, you use `this.setState()`. Every time `this.setState()` is called, React updates the state, calculates a diff between the previous state and the new state, and injects a set of changes to the DOM on the page. This results a fast and efficient updates to your UI.
 
 The common convention is to initialize state with all your attributes empty in the constructor. Then you lookup data from the server using `componentDidMount` and populate your attributes. From there on, updates can be driven by user action or other events.
 
@@ -292,7 +292,7 @@ Below is the definition for an `EmployeeList`.
 include::src/main/js/app.js[tag=employee-list]
 ----
 
-Using JavaScript's map function, `this.props.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you'll see a little further down). 
+Using JavaScript's map function, `this.props.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you'll see a little further down).
 
 [source,javascript]
 ----
@@ -373,7 +373,7 @@ And now you can see both of them listed on the web site.
 In this section:
 
 * You defined a domain object and a corresponding repository.
-* You let Spring Data REST export it with full blown hypermedia controls. 
+* You let Spring Data REST export it with full blown hypermedia controls.
 * You created two simple React components in a parent-child relationship.
 * You fetched server data and rendered them in as a simple, static HTML structure.
 
