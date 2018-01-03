@@ -1,6 +1,6 @@
 [[react-and-spring-data-rest-part-4]]
 = Part 4 - Events
-:sourcedir: https://github.com/sprig-guides/tut-react-and-spring-data-rest/tree/master
+:sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
 In the <<react-and-spring-data-rest-part-3,previous section>>, you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
 
