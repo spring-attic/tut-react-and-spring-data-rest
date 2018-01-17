@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.1.RELEASE</version>
+		<version>1.5.6.RELEASE</version>
 		<relativePath/>
 	</parent>
 
@@ -67,7 +67,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.2</version>
+				<version>1.5</version>
 				<configuration>
 					<installDirectory>target</installDirectory>
 				</configuration>
@@ -78,8 +78,8 @@
 							<goal>install-node-and-npm</goal>
 						</goals>
 						<configuration>
-							<nodeVersion>v4.4.5</nodeVersion>
-							<npmVersion>3.9.2</npmVersion>
+							<nodeVersion>v6.11.3</nodeVersion>
+							<npmVersion>5.4.1</npmVersion>
 						</configuration>
 					</execution>
 					<execution>
