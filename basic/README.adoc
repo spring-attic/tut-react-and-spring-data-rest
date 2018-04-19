@@ -321,7 +321,7 @@ This simple layout of state, properties, and HTML shows how React lets you decla
 
 [[NOTE]]
 ====
-Does this code contain both HTML _and_ JavaScript? Yes, this is https://facebook.github.io/js/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse. Thanks to rapid work on the Babel.js, the transpiler provides both JSX and ES6 support all at once
+Does this code contain both HTML _and_ JavaScript? Yes, this is https://facebook.github.io/jsx/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse. Thanks to rapid work on the Babel.js, the transpiler provides both JSX and ES6 support all at once
 
 JSX also includes bits and pieces of http://es6-features.org/#Constants[ES6]. The one used in the code is the http://es6-features.org/#ExpressionBodies[arrow function]. It avoids creating a nested function() with its own scoped *this*, and avoids needing a http://stackoverflow.com/a/962040/28214[*self* variable].
 
