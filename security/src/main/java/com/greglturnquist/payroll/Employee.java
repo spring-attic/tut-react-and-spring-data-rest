@@ -21,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Version;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,6 +41,7 @@ public class Employee {
 
 	private @Version @JsonIgnore Long version;
 
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY) // Manager is only set in backend.
 	private @ManyToOne Manager manager;
 
 	private Employee() {}
