@@ -281,7 +281,7 @@ Since you are using webpack to assemble things, go ahead and fetch the modules y
 include::src/main/js/app.js[tag=vars]
 ----
 
-* `React` is the main library from Facebook for building this app.
+* `React` and `ReactDOM` are the main libraries from Facebook used to build this app.
 * `client` is custom code that configures rest.js to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/js/client.js[read the code here].
 
 == Diving into React
