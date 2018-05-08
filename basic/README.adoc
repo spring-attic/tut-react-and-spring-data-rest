@@ -217,6 +217,8 @@ include::src/main/resources/templates/index.html[]
 
 The key part in this template is the `<div id="react"></div>` component in the middle. It is where you will direct React to plug in the rendered output.
 
+You may also be wondering where that `bundle.js` file came from. The way it's built is shown in the next section.
+
 == Loading JavaScript modules
 
 This section contains the barebones information to get off the JavaScript bits off the ground. While you _can_ install all of JavaScripts command line tools, you don't _have_ to. At least, not yet. Instead, all you need to add is the following to your `pom.xml` build file:
