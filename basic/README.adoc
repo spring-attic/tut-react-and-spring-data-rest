@@ -219,18 +219,53 @@ The key part in this template is the `<div id="react"></div>` component in the m
 
 == Loading JavaScript modules
 
-This tutorial won't go into extensive detail on how it uses https://webpack.github.io/[webpack] to load JavaScript modules. But thanks to the *frontend-maven-plugin*, you don't _have_ to install any of the node.js tools to build and run the code.
+This section contains the barebones information to get off the JavaScript bits off the ground. While you _can_ install all of JavaScripts command line tools, you don't _have_ to. At least, not yet. Instead, all you need to add is the following to your `pom.xml` build file:
 
-The following JavaScript modules will be used:
+.The `frontend-maven-plugin` used to build JavaScript bits
+[source,xml,indent=0]
+----
+include::pom.xml[tag=frontend-maven-plugin]
+----
 
-* webpack
-* babel
-* react.js
-* rest.js
+This little plugin perform multiple steps:
 
-With the power of babel, the JavaScript is written in ES6.
+* The `install-node-and-npm` command will install node.js and it's package management tool, `npm`, into the `target` folder. (This ensures the binaries are NOT pulled under source control, and can be cleaned out with `clean`).
+* The `npm` command will execute the npm binary with the provided argument (`install`). This installs modules defined in `package.json`.
+* The `webpack` command will execute webpack binary, which compiles all the JavaScript code based on `webpack.config.js`.
 
-If you're interested, the paths for the JavaScript modules are defined in https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/webpack.config.js[webpack.config.js]. This is then used by webpack to generate a JavaScript bundle, which is loaded inside the template. 
+These steps are run in sequence, essentially installing node.js, downloading JavaScript modules, and building the JS bits.
+
+What modules are installed? JavaScript developers typically use `npm` to build up a `package.json` file like the one below:
+
+.package.json
+[source,javascript]
+----
+include::package.json[]
+----
+
+Key dependencies include:
+
+* react.js - toolkit used by this tutorial
+* rest.js - CujoJS toolkit used to make REST calls
+* webpack - toolkit used to compile JavaScript components into a single, loadable bundle
+* babel - write your JavaScript code using ES6 and compile it into ES5 to run in the browser
+
+To build the JavaScript code you'll poke at further down, you need to define a build file for https://webpack.github.io/[webpack].
+
+.webpack.config.js
+[source,javascript]
+----
+include::webpack.config.js[]
+----
+
+This webpack configuration file does the following:
+
+* Defines the *entry point* as `./src/main/js/app.js`. In essence, `app.js` (a module we'll write shortly) is the proverbial `public static void main()` of our JavaScript application. webpack must know this in order to know _what_ to launch when the final bundle is loaded by the browser.
+* Creates *sourcemaps* so when debugging JS code in the browser, is able to link back to original source code.
+* Compile ALL of the JavaScript bits into `./src/main/resources/static/built/bundle.js`, which is a JavaScript equivalent to a Spring Boot uber JAR. All your custom code AND the modules pulled in a la `require()` calls are stuffed into this file.
+* It hooks into the babel engine, using both `es2015` and `react` presets, in order to compile ES6 React code into a format able to be run in any standard browser.
+
+For more details on how each of these JavaScript tools operates, please read their corresponding reference docs.
 
 NOTE: Want to see your JavaScript changes automatically? Run `npm run-script watch` to put webpack into watch mode. It will regenerate bundle.js as you edit the source.
 
