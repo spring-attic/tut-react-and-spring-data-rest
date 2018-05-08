@@ -17,6 +17,7 @@ package com.greglturnquist.payroll;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
+import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,7 @@ public class SpringDataRestEventHandler {
 	}
 
 	@HandleBeforeCreate
+	@HandleBeforeSave
 	public void applyUserInformationUsingSecurityContext(Employee employee) {
 
 		String name = SecurityContextHolder.getContext().getAuthentication().getName();
