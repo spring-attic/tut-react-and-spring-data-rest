@@ -124,7 +124,7 @@ NOTE: This behavior tells every client to refresh their current page when an upd
 
 Before you finish this section, there is something to recognize. You just added a new way for the state in the UI to get updated: when a WebSocket message arrives. But the old way to update the state is still there.
 
-To simplify your code's management of state, it simplifies things if you remove the old way. In other words, submit your *POST*, *PUT*, and *DELETE* calls, but don't use their results to update the UI's state. Instead, wait for the WebSocket event to circle back and then do the update.
+To simplify your code's management of state, remove the old way. In other words, submit your *POST*, *PUT*, and *DELETE* calls, but don't use their results to update the UI's state. Instead, wait for the WebSocket event to circle back and then do the update.
 
 The follow chunk of code shows the same `onCreate()` function as the previous section, only simplified:
 

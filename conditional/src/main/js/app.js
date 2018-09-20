@@ -1,7 +1,7 @@
 'use strict';
 
 const React = require('react');
-const ReactDOM = require('react-dom')
+const ReactDOM = require('react-dom');
 const when = require('when');
 const client = require('./client');
 
@@ -57,7 +57,7 @@ class App extends React.Component {
 
 	// tag::create[]
 	onCreate(newEmployee) {
-		var self = this;
+		const self = this;
 		follow(client, root, ['employees']).then(response => {
 			return client({
 				method: 'POST',
@@ -68,7 +68,7 @@ class App extends React.Component {
 		}).then(response => {
 			return follow(client, root, [{rel: 'employees', params: {'size': self.state.pageSize}}]);
 		}).done(response => {
-			if (typeof response.entity._links.last != "undefined") {
+			if (typeof response.entity._links.last !== "undefined") {
 				this.onNavigate(response.entity._links.last.href);
 			} else {
 				this.onNavigate(response.entity._links.self.href);
@@ -174,7 +174,7 @@ class CreateDialog extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault();
-		var newEmployee = {};
+		const newEmployee = {};
 		this.props.attributes.forEach(attribute => {
 			newEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
 		});
@@ -186,9 +186,9 @@ class CreateDialog extends React.Component {
 	}
 
 	render() {
-		var inputs = this.props.attributes.map(attribute =>
+		const inputs = this.props.attributes.map(attribute =>
 			<p key={attribute}>
-				<input type="text" placeholder={attribute} ref={attribute} className="field" />
+				<input type="text" placeholder={attribute} ref={attribute} className="field"/>
 			</p>
 		);
 		return (
@@ -210,7 +210,7 @@ class CreateDialog extends React.Component {
 			</div>
 		)
 	}
-};
+}
 // end::create-dialog[]
 
 // tag::update-dialog[]
@@ -223,7 +223,7 @@ class UpdateDialog extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault();
-		var updatedEmployee = {};
+		const updatedEmployee = {};
 		this.props.attributes.forEach(attribute => {
 			updatedEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
 		});
@@ -232,15 +232,15 @@ class UpdateDialog extends React.Component {
 	}
 
 	render() {
-		var inputs = this.props.attributes.map(attribute =>
-				<p key={this.props.employee.entity[attribute]}>
-					<input type="text" placeholder={attribute}
-						   defaultValue={this.props.employee.entity[attribute]}
-						   ref={attribute} className="field" />
-				</p>
+		const inputs = this.props.attributes.map(attribute =>
+			<p key={this.props.employee.entity[attribute]}>
+				<input type="text" placeholder={attribute}
+					   defaultValue={this.props.employee.entity[attribute]}
+					   ref={attribute} className="field"/>
+			</p>
 		);
 
-		var dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
+		const dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
 
 		return (
 			<div key={this.props.employee.entity._links.self.href}>
@@ -279,7 +279,7 @@ class EmployeeList extends React.Component {
 	// tag::handle-page-size-updates[]
 	handleInput(e) {
 		e.preventDefault();
-		var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
+		const pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
 		if (/^[0-9]+$/.test(pageSize)) {
 			this.props.updatePageSize(pageSize);
 		} else {
@@ -308,15 +308,15 @@ class EmployeeList extends React.Component {
 	// end::handle-nav[]
 	// tag::employee-list-render[]
 	render() {
-		var employees = this.props.employees.map(employee =>
-				<Employee key={employee.entity._links.self.href}
-						  employee={employee}
-						  attributes={this.props.attributes}
-						  onUpdate={this.props.onUpdate}
-						  onDelete={this.props.onDelete}/>
+		const employees = this.props.employees.map(employee =>
+			<Employee key={employee.entity._links.self.href}
+					  employee={employee}
+					  attributes={this.props.attributes}
+					  onUpdate={this.props.onUpdate}
+					  onDelete={this.props.onDelete}/>
 		);
 
-		var navLinks = [];
+		const navLinks = [];
 		if ("first" in this.props.links) {
 			navLinks.push(<button key="first" onClick={this.handleNavFirst}>&lt;&lt;</button>);
 		}

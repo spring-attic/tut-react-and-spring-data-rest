@@ -1,7 +1,7 @@
 define(function(require) {
 	'use strict';
 
-	var interceptor = require('rest/interceptor');
+	const interceptor = require('rest/interceptor');
 
 	return interceptor({
 		request: function (request /*, config, meta */) {

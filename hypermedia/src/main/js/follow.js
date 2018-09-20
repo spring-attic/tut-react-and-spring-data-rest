@@ -1,11 +1,11 @@
 module.exports = function follow(api, rootPath, relArray) {
-	var root = api({
+	const root = api({
 		method: 'GET',
 		path: rootPath
 	});
 
 	return relArray.reduce(function(root, arrayItem) {
-		var rel = typeof arrayItem === 'string' ? arrayItem : arrayItem.rel;
+		const rel = typeof arrayItem === 'string' ? arrayItem : arrayItem.rel;
 		return traverseNext(root, rel, arrayItem);
 	}, root);
 

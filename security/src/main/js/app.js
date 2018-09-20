@@ -1,7 +1,7 @@
 'use strict';
 
 const React = require('react');
-const ReactDOM = require('react-dom')
+const ReactDOM = require('react-dom');
 const when = require('when');
 const client = require('./client');
 
@@ -91,7 +91,7 @@ class App extends React.Component {
 
 	// tag::on-update[]
 	onUpdate(employee, updatedEmployee) {
-		if(employee.entity.manager.name == this.state.loggedInManager) {
+		if(employee.entity.manager.name === this.state.loggedInManager) {
 			updatedEmployee["manager"] = employee.entity.manager;
 			client({
 				method: 'PUT',
@@ -249,7 +249,7 @@ class CreateDialog extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault();
-		var newEmployee = {};
+		const newEmployee = {};
 		this.props.attributes.forEach(attribute => {
 			newEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
 		});
@@ -261,10 +261,10 @@ class CreateDialog extends React.Component {
 	}
 
 	render() {
-		var inputs = this.props.attributes.map(attribute =>
-				<p key={attribute}>
-					<input type="text" placeholder={attribute} ref={attribute} className="field" />
-				</p>
+		const inputs = this.props.attributes.map(attribute =>
+			<p key={attribute}>
+				<input type="text" placeholder={attribute} ref={attribute} className="field"/>
+			</p>
 		);
 		return (
 			<div>
@@ -296,7 +296,7 @@ class UpdateDialog extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault();
-		var updatedEmployee = {};
+		const updatedEmployee = {};
 		this.props.attributes.forEach(attribute => {
 			updatedEmployee[attribute] = ReactDOM.findDOMNode(this.refs[attribute]).value.trim();
 		});
@@ -305,19 +305,19 @@ class UpdateDialog extends React.Component {
 	}
 
 	render() {
-		var inputs = this.props.attributes.map(attribute =>
-				<p key={this.props.employee.entity[attribute]}>
-					<input type="text" placeholder={attribute}
-						   defaultValue={this.props.employee.entity[attribute]}
-						   ref={attribute} className="field" />
-				</p>
+		const inputs = this.props.attributes.map(attribute =>
+			<p key={this.props.employee.entity[attribute]}>
+				<input type="text" placeholder={attribute}
+					   defaultValue={this.props.employee.entity[attribute]}
+					   ref={attribute} className="field"/>
+			</p>
 		);
 
-		var dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
+		const dialogId = "updateEmployee-" + this.props.employee.entity._links.self.href;
 
-		var isManagerCorrect = this.props.employee.entity.manager.name == this.props.loggedInManager;
-		
-		if (isManagerCorrect == false) {
+		const isManagerCorrect = this.props.employee.entity.manager.name == this.props.loggedInManager;
+
+		if (isManagerCorrect === false) {
 			return (
 					<div>
 						<a>Not Your Employee</a>
@@ -360,7 +360,7 @@ class EmployeeList extends React.Component {
 
 	handleInput(e) {
 		e.preventDefault();
-		var pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
+		const pageSize = ReactDOM.findDOMNode(this.refs.pageSize).value;
 		if (/^[0-9]+$/.test(pageSize)) {
 			this.props.updatePageSize(pageSize);
 		} else {
@@ -389,10 +389,10 @@ class EmployeeList extends React.Component {
 	}
 
 	render() {
-		var pageInfo = this.props.page.hasOwnProperty("number") ?
+		const pageInfo = this.props.page.hasOwnProperty("number") ?
 			<h3>Employees - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
 
-		var employees = this.props.employees.map(employee =>
+		const employees = this.props.employees.map(employee =>
 			<Employee key={employee.entity._links.self.href}
 					  employee={employee}
 					  attributes={this.props.attributes}
@@ -401,7 +401,7 @@ class EmployeeList extends React.Component {
 					  loggedInManager={this.props.loggedInManager}/>
 		);
 
-		var navLinks = [];
+		const navLinks = [];
 		if ("first" in this.props.links) {
 			navLinks.push(<button key="first" onClick={this.handleNavFirst}>&lt;&lt;</button>);
 		}
