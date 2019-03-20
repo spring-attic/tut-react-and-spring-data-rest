@@ -73,7 +73,7 @@ include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=co
 
 `@PreAuthorize` at the top of the interface restricts access to people with *ROLE_MANAGER*.
 
-On `save()`, either the employee's manager is null (initial creation of a new employee when no manager has been assigned), or the employee's manager's name matches the currently authenticated user's name. Here you are using http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-access[Spring Security's SpEL expressions] to define access. It comes with a handy "?." property navigator to handle null checks. It's also important to note using the `@Param(...)` on the arguments to link HTTP operations with the methods.
+On `save()`, either the employee's manager is null (initial creation of a new employee when no manager has been assigned), or the employee's manager's name matches the currently authenticated user's name. Here you are using https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-access[Spring Security's SpEL expressions] to define access. It comes with a handy "?." property navigator to handle null checks. It's also important to note using the `@Param(...)` on the arguments to link HTTP operations with the methods.
 
 On `delete()`, the method either has access to the employee, or in the event it only has an id, then it must find the *employeeRepository* in the application context, perform a `findOne(id)`, and then check the manager against the currently authenticated user.
 
@@ -104,7 +104,7 @@ include::src/main/java/com/greglturnquist/payroll/SecurityConfiguration.java[tag
 This code has a lot of complexity in it, so let's walk through it, first talking about the annotations and APIs. Then we'll discuss the security policy it defines.
 
 * `@EnableWebSecurity` tells Spring Boot to drop its autoconfigured security policy and use this one instead. For quick demos, autoconfigured security is okay. But for anything real, you should write the policy yourself.
-* `@EnableGlobalMethodSecurity` turns on method-level security with Spring Security's sophisticated http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-pre-post-annotations[@Pre and @Post annotations].
+* `@EnableGlobalMethodSecurity` turns on method-level security with Spring Security's sophisticated https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-pre-post-annotations[@Pre and @Post annotations].
 * It extends `WebSecurityConfigurerAdapter`, a handy base class to write policy.
 * It autowired the `SpringDataJpaUserDetailsService` by field inject and then plugs it in via the `configure(AuthenticationManagerBuilder)` method. The `PASSWORD_ENCODER` from `Manager` is also setup.
 * The pivotal security policy is written in pure Java with the `configure(HttpSecurity)`.
@@ -219,7 +219,7 @@ If a field is shown in the data output, it is safe to assume it has an entry in 
     ...
   },
   ...
-  "$schema" : "http://json-schema.org/draft-04/schema#"
+  "$schema" : "https://json-schema.org/draft-04/schema#"
 }
 ----
 

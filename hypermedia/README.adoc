@@ -9,7 +9,7 @@ Feel free to {sourcedir}/hypermedia[grab the code] from this repository and foll
 
 == In the beginning there was data...and then there was REST
 
-[quote, Roy T. Fielding, http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven]
+[quote, Roy T. Fielding, https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven]
 I am getting frustrated by the number of people calling any HTTP-based interface a REST API. Today’s example is the SocialSite REST API. That is RPC. It screams RPC....What needs to be done to make the REST architectural style clear on the notion that hypertext is a constraint? In other words, if the engine of application state (and hence the API) is not being driven by hypertext, then it cannot be RESTful and cannot be a REST API. Period. Is there some broken manual somewhere that needs to be fixed?
 
 So, what exactly ARE hypermedia controls, i.e. hypertext, and how can you use them? To find out, let's take a step back and look at the core mission of REST.
@@ -163,7 +163,7 @@ Sometimes, a rel by itself isn't enough. In this fragment of code, it also plugs
 
 == Grabbing JSON Schema metadata
 
-After navigating to *employees* with the size-based query, the *employeeCollection* is at your fingertips. In the previous section, we called it day and displayed that data inside `<EmployeeList />`. Today, you are performing another call to grab some http://json-schema.org/[JSON Schema metadata] found at `/api/profile/employees/`.
+After navigating to *employees* with the size-based query, the *employeeCollection* is at your fingertips. In the previous section, we called it day and displayed that data inside `<EmployeeList />`. Today, you are performing another call to grab some https://json-schema.org/[JSON Schema metadata] found at `/api/profile/employees/`.
 
 You can see the data yourself:
 
@@ -190,7 +190,7 @@ $ curl http://localhost:8080/api/profile/employees -H "Accept:application/schema
   },
   "definitions" : { },
   "type" : "object",
-  "$schema" : "http://json-schema.org/draft-04/schema#"
+  "$schema" : "https://json-schema.org/draft-04/schema#"
 }
 ----
 

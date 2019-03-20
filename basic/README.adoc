@@ -10,7 +10,7 @@ In this section, you will see how to get a bare-bones Spring Data REST applicati
 
 Feel free to {sourcedir}/basic[grab the code] from this repository and follow along.
 
-If you want to do it yourself, visit http://start.spring.io and pick these items:
+If you want to do it yourself, visit https://start.spring.io and pick these items:
 
 * Rest Repositories
 * Thymeleaf
@@ -61,7 +61,7 @@ include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=co
 
 That is all that is needed! In fact, you don't even have to annotate this if it's top-level and visible. If you use your IDE and open up `CrudRepository`, you'll find a fist full of pre-built methods already defined.
 
-NOTE: You can define http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.definition[your own repository] if you wish. Spring Data REST supports that as well.
+NOTE: You can define https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.definition[your own repository] if you wish. Spring Data REST supports that as well.
 
 == Pre-loading the demo
 
@@ -78,7 +78,7 @@ include::src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[tag=code]
 * It uses constructor injection and autowiring to get Spring Data's automatically created `EmployeeRepository`.
 * The `run()` method is invoked with command line arguments, loading up your data.
 
-One of the biggest, most powerful features of Spring Data is its ability to write JPA queries for you. This not only cuts down on your development time, but also reduces the risk of bugs and errors. Spring Data http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details[looks at the name of methods] in a repository class and figures out the operation you need including saving, deleting, and finding.
+One of the biggest, most powerful features of Spring Data is its ability to write JPA queries for you. This not only cuts down on your development time, but also reduces the risk of bugs and errors. Spring Data https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details[looks at the name of methods] in a repository class and figures out the operation you need including saving, deleting, and finding.
 
 That is how we can write an empty interface and inherit already built save, find, and delete operations.
 
@@ -101,13 +101,13 @@ The last step needed to get a fully operational REST API off the ground is to wr
 include::src/main/java/com/greglturnquist/payroll/ReactAndSpringDataRestApplication.java[tag=code]
 ----
 
-Assuming the previous class as well as your Maven build file were generated from http://start.spring.io, you can now launch it either by running that `main()` method inside your IDE, or type `./mvnw spring-boot:run` on the command line. (mvnw.bat for Windows users).
+Assuming the previous class as well as your Maven build file were generated from https://start.spring.io, you can now launch it either by running that `main()` method inside your IDE, or type `./mvnw spring-boot:run` on the command line. (mvnw.bat for Windows users).
 
 NOTE: If you aren't up-to-date on Spring Boot and how it works, you should consider watch one of https://www.youtube.com/watch?v=sbPSjI4tt10[Josh Long's introductory presentations]. Did it? Press on!
 
 == Touring your REST service
 
-With the app running, you can check things out on the command line using http://curl.haxx.se/[cURL] (or any other tool you like).
+With the app running, you can check things out on the command line using https://curl.haxx.se/[cURL] (or any other tool you like).
 
 ----
 $ curl localhost:8080/api
@@ -360,7 +360,7 @@ This simple layout of state, properties, and HTML shows how React lets you decla
 ====
 Does this code contain both HTML _and_ JavaScript? Yes, this is https://facebook.github.io/jsx/[JSX]. There is no requirement to use it. React can be written using pure JavaScript, but the JSX syntax is quite terse. Thanks to rapid work on the Babel.js, the transpiler provides both JSX and ES6 support all at once
 
-JSX also includes bits and pieces of http://es6-features.org/#Constants[ES6]. The one used in the code is the http://es6-features.org/#ExpressionBodies[arrow function]. It avoids creating a nested function() with its own scoped *this*, and avoids needing a http://stackoverflow.com/a/962040/28214[*self* variable].
+JSX also includes bits and pieces of http://es6-features.org/#Constants[ES6]. The one used in the code is the http://es6-features.org/#ExpressionBodies[arrow function]. It avoids creating a nested function() with its own scoped *this*, and avoids needing a https://stackoverflow.com/a/962040/28214[*self* variable].
 
 Worried about mixing logic with your structure? React's APIs encourage nice, declarative structure combined with state and properties. Instead of mixing a bunch of unrelated JavaScript and HTML, React encourages building simple components with small bits of related state and properties that work well together. It lets you look at a single component and understand the design. Then they are easy to combine together for bigger structures.
 ====
