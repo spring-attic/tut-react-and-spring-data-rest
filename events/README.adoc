@@ -23,7 +23,7 @@ This bring in Spring Boot's WebSocket starter.
 
 == Configuring WebSockets with Spring
 
-http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#websocket[Spring comes with powerful WebSocket support]. One thing to recognize is that a WebSocket is a very low level protocol. It does little more than offer the means to transmit data between client and server. The recommendation is to use a sub-protocol (STOMP for this section) to actually encode data and routes.
+https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#websocket[Spring comes with powerful WebSocket support]. One thing to recognize is that a WebSocket is a very low level protocol. It does little more than offer the means to transmit data between client and server. The recommendation is to use a sub-protocol (STOMP for this section) to actually encode data and routes.
 
 The follow code is used to configure WebSocket support on the server side:
 
@@ -42,7 +42,7 @@ With this configuration, it's now possible to tap into Spring Data REST events a
 
 == Subscribing to Spring Data REST events
 
-Spring Data REST generates several http://docs.spring.io/spring-data/rest/docs/current/reference/html/#events[application events] based on actions occurring on the repositories. The follow code shows how to subscribe to some of these events:
+Spring Data REST generates several https://docs.spring.io/spring-data/rest/docs/current/reference/html/#events[application events] based on actions occurring on the repositories. The follow code shows how to subscribe to some of these events:
 
 [source,java]
 ----
