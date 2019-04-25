@@ -173,7 +173,7 @@ $ curl localhost:8080/api/employees/1
 
 Little change here, except that there is no need for the *_embedded* wrapper since there is only domain object.
 
-That's all and good, but you are probably itching to create some new entries.
+That's all well and good, but you are probably itching to create some new entries.
 
 ----
 $ curl -X POST localhost:8080/api/employees -d "{\"firstName\": \"Bilbo\", \"lastName\": \"Baggins\", \"description\": \"burglar\"}" -H "Content-Type:application/json"
@@ -231,7 +231,7 @@ include::pom.xml[tag=frontend-maven-plugin]
 
 This little plugin perform multiple steps:
 
-* The `install-node-and-npm` command will install node.js and it's package management tool, `npm`, into the `target` folder. (This ensures the binaries are NOT pulled under source control, and can be cleaned out with `clean`).
+* The `install-node-and-npm` command will install node.js and its package management tool, `npm`, into the `target` folder. (This ensures the binaries are NOT pulled under source control, and can be cleaned out with `clean`).
 * The `npm` command will execute the npm binary with the provided argument (`install`). This installs modules defined in `package.json`.
 * The `webpack` command will execute webpack binary, which compiles all the JavaScript code based on `webpack.config.js`.
 
@@ -271,7 +271,7 @@ For more details on how each of these JavaScript tools operates, please read the
 
 NOTE: Want to see your JavaScript changes automatically? Run `npm run-script watch` to put webpack into watch mode. It will regenerate bundle.js as you edit the source.
 
-With all that in place, you can focus on the React bits which are fetched after the DOM is loaded. It's broken down into parts as below:
+With all that in place, you can focus on the React bits which are fetched after the DOM is loaded. It's broken down into parts as shown below:
 
 Since you are using webpack to assemble things, go ahead and fetch the modules you need:
 
@@ -312,12 +312,12 @@ React components have two types of data: *state* and *properties*.
 
 The common convention is to initialize state with all your attributes empty in the constructor. Then you lookup data from the server using `componentDidMount` and populate your attributes. From there on, updates can be driven by user action or other events.
 
-*Properties* encompass data that is passed into the component. Properties do NOT change but are instead fixed values. To set them, you assign them to attributes when creating a new component and you'll soon see.
+*Properties* encompass data that is passed into the component. Properties do NOT change but are instead fixed values. To set them, you assign them to attributes when creating a new component as you'll soon see.
 
 WARNING: JavaScript doesn't lock down data structures like other languages. You can try to subvert properties by assigning values, but this doesn't work with React's differential engine and should be avoided.
 ====
 
-In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] instance of rest.js. When it is done retrieving from `/api/employees`, it then invokes the function inside `done()` and set's the state based on it's HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /api/employees` <<Touring your REST service,earlier>> and see how it maps onto this structure.
+In this code, the function loads data via `client`, a https://promisesaplus.com/[Promise compliant] instance of rest.js. When it is done retrieving from `/api/employees`, it then invokes the function inside `done()` and sets the state based on its HAL document (`response.entity._embedded.employees`). You might remember the structure of `curl /api/employees` <<Touring your REST service,earlier>> and see how it maps onto this structure.
 
 When the state is updated, the `render()` function is invoked by the framework. The employee state data is included in creation of the `<EmployeeList />` React component as an input parameter.
 
