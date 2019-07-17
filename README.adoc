@@ -1,7 +1,6 @@
----
-tags: [rest,hateoas,data,react,security]
-projects: [spring-data-rest,spring-data-jpa,spring-hateoas,spring-security,spring-boot,]
----
+:doctype: book
+:tags: [rest,hateoas,data,react,security]
+:projects: [spring-data-rest,spring-data-jpa,spring-hateoas,spring-security,spring-boot,]
 :toc: left
 :icons: font
 :source-highlighter: prettify
