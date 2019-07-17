@@ -2,17 +2,12 @@
 
 asciidoctor -a linkcss -s README.adoc
 
-cd basic
-asciidoctor -a linkcss -s README.adoc
+asciidoctor -a linkcss -s basic/README.adoc
 
-cd ../hypermedia
-asciidoctor -a linkcss -s README.adoc
+asciidoctor -a linkcss -s hypermedia/README.adoc
 
-cd ../conditional
-asciidoctor -a linkcss -s README.adoc
+asciidoctor -a linkcss -s conditional/README.adoc
 
-cd ../events
-asciidoctor -a linkcss -s README.adoc
+asciidoctor -a linkcss -s events/README.adoc
 
-cd ../security
-asciidoctor -a linkcss -s README.adoc
+asciidoctor -a linkcss -s security/README.adoc
