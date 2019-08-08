@@ -16,7 +16,6 @@ If you want to do it yourself, visit https://start.spring.io and pick these item
 * Thymeleaf
 * JPA
 * H2
-* Lombok (May want to ensure your IDE has support for this as well.)
 
 This demo uses Java 8, Maven Project, and the latest stable release of Spring Boot. It also uses React.js coded in http://es6-features.org/[ES6]. This will give you a clean, empty project. From there, you can add the various files shown explicitly in this section, and/or borrow from the repository listed above.
 
@@ -41,7 +40,6 @@ include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 
 * `@Entity` is a JPA annotation that denotes the whole class for storage in a relational table.
 * `@Id` and `@GeneratedValue` are JPA annotations to note the primary key and that is generated automatically when needed.
-* `@Data` is a Project Lombok annotation to autogenerate getters, setters, constructors, toString, hash, equals, and other things. It cuts down on the boilerplate.
 
 This entity is used to track employee information. In this case, their name and job description.
 

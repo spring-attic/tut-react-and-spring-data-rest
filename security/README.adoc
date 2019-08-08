@@ -34,7 +34,6 @@ include::src/main/java/com/greglturnquist/payroll/Manager.java[tag=code]
 
 There is a key thing to keep in mind when designing your security layer. Secure the right bits of data (like passwords) and do NOT let them get printed to console, into logs, or exported via JSON serialization. 
 
-* `@ToString(exclude = "password")` ensures that the Lombok-generated toString() method will NOT print out the password.
 * `@JsonIgnore` applied to the password field protects from Jackson serializing this field.
 
 == Creating a manager's repository
