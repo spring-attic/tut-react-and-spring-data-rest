@@ -217,6 +217,8 @@ The key part in this template is the `<div id="react"></div>` component in the m
 
 You may also be wondering where that `bundle.js` file came from. The way it's built is shown in the next section.
 
+IMPORTANT: This tutorial doesn't show `main.css`, but you can see it linked up above. When it comes to CSS, Spring Boot will server anything found in `src/main/resources/static` automatically. Put your own `main.css` file there. It's not shown in the tutorial, since our focus is on React and Spring Data REST, not CSS3.
+
 == Loading JavaScript modules
 
 This section contains the barebones information to get off the JavaScript bits off the ground. While you _can_ install all of JavaScripts command line tools, you don't _have_ to. At least, not yet. Instead, all you need to add is the following to your `pom.xml` build file:
@@ -281,6 +283,8 @@ include::src/main/js/app.js[tag=vars]
 
 * `React` and `ReactDOM` are the main libraries from Facebook used to build this app.
 * `client` is custom code that configures rest.js to include support for HAL, URI Templates, and other things. It also sets the default *Accept* request header to *application/hal+json*. You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/js/client.js[read the code here].
+
+IMPORTANT: The code for `client` is not shown because what you use to make REST calls isn't important. Feel free to check the source, but the point is, you can plugin Restangular or anything you like, and the concepts still apply.
 
 == Diving into React
 

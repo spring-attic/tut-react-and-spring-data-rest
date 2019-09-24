@@ -224,7 +224,7 @@ Your code maps over the JSON Schema data found in the *attributes* property and 
 
 This represents the dynamic nature of the component, driven by loading data from the server.
 
-Inside this component's top-level `<div>` is an anchor tag and another `<div>`. The anchor tag is the button to open the dialog. And the nested `<div>` is the hidden dialog itself. In this example, you are use pure HTML5 and CSS3. No JavaScript at all! You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/main.css[see the CSS code] used to show/hide the dialog. We won't dive into that here.
+Inside this component's top-level `<div>` is an anchor tag and another `<div>`. The anchor tag is the button to open the dialog. And the nested `<div>` is the hidden dialog itself. In this example, you are using pure HTML5 and CSS3. No JavaScript at all! You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/main.css[see the CSS code] used to show/hide the dialog. We won't dive into that here.
 
 Nestled inside `<div id="createEmployee">` is a form where your dynamic list of input fields are injected followed by the *Create* button. That button has an `onClick={this.handleSubmit}` event handler. This is the React way of registering an event handler.
 
