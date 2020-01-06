@@ -17,7 +17,49 @@
 
 	<name>React.js and Spring Data REST - Root</name>
 	<description>An SPA with ReactJS in the frontend and Spring Data REST in the backend</description>
-
+	<build>
+		<pluginManagement>
+			<plugins>
+						<!-- tag::frontend-maven-plugin[] -->
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<configuration>
+					<installDirectory>target</installDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v12.14.0</nodeVersion>
+							<npmVersion>6.13.4</npmVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>webpack build</id>
+						<goals>
+							<goal>webpack</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- end::frontend-maven-plugin[] -->
+			</plugins>
+		</pluginManagement>
+	</build>
 	<modules>
 		<module>basic</module>
 		<module>hypermedia</module>
