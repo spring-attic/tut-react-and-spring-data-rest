@@ -28,12 +28,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 // tag::code[]
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity // <1>
+@EnableGlobalMethodSecurity(prePostEnabled = true) // <2>
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter { // <3>
 
 	@Autowired
-	private SpringDataJpaUserDetailsService userDetailsService;
+	private SpringDataJpaUserDetailsService userDetailsService; // <4>
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -43,7 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+	protected void configure(HttpSecurity http) throws Exception { // <5>
 		http
 			.authorizeRequests()
 				.antMatchers("/built/**", "/main.css").permitAll()

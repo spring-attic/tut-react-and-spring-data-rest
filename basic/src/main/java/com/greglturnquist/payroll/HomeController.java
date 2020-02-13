@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Greg Turnquist
  */
 // tag::code[]
-@Controller
+@Controller // <1>
 public class HomeController {
 
-	@RequestMapping(value = "/")
+	@RequestMapping(value = "/") // <2>
 	public String index() {
-		return "index";
+		return "index"; // <3>
 	}
 
 }

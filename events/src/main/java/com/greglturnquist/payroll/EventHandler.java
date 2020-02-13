@@ -22,7 +22,7 @@ import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
-import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -31,10 +31,10 @@ import org.springframework.stereotype.Component;
  */
 // tag::code[]
 @Component
-@RepositoryEventHandler(Employee.class)
+@RepositoryEventHandler(Employee.class) // <1>
 public class EventHandler {
 
-	private final SimpMessagingTemplate websocket;
+	private final SimpMessagingTemplate websocket; // <2>
 
 	private final EntityLinks entityLinks;
 
@@ -44,19 +44,19 @@ public class EventHandler {
 		this.entityLinks = entityLinks;
 	}
 
-	@HandleAfterCreate
+	@HandleAfterCreate // <3>
 	public void newEmployee(Employee employee) {
 		this.websocket.convertAndSend(
 				MESSAGE_PREFIX + "/newEmployee", getPath(employee));
 	}
 
-	@HandleAfterDelete
+	@HandleAfterDelete // <3>
 	public void deleteEmployee(Employee employee) {
 		this.websocket.convertAndSend(
 				MESSAGE_PREFIX + "/deleteEmployee", getPath(employee));
 	}
 
-	@HandleAfterSave
+	@HandleAfterSave // <3>
 	public void updateEmployee(Employee employee) {
 		this.websocket.convertAndSend(
 				MESSAGE_PREFIX + "/updateEmployee", getPath(employee));
@@ -68,7 +68,7 @@ public class EventHandler {
 	 * @param employee
 	 */
 	private String getPath(Employee employee) {
-		return this.entityLinks.linkForSingleResource(employee.getClass(),
+		return this.entityLinks.linkForItemResource(employee.getClass(),
 				employee.getId()).toUri().getPath();
 	}
 

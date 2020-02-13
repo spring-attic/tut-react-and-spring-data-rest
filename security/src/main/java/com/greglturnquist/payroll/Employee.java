@@ -39,11 +39,11 @@ public class Employee {
 
 	private @Version @JsonIgnore Long version;
 
-	private @ManyToOne Manager manager;
+	private @ManyToOne Manager manager; // <1>
 
 	private Employee() {}
 
-	public Employee(String firstName, String lastName, String description, Manager manager) {
+	public Employee(String firstName, String lastName, String description, Manager manager) { // <2>
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.description = description;

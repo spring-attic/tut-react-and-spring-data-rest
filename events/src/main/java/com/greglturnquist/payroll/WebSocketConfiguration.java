@@ -26,18 +26,18 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  */
 // tag::code[]
 @Component
-@EnableWebSocketMessageBroker
-public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
+@EnableWebSocketMessageBroker // <1>
+public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer { // <2>
 
-	static final String MESSAGE_PREFIX = "/topic";
+	static final String MESSAGE_PREFIX = "/topic"; // <3>
 
 	@Override
-	public void registerStompEndpoints(StompEndpointRegistry registry) {
+	public void registerStompEndpoints(StompEndpointRegistry registry) { // <4>
 		registry.addEndpoint("/payroll").withSockJS();
 	}
 
 	@Override
-	public void configureMessageBroker(MessageBrokerRegistry registry) {
+	public void configureMessageBroker(MessageBrokerRegistry registry) { // <5>
 		registry.enableSimpleBroker(MESSAGE_PREFIX);
 		registry.setApplicationDestinationPrefixes("/app");
 	}

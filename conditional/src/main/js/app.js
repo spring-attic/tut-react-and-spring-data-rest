@@ -23,9 +23,9 @@ class App extends React.Component {
 
 	// tag::follow-2[]
 	loadFromServer(pageSize) {
-		follow(client, root, [
+		follow(client, root, [ // <1>
 			{rel: 'employees', params: {size: pageSize}}]
-		).then(employeeCollection => {
+		).then(employeeCollection => { // <2>
 			return client({
 				method: 'GET',
 				path: employeeCollection.entity._links.profile.href,
@@ -35,16 +35,16 @@ class App extends React.Component {
 				this.links = employeeCollection.entity._links;
 				return employeeCollection;
 			});
-		}).then(employeeCollection => {
+		}).then(employeeCollection => { // <3>
 			return employeeCollection.entity._embedded.employees.map(employee =>
 					client({
 						method: 'GET',
 						path: employee._links.self.href
 					})
 			);
-		}).then(employeePromises => {
+		}).then(employeePromises => { // <4>
 			return when.all(employeePromises);
-		}).done(employees => {
+		}).done(employees => { // <5>
 			this.setState({
 				employees: employees,
 				attributes: Object.keys(this.schema.properties),
