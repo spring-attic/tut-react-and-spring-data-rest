@@ -25,10 +25,10 @@ import javax.persistence.Id;
  * @author Greg Turnquist
  */
 // tag::code[]
-@Entity
+@Entity // <1>
 public class Employee {
 
-	private @Id @GeneratedValue Long id;
+	private @Id @GeneratedValue Long id; // <2>
 	private String firstName;
 	private String lastName;
 	private String description;

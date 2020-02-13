@@ -2,48 +2,51 @@
 = Part 2 - Hypermedia Controls
 :sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
-In the <<react-and-spring-data-rest-part-1,previous section>>, you found out how to stand up a backend payroll service to store employee data using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard coded the path to find data.
+In the <<react-and-spring-data-rest-part-1,previous section>>, you found out how to create a backend payroll service to store employee data by using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard-coded the path to find data.
 
-Feel free to {sourcedir}/hypermedia[grab the code] from this repository and follow along. This section is based on the previous section's app with extra things added.
+Feel free to {sourcedir}/hypermedia[grab the code] from this repository and follow along. This section is based on the previous section's application, with extra things added.
 
 
-== In the beginning there was data...and then there was REST
+== In the Beginning, There Was Data...and Then There Was REST
 
 [quote, Roy T. Fielding, https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven]
 I am getting frustrated by the number of people calling any HTTP-based interface a REST API. Today’s example is the SocialSite REST API. That is RPC. It screams RPC....What needs to be done to make the REST architectural style clear on the notion that hypertext is a constraint? In other words, if the engine of application state (and hence the API) is not being driven by hypertext, then it cannot be RESTful and cannot be a REST API. Period. Is there some broken manual somewhere that needs to be fixed?
 
-So, what exactly ARE hypermedia controls, i.e. hypertext, and how can you use them? To find out, let's take a step back and look at the core mission of REST.
+So, what exactly ARE hypermedia controls (that is, hypertext) and how can you use them? To find out, we take a step back and look at the core mission of REST.
 
-The concept of REST was to borrow ideas that made the web so successful and apply them to APIs. Despite the web's vast size, dynamic nature, and low rate that clients, i.e. browsers, are updated, the web is an amazing success. Roy Fielding sought to use some of its constraints and features and see if that would afford similar expansion of API production and consumption.
+The concept of REST was to borrow ideas that made the web so successful and apply them to APIs. Despite the web's vast size, dynamic nature, and low rate at which clients (that is, browsers) are updated, the web is an amazing success. Roy Fielding sought to use some of its constraints and features and see if that would afford similar expansion of API production and consumption.
 
-One of the constraints is to limit the number of verbs. For REST, the primary ones are GET, POST, PUT, DELETE, and PATCH. There are others, but we won't get into them here.
+One of the constraints is to limit the number of verbs. For REST, the primary ones are GET, POST, PUT, DELETE, and PATCH. There are others, but we will not get into them here.
 
-* GET - fetch the state of a resource without altering the system
-* POST - create a new resource without saying where
-* PUT - replace an existing resource, overwriting whatever else is already there (if anything)
-* DELETE - remove an existing resource
-* PATCH - alter an existing resource partially
+* GET: Fetches the state of a resource without altering the system
+* POST: Creates a new resource without saying where
+* PUT: Replaces an existing resource, overwriting whatever else (if anything) is already there
+* DELETE: Removes an existing resource
+* PATCH: Alters an existing resource (partially rather than creating a new resource)
 
-These are standardized HTTP verbs with well written specs. By picking up and using already coined HTTP operations, we don't have to invent a new language and educate the industry.
+These are standardized HTTP verbs with well known specifications. By picking up and using already coined HTTP operations, we need not invent a new language and educate the industry.
 
-Another constraint of REST is to use media types to define the format of data. Instead of everyone writing their own dialect for the exchange of information, it would be prudent to develop some media types. One of the most popular ones to be accepted is HAL, media type application/hal+json. It is Spring Data REST's default media type. A keen value is that there is no centralized, single media type for REST. Instead, people can develop media types and plug them in. Try them out. As different needs become available, the industry can flexibly move.
+Another constraint of REST is to use media types to define the format of data. Instead of everyone writing their own dialect for the exchange of information, it would be prudent to develop some media types. One of the most popular ones to be accepted is HAL, media type `application/hal+json`. It is Spring Data REST's default media type. A key value is that there is no centralized, single media type for REST. Instead, people can develop media types and plug them in and try them out. As different needs become available, the industry can flexibly move.
 
-A key feature of REST is to include links to relevant resources. For example, if you were looking at an order, a RESTful API would include a link to the related customer, links to the catalog of items, and perhaps a link to the store from which the order was placed. In this section, you will introduce paging, and see how to also use navigational paging links.
+A key feature of REST is to include links to relevant resources. For example, if you were looking at an order, a RESTful API would include a link to the related customer, links to the catalog of items, and perhaps a link to the store from which the order was placed. In this section, you will introduce paging and see how to also use navigational paging links.
 
-== Turning on paging from the backend
+== Turning on Paging from the Backend
 
-To get underway with using frontend hypermedia controls, you need to turn on some extra controls. Spring Data REST provides paging support. To use it, just tweak the repository definition:
+To get underway with using frontend hypermedia controls, you need to turn on some extra controls. Spring Data REST provides paging support. To use it, tweak the repository definition as follows:
 
 .src/main/java/com/greglturnquist/payroll/EmployeeRepository.java
+====
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=code]
 ----
+====
 
-Your interface now extends `PagingAndSortingRepository` which adds extra options to set page size, and also adds navigational links to hop from page to page. The rest of the backend is the same (exception for some https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[extra pre-loaded data] to make things interesting).
+Your interface now extends `PagingAndSortingRepository`, which adds extra options to set page size and adds navigational links to hop from page to page. The rest of the backend is the same (except for some https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[extra pre-loaded data] to make things interesting).
 
-Restart the application (`./mvnw spring-boot:run`) and see how it works.
+Restart the application (`./mvnw spring-boot:run`) and see how it works. Then run the following command (shown with its output) to see the paging in action:
 
+====
 ----
 $ curl "localhost:8080/api/employees?size=2"
 {
@@ -90,11 +93,13 @@ $ curl "localhost:8080/api/employees?size=2"
   }
 }
 ----
+====
 
-The default page size is 20, so to see it in action, `?size=2` applied. As expected, only two employees are listed. In addition, there is also a *first*, *next*, and *last* link. There is also the *self* link, free of context _including page parameters_.
+The default page size is 20, but we do not have that much data. So, to see it in action, we set `?size=2`. As expected, only two employees are listed. In addition, there are also `first`, `next`, and `last` links. There is also the `self` link, which is free of context, _including page parameters_.
 
-If you navigate to the *next* link, you'll then see a *prev* link as well:
+If you navigate to the `next` link, you'll see a `prev` link as well. The following command (shown with its output) does so:
 
+====
 ----
 $ curl "http://localhost:8080/api/employees?page=1&size=2"
 {
@@ -117,56 +122,64 @@ $ curl "http://localhost:8080/api/employees?page=1&size=2"
   },
 ...
 ----
+====
 
-NOTE: When using "&" in URL query parameters, the command line thinks it's a line break. Wrap the whole URL with quotation marks to bypass that.
+NOTE: When using `&` in URL query parameters, the command line thinks it is a line break. Wrap the whole URL with quotation marks to avoid that problem.
 
-That looks neat, but it will be even better when you update the frontend to take advantage of that.
+That looks neat, but it will be even better when you update the frontend to take advantage of it.
 
-== Navigating by relationship
+== Navigating by Relationship
 
-That's it! No more changes are needed on the backend to start using the hypermedia controls Spring Data REST provides out of the box. You can switch to working on the frontend. (That's part of the beauty of Spring Data REST. No messy controller updates!)
+No more changes are needed on the backend to start using the hypermedia controls Spring Data REST provides out of the box. You can switch to working on the frontend. (That is part of the beauty of Spring Data REST: No messy controller updates!)
 
-NOTE: It's important to point out, this application isn't "Spring Data REST-specific." Instead, it uses http://stateless.co/hal_specification.html[HAL], https://tools.ietf.org/html/rfc6570[URI Templates], and other standards. That's how using rest.js is a snap: that library comes with HAL support.
+NOTE: It is important to point out that this application is npt "`Spring Data REST-specific.`" Instead, it uses http://stateless.co/hal_specification.html[HAL], https://tools.ietf.org/html/rfc6570[URI Templates], and other standards. That is Why using rest.js is a snap: That library comes with HAL support.
 
-In the previous section, you hardcoded the path to `/api/employees`. Instead, the ONLY path you should hardcode is the root.
+In the previous section, you hardcoded the path to `/api/employees`. Instead, the ONLY path you should hardcode is the root, as follows
 
+====
 [source,javascript]
 ----
 ...
 var root = '/api';
 ...
 ----
+====
 
-With a handy little https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/js/follow.js[`follow()` function], you can now start from the root and navigate to where you need!
+With a handy little https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/js/follow.js[`follow()` function], you can now start from the root and navigate to where you want, as follows:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=follow-1]
 ----
+====
 
-In the previous section, the loading was done directly inside `componentDidMount()`. In this section, we are making it possible to reload the entire list of employees when the page size is updated. To do so, we have moved things into `loadFromServer()`.
+In the previous section, the loading was done directly inside `componentDidMount()`. In this section, we are making it possible to reload the entire list of employees when the page size is updated. To do so, we have moved things into `loadFromServer()`, as follows:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=follow-2]
 ----
+====
 
-`loadFromServer` is very similar the previous section, but instead if uses `follow()`:
+`loadFromServer` is very similar to the previous section. However, it uses `follow()`:
 
-* The first argument to the follow() function is the `client` object used to make REST calls.
+* The first argument to the `follow()` function is the `client` object used to make REST calls.
 * The second argument is the root URI to start from.
 * The third argument is an array of relationships to navigate along. Each one can be a string or an object.
 
-The array of relationships can be as simple as `["employees"]`, meaning when the first call is made, look in *_links* for the relationship (or *rel*) named *employees*. Find its *href* and navigate to it. If there is another relationship in the array, rinse and repeat.
+The array of relationships can be as simple as `["employees"]`, meaning when the first call is made, look in `_links` for the relationship (or `rel`) named `employees`. Find its `href` and navigate to it. If there is another relationship in the array, repeat the process.
 
-Sometimes, a rel by itself isn't enough. In this fragment of code, it also plugs in a query parameter of *?size=<pageSize>*. There are other options that can be supplied, as you'll see further along.
+Sometimes, a `rel` by itself is not enough. In this fragment of code, it also plugs in a query parameter of `?size=<pageSize>`. There are other options that can be supplied, as you will see later.
 
-== Grabbing JSON Schema metadata
+== Grabbing JSON Schema Metadata
 
-After navigating to *employees* with the size-based query, the *employeeCollection* is at your fingertips. In the previous section, we called it day and displayed that data inside `<EmployeeList />`. Today, you are performing another call to grab some https://json-schema.org/[JSON Schema metadata] found at `/api/profile/employees/`.
+After navigating to `employees` with the size-based query, the `employeeCollection` is available. In the previous section, we displayed that data inside `<EmployeeList />`. In this section, you are performing another call to grab some https://json-schema.org/[JSON Schema metadata] found at `/api/profile/employees/`.
 
-You can see the data yourself:
+You can see the data yourself by running the following `curl` command (shown with its output):
 
+====
 ----
 $ curl http://localhost:8080/api/profile/employees -H "Accept:application/schema+json"
 {
@@ -193,68 +206,72 @@ $ curl http://localhost:8080/api/profile/employees -H "Accept:application/schema
   "$schema" : "https://json-schema.org/draft-04/schema#"
 }
 ----
+====
 
-NOTE: The default form of metadata at /profile/employees is ALPS. In this case, though, you are using content negotation to fetch JSON Schema.
+NOTE: The default form of metadata at `/profile/employees` is http://alps.io[ALPS]. In this case, though, you are using content negotiation to fetch JSON Schema.
 
-By capturing this information in the`<App />` component's state, you can make good use of it later on when building input forms.
+By capturing this information in the`<App />` component's state, you can make good use of it later when building input forms.
 
 [[creating-new-records]]
-== Creating new records
+== Creating New Records
 
-Equipped with this metadata, you can now add some extra controls to the UI. Create a new React component, `<CreateDialog />`.
+Equipped with this metadata, you can now add some extra controls to the UI. You can start by creating a new React component `<CreateDialog />`, as follows:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=create-dialog]
 ----
+====
 
-This new component has both a `handleSubmit()` function as well as the expected `render()` function.
+This new component has both a `handleSubmit()` function and the expected `render()` function.
 
-Let's dig into these functions in reverse order, and first look at the `render()` function.
+We dig into these functions in reverse order, looking first at the `render()` function.
 
 [[hypermedia-rendering]]
 === Rendering
 
-Your code maps over the JSON Schema data found in the *attributes* property and converts it into an array of `<p><input></p>` elements.
+Your code maps over the JSON Schema data found in the `attributes` property and converts it into an array of `<p><input></p>` elements.
 
-* *key* is again needed by React to distinguish between multiple child nodes.
-* It's a simple text-based entry field.
-* *placeholder* is where we can show the user with field is which.
-* You may used to having a *name* attribute, but it's not necessary. With React, *ref* is the mechanism to grab a particular DOM node (as you'll soon see).
+* `key` is again needed by React to distinguish between multiple child nodes.
+* It is a simple text-based entry field.
+* `placeholder` lets us show the user with field is which.
+* You may be used to having a `name` attribute, but it is not necessary. With React, `ref` is the mechanism for grabbing a particular DOM node (as you will soon see).
 
 This represents the dynamic nature of the component, driven by loading data from the server.
 
-Inside this component's top-level `<div>` is an anchor tag and another `<div>`. The anchor tag is the button to open the dialog. And the nested `<div>` is the hidden dialog itself. In this example, you are using pure HTML5 and CSS3. No JavaScript at all! You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/main.css[see the CSS code] used to show/hide the dialog. We won't dive into that here.
+Inside this component's top-level `<div>` is an anchor tag and another `<div>`. The anchor tag is the button to open the dialog. And the nested `<div>` is the hidden dialog itself. In this example, you are using pure HTML5 and CSS3. No JavaScript at all! You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/hypermedia/src/main/resources/static/main.css[see the CSS code] used to show and hide the dialog. We will not dive into that here.
 
 Nestled inside `<div id="createEmployee">` is a form where your dynamic list of input fields are injected followed by the *Create* button. That button has an `onClick={this.handleSubmit}` event handler. This is the React way of registering an event handler.
 
-NOTE: React doesn't create a fistful of event handlers on every DOM element. Instead, it has a https://facebook.github.io/react/docs/interactivity-and-dynamic-uis.html#under-the-hood-autobinding-and-event-delegation[much more performant and sophisticated] solution. The point being you don't have to manage that infrastructure and can instead focus on writing functional code.
+NOTE: React does not create event handlers on every DOM element. Instead, it has a https://facebook.github.io/react/docs/interactivity-and-dynamic-uis.html#under-the-hood-autobinding-and-event-delegation[much more performant and sophisticated] solution. You need not manage that infrastructure and can instead focus on writing functional code.
 
-=== Handling user input
+=== Handling User Input
 
-The `handleSubmit()` function first stops the event from bubbling further up the hierarchy. It then uses the same JSON Schema attribute property to find each `<input>` using `React.findDOMNode(this.refs[attribute])`.
+The `handleSubmit()` function first stops the event from bubbling further up the hierarchy. It then uses the same JSON Schema attribute property to find each `<input>`, by using `React.findDOMNode(this.refs[attribute])`.
 
-`this.refs` is a way to reach out and grab a particular React component by name. In that sense, you are ONLY getting the virtual DOM component. To grab the actual DOM element you need to use `React.findDOMNode()`.
+`this.refs` is a way to reach out and grab a particular React component by name. Note that you are getting ONLY the virtual DOM component. To grab the actual DOM element, you need to use `React.findDOMNode()`.
 
-After iterating over every input and building up the `newEmployee` object, we invoke a callback to `onCreate()` the new employee. This function is up top inside `App.onCreate` and was provided to this React component as another property. Look at how that top-level function operates:
+After iterating over every input and building up the `newEmployee` object, we invoke a callback to `onCreate()` for the new employee record. This function is inside `App.onCreate` and was provided to this React component as another property. Look at how that top-level function operates:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=create]
 ----
+====
 
-Once again, use the `follow()` function to navigate to the *employees* resource where POST operations are performed. In this case, there was no need to apply any parameters, so the string-based array of rels is fine. In this situation, the POST call is returned. This allows the next `then()` clause to handle processing the outcome of the POST.
+Once again, we use the `follow()` function to navigate to the `employees` resource where POST operations are performed. In this case, there was no need to apply any parameters, so the string-based array of `rel` instance is fine. In this situation, the `POST` call is returned. This allows the next `then()` clause to handle processing the outcome of the `POST`.
 
-New records are typically added to the end of the dataset. Since you are looking at a certain page, it's logical to expect the new employee record to not be on the current page. To handle this, you need to fetch a new batch of data with the same page size applied. That promise is returned for the final clause inside `done()`.
+New records are typically added to the end of the dataset. Since you are looking at a certain page, it is logical to expect the new employee record to not be on the current page. To handle this, you need to fetch a new batch of data with the same page size applied. That promise is returned for the final clause inside `done()`.
 
-Since the user probably wants to see the newly created employee, you can then use the hypermedia controls and navigate to the *last* entry.
-
-This introduces the concept of paging in our UI. Let's tackle that next!
+Since the user probably wants to see the newly created employee, you can then use the hypermedia controls and navigate to the `last` entry.
 
 [[NOTE]]
-====
-First time using a promise-based API? https://promisesaplus.com/[Promises] are a way to kick of asynchronous operations and then register a function to respond when the task is done. Promises are designed to be chained together to avoid "callback hell". Look at the following flow:
+=====
+First time using a promise-based API? https://promisesaplus.com/[Promises] are a way to kick off asynchronous operations and then register a function to respond when the task is done. Promises are designed to be chained together to avoid "`callback hell`". Look at the following flow:
 
+====
 [source,javascript]
 ----
 when.promise(async_func_call())
@@ -268,124 +285,138 @@ when.promise(async_func_call())
 		/* process the previous then() and wrap things up */
 	});
 ----
+====
 
 For more details, check out http://know.cujojs.com/tutorials/promises/consuming-promises[this tutorial on promises].
 
-The secret thing to remember with promises is that `then()` functions _need_ to return something, whether it's a value or another promise.  `done()` functions do NOT return anything, and you don't chain anything after it. In case you haven't noticed yet, `client` (which is an instance of `rest` from rest.js) as well as the `follow` function return promises.
+The secret thing to remember with promises is that `then()` functions _need_ to return something, whether it is a value or another promise.  `done()` functions do NOT return anything, and you do not chain anything after one. In case you have not yet noticed, `client` (which is an instance of `rest` from rest.js) and the `follow` function return promises.
+=====
+
+== Paging Through Data
+
+You have set up paging on the backend and have already starting taking advantage of it when creating new employees.
+
+In <<creating-new-records,the previous section>>, you used the page controls to jump to the `last` page. It would be really handy to dynamically apply it to the UI and let the user navigate as desired. Adjusting the controls dynamically, based on available navigation links, would be great.
+
+First, let's check out the `onNavigate()` function you used:
+
 ====
-
-== Paging through data
-
-You set up paging on the backend and have already starting taking advantage of it when creating new employees.
-
-In <<creating-new-records,the previous section>>, you used the page controls to jump to the *last* page. It would be really handy to dynamically apply it to the UI and let the user navigate as desired. Adjusting the controls dynamically based on available navigation links would be great.
-
-First, let's check out the `onNavigate()` function you used.
-
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=navigate]
 ----
+====
 
 This is defined at the top, inside `App.onNavigate`. Again, this is to allow managing the state of the UI in the top component. After passing `onNavigate()` down to the `<EmployeeList />` React component, the following handlers are coded up to handle clicking on some buttons:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=handle-nav]
 ----
+====
 
-Each of these functions intercepts the default event and stops it from bubbling up. Then it invokes the `onNavigate()` function with the proper hypermedia link. 
+Each of these functions intercepts the default event and stops it from bubbling up. Then it invokes the `onNavigate()` function with the proper hypermedia link.
 
-Now conditionally display the controls based on which links appear in the hypermedia links in `EmployeeList.render`:
+Now you can conditionally display the controls based on which links appear in the hypermedia links in `EmployeeList.render`:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=employee-list-render]
 ----
+====
 
-As in the previous section, it still transforms `this.props.employees` into an array of `<Element />` components. Then it builds up an array of `navLinks`, an array of HTML buttons.
+As in the previous section, it still transforms `this.props.employees` into an array of `<Element />` components. Then it builds up an array of `navLinks` as an array of HTML buttons.
 
-NOTE: Because React is based on XML, you can't put "<" inside the `<button>` element. You must instead use the encoded version.
+NOTE: Because React is based on XML, you cannot put `<` inside the `<button>` element. You must instead use the encoded version.
 
 Then you can see `{navLinks}` inserted towards the bottom of the returned HTML.
 
-== Deleting existing records
+== Deleting Existing Records
 
-Deleting entries is much easier. Get a hold of its HAL-based record and apply *DELETE* to its *self* link.
+Deleting entries is much easier. All you need to do is get its HAL-based record and apply `DELETE` to its `self` link:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=employee]
 ----
+====
 
-This updated version of the Employee component shows an extra entry at the end of the row, a delete button. It is registered to invoke `this.handleDelete` when clicked upon. The `handleDelete()` function can then invoke the callback passed down while supplying the contextually important `this.props.employee` record.
+This updated version of the Employee component shows an extra entry (a delete button) at the end of the row. It is registered to invoke `this.handleDelete` when clicked. The `handleDelete()` function can then invoke the callback passed down while supplying the contextually important `this.props.employee` record.
 
-IMPORTANT: This shows again that it is easiest to manage state in the top component, in one place. This might not _always_ be the case, but oftentimes, managing state in one place makes it easier to keep straight and simpler. By invoking the callback with component-specific details (`this.props.onDelete(this.props.employee)`), it is very easy to orchestrate behavior between components. 
+IMPORTANT: This again shows that it is easiest to manage state in the top component, in one place. This might not _always_ be the case. However, oftentimes, managing state in one place makes it easier to keep things straight and simpler. By invoking the callback with component-specific details (`this.props.onDelete(this.props.employee)`), it is very easy to orchestrate behavior between components.
 
-Tracing the `onDelete()` function back to the top at `App.onDelete`, you can see how it operates:
+By tracing the `onDelete()` function back to the top at `App.onDelete`, you can see how it operates:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=delete]
 ----
+====
 
 The behavior to apply after deleting a record with a page-based UI is a bit tricky. In this case, it reloads the whole data from the server, applying the same page size. Then it shows the first page.
 
 If you are deleting the last record on the last page, it will jump to the first page.
 
-== Adjusting the page size
+== Adjusting the Page Size
 
 One way to see how hypermedia really shines is to update the page size. Spring Data REST fluidly updates the navigational links based on the page size.
 
 There is an HTML element at the top of `ElementList.render`: `<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>`.
 
-* `ref="pageSize"` makes it easy to grab that element via this.refs.pageSize.
-* `defaultValue` initializes it with the state's *pageSize*.
-* `onInput` registers a handler as shown below.
-
+* `ref="pageSize"` makes it easy to grab that element with `this.refs.pageSize`.
+* `defaultValue` initializes it with the state's `pageSize`.
+* `onInput` registers a handler, as shown below:
++
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=handle-page-size-updates]
 ----
+====
 
-It stops the event from bubbling up. Then it uses the *ref* attribute of the `<input>` to find the DOM node and extract its value, all through React's `findDOMNode()` helper function. It tests if the input is really a number by checking if it's a string of digits. If so, it invokes the callback, sending the new page size to the `App` React component. If not, the character just entered is stripped off the input.
+It stops the event from bubbling up. Then it uses the `ref` attribute of the `<input>` to find the DOM node and extract its value, all through React's `findDOMNode()` helper function. It tests whether the input is really a number by checking if it is a string of digits. If so, it invokes the callback, sending the new page size to the `App` React component. If not, the character just entered is stripped off the input.
 
 What does `App` do when it gets a `updatePageSize()`? Check it out:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=update-page-size]
 ----
+====
 
-Because a new page size causes changes to all the navigation links, it's best to refetch the data and start from the beginning. 
+Because a new page size value causes changes to all the navigation links, it is best to refetch the data and start from the beginning.
 
-== Putting it all together
+== Putting It All Together
 
-With all these nice additions, you now have a really vamped up UI.
+With all these nice additions, you now have a really vamped up UI, as the following image shows:
 
 image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/hypermedia/images/hypermedia-1.png[]
 
 You can see the page size setting at the top, the delete buttons on each row, and the navigational buttons at the bottom. The navigational buttons illustrate a powerful feature of hypermedia controls.
 
-Down below, you can see the `CreateDialog` with the metadata plugged into the HTML input placeholders.
+In the following image, you can see the `CreateDialog` with the metadata plugged into the HTML input placeholders:
 
 image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/hypermedia/images/hypermedia-2.png[]
 
-This really shows the power of using hypermedia coupled with domain-driven metadata (JSON Schema). The web page doesn't have to know which field is which. Instead, the user can _see_ it and know how to use it. If you added another field to the `Employee` domain object, this pop-up would automatically display it.
+This really shows the power of using hypermedia coupled with domain-driven metadata (JSON Schema). The web page does not have to know which field is which. Instead, the user can _see_ it and know how to use it. If you added another field to the `Employee` domain object, this pop-up would automatically display it.
 
 == Review
 
 In this section:
 
 * You turned on Spring Data REST's paging feature.
-* You threw out hardcoded URI paths and started using the root URI combined with relationship names or "rels". 
+* You threw out hardcoded URI paths and started using the root URI combined with relationship names or "`rels`".
 * You updated the UI to dynamically use page-based hypermedia controls.
 * You added the ability to create & delete employees and update the UI as needed.
 * You made it possible to change the page size and have the UI flexibly respond.
 
 Issues?
 
-You made the webpage dynamic. But open another browser tab and point it at the same app. Changes in one tab won't update anything in the other.
+You made the webpage dynamic. But open another browser tab and point it at the same app. Changes in one tab do not update anything in the other.
 
-That is something we can address in the next section. 
-
+We address that issue in the next section.

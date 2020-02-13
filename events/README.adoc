@@ -2,161 +2,177 @@
 = Part 4 - Events
 :sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
-In the <<react-and-spring-data-rest-part-3,previous section>>, you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a tip off if someone edited the same record so you could refresh the page and get the update.
+In the <<react-and-spring-data-rest-part-3,previous section>>, you introduced conditional updates to avoid collisions with other users when editing the same data. You also learned how to version data on the backend with optimistic locking. You got a notification if someone edited the same record so you could refresh the page and get the update.
 
-That's good. But do you know what's even better? Having the UI dynamically respond when other people update the resources.
+That is good. But do you know what is even better? Having the UI dynamically respond when other people update the resources.
 
-In this section you'll learn how to use Spring Data REST's built in event system to detect changes in the backend and publish updates to ALL users through Spring's WebSocket support. Then you'll be able to dynamically adjust clients as the data updates.
+In this section, you will learn how to use Spring Data REST's built in event system to detect changes in the backend and publish updates to ALL users through Spring's WebSocket support. Then you will be able to dynamically adjust clients as the data updates.
 
-Feel free to {sourcedir}/events[grab the code] from this repository and follow along. This section is based on the previous section's app with extra things added.
+Feel free to {sourcedir}/events[grab the code] from this repository and follow along. This section is based on the previous section's application, with extra things added.
 
-== Adding Spring WebSocket support to the project
+== Adding Spring WebSocket Support to the Project
 
 Before getting underway, you need to add a dependency to your project's pom.xml file:
 
+====
 [source,xml,indent=0]
 ----
 include::pom.xml[tag=websocket]
 ----
+====
 
-This bring in Spring Boot's WebSocket starter.
+This dependency brings in Spring Boot's WebSocket starter.
 
 == Configuring WebSockets with Spring
 
-https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#websocket[Spring comes with powerful WebSocket support]. One thing to recognize is that a WebSocket is a very low level protocol. It does little more than offer the means to transmit data between client and server. The recommendation is to use a sub-protocol (STOMP for this section) to actually encode data and routes.
+https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#websocket[Spring comes with powerful WebSocket support]. One thing to recognize is that a WebSocket is a very low-level protocol. It does little more than offer the means to transmit data between client and server. The recommendation is to use a sub-protocol (STOMP for this section) to actually encode data and routes.
 
-The follow code is used to configure WebSocket support on the server side:
+The following code configures WebSocket support on the server side:
 
+====
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/WebSocketConfiguration.java[tag=code]
 ----
 
-* `@EnableWebSocketMessageBroker` turns on WebSocket support.
-* `AbstractWebSocketMessageBrokerConfigurer` provides a convenient base class to configure basic features.
-* *MESSAGE_PREFIX* is the prefix you will prepend to every message's route.
-* `registerStompEndpoints()` is used to configure the endpoint on the backend for clients and server to link (`/payroll`).
-* `configureMessageBroker()` is used to configure the broker used to relay messages between server and client.
+<1> `@EnableWebSocketMessageBroker` turns on WebSocket support.
+<2> `WebSocketMessageBrokerConfigurer` provides a convenient base class to configure basic features.
+<3> *MESSAGE_PREFIX* is the prefix you will prepend to every message's route.
+<4> `registerStompEndpoints()` is used to configure the endpoint on the backend for clients and server to link (`/payroll`).
+<5> `configureMessageBroker()` is used to configure the broker used to relay messages between server and client.
+====
 
-With this configuration, it's now possible to tap into Spring Data REST events and publish them over a WebSocket.
+With this configuration, you can now tap into Spring Data REST events and publish them over a WebSocket.
 
-== Subscribing to Spring Data REST events
+== Subscribing to Spring Data REST Events
 
-Spring Data REST generates several https://docs.spring.io/spring-data/rest/docs/current/reference/html/#events[application events] based on actions occurring on the repositories. The follow code shows how to subscribe to some of these events:
+Spring Data REST generates several https://docs.spring.io/spring-data/rest/docs/current/reference/html/#events[application events] based on actions occurring on the repositories. The following code shows how to subscribe to some of these events:
 
+====
 [source,java]
 ----
 include::src/main/java/com/greglturnquist/payroll/EventHandler.java[tag=code]
 ----
 
-* `@RepositoryEventHandler(Employee.class)` flags this class to trap events based on *employees*.
-* `SimpMessagingTemplate` and `EntityLinks` are autowired from the application context.
-* The `@HandleXYZ` annotations flag the methods that need to listen to. These methods must be public.
+<1> `@RepositoryEventHandler(Employee.class)` flags this class to trap events based on *employees*.
+<2> `SimpMessagingTemplate` and `EntityLinks` are autowired from the application context.
+<3> The `@HandleXYZ` annotations flag the methods that need to listen to events. These methods must be public.
+====
 
 Each of these handler methods invokes `SimpMessagingTemplate.convertAndSend()` to transmit a message over the WebSocket. This is a pub-sub approach so that one message is relayed to every attached consumer.
 
-The route of each message is different, allowing multiple messages to be sent to distinct receivers on the client while only needing one open WebSocket, a resource-efficient approach.
+The route of each message is different, allowing multiple messages to be sent to distinct receivers on the client while needing only one open WebSocket -- a resource-efficient approach.
 
 `getPath()` uses Spring Data REST's `EntityLinks` to look up the path for a given class type and id. To serve the client's needs, this `Link` object is converted to a Java URI with its path extracted.
 
 NOTE: `EntityLinks` comes with several utility methods to programmatically find the paths of various resources, whether single or for collections.
 
-In essense, you are listening for create, update, and delete events, and after they are completed, sending notice of them to all clients. It's also possible to intercept such operations BEFORE they happen, and perhaps log them, block them for some reason, or decorate the domain objects with extra information. (In the next section, we'll see a VERY handy use for this!)
+In essence, you are listening for create, update, and delete events, and, after they are completed, sending notice of them to all clients. You can also intercept such operations BEFORE they happen, and perhaps log them, block them for some reason, or decorate the domain objects with extra information. (In the next section, we will see a handy use for this.)
 
 == Configuring a JavaScript WebSocket
 
-Next step is to write some client-side code to consume WebSocket events. The follow chunk in them main app pulls in a module.
+The next step is to write some client-side code to consume WebSocket events. The following chunk in the main application pulls in a module:
 
+====
 [source,javascript]
 ----
 var stompClient = require('./websocket-listener')
 ----
+====
 
 That module is shown below:
 
+====
 [source,javascript]
 ----
 include::src/main/js/websocket-listener.js[]
 ----
 
-<1> You pull in the SockJS JavaScript library for talking over WebSockets.
-<2> You pull in the stomp-websocket JavaScript library to use the STOMP sub-protocol.
-<3> Here is where the WebSocket is pointed at the application's `/payroll` endpoint.
-<4> Iterate over the array of `registrations` supplied so each can subscribe for callback as messages arrive.
+<1> Pull in the SockJS JavaScript library for talking over WebSockets.
+<2> Pull in the stomp-websocket JavaScript library to use the STOMP sub-protocol.
+<3> Point the WebSocket at the application's `/payroll` endpoint.
+<4> Iterate over the array of `registrations` supplied so that each can subscribe for callback as messages arrive.
+====
 
 Each registration entry has a `route` and a `callback`. In the next section, you can see how to register event handlers.
 
-== Registering for WebSocket events
+== Registering for WebSocket Events
 
-In React, a component's `componentDidMount()` is the function that gets called after it has been rendered in the DOM. That is also the right time to register for WebSocket events, because the component is now online and ready for business. Checkout the code below:
+In React, a component's `componentDidMount()` function gets called after it has been rendered in the DOM. That is also the right time to register for WebSocket events, because the component is now online and ready for business. The following code does so:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=register-handlers]
 ----
+====
 
 The first line is the same as before, where all the employees are fetched from the server using page size. The second line shows an array of JavaScript objects being registered for WebSocket events, each with a `route` and a `callback`.
 
-When a new employee is created, the behavior is to refresh the data set and then use the paging links to navigate to the *last* page. Why refresh the data before navigating to the end? It's possible that adding a new record causes a new page to get created. While it's possible to calculate if this will happen, it subverts the point of hypermedia. Instead of cobbling together customize page counts, it's better to use existing links and only go down that road if there is a performance-driving reason to do so.
+When a new employee is created, the behavior is to refresh the data set and then use the paging links to navigate to the *last* page. Why refresh the data before navigating to the end? It is possible that adding a new record causes a new page to get created. While it is possible to calculate if this will happen, it subverts the point of hypermedia. Instead of cobbling together customized page counts, it is better to use existing links and only go down that road if there is a performance-driving reason to do so.
 
-When an employee is updated or deleted, the behavior is to refresh the current page. When you update a record, it impacts the page your are viewing. When you delete a record on the current page, a record from the next page will get pulled into the current one, hence the need to also refresh the current page.
+When an employee is updated or deleted, the behavior is to refresh the current page. When you update a record, it impacts the page your are viewing. When you delete a record on the current page, a record from the next page will get pulled into the current one -- hence the need to also refresh the current page.
 
-NOTE: There is no requirement for these WebSocket messages to start with `/topic`. It is simply a common convention that indicates pub-sub semantics.
+NOTE: There is no requirement for these WebSocket messages to start with `/topic`. It is a common convention that indicates pub-sub semantics.
 
 In the next section, you can see the actual operations to perform these operations.
 
-== Reacting to WebSocket events and updating the UI state
+== Reacting to WebSocket Events and Updating the UI State
 
-The following chunk of code contains the two callbacks used to update UI state when a WebSocket event is received.
+The following chunk of code contains the two callbacks used to update UI state when a WebSocket event is received:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=websocket-handlers]
 ----
+====
 
-`refreshAndGoToLastPage()` uses the familiar `follow()` function to navigate to the *employees* link with the *size* parameter applied, plugging in `this.state.pageSize`. When the response is received, you then invoke the same `onNavigate()` function from the last section, and jump to the *last* page, the one where the new record will be found.
+`refreshAndGoToLastPage()` uses the familiar `follow()` function to navigate to the `employees` link with the `size` parameter applied, plugging in `this.state.pageSize`. When the response is received, you then invoke the same `onNavigate()` function from the last section and jump to the *last* page, the one where the new record will be found.
 
-`refreshCurrentPage()` also uses the `follow()` function but applies `this.state.pageSize` to *size* and `this.state.page.number` to *page*. This fetches the same page you are currently looking at and updates the state accordingly.
+`refreshCurrentPage()` also uses the `follow()` function but applies `this.state.pageSize` to `size` and `this.state.page.number` to `page`. This fetches the same page you are currently looking at and updates the state accordingly.
 
-NOTE: This behavior tells every client to refresh their current page when an update or delete message is sent. It's possible that their current page may have nothing to do with the current event. However, it can be tricky to figure that out. What if the record that was deleted was on page two and you are looking at page three? Every entry would change. But is this desired behavior at all? Maybe, maybe not. 
+NOTE: This behavior tells every client to refresh their current page when an update or delete message is sent. It is possible that their current page may have nothing to do with the current event. However, it can be tricky to figure that out. What if the record that was deleted was on page two and you are looking at page three? Every entry would change. But is this desired behavior at all? Maybe. Maybe not.
 
-== Moving state management out of the local updates
+== Moving State Management Out of the Local Updates
 
 Before you finish this section, there is something to recognize. You just added a new way for the state in the UI to get updated: when a WebSocket message arrives. But the old way to update the state is still there.
 
-To simplify your code's management of state, remove the old way. In other words, submit your *POST*, *PUT*, and *DELETE* calls, but don't use their results to update the UI's state. Instead, wait for the WebSocket event to circle back and then do the update.
+To simplify your code's management of state, remove the old way. In other words, submit your `POST`, `PUT`, and `DELETE` calls, but do not use their results to update the UI's state. Instead, wait for the WebSocket event to circle back and then do the update.
 
 The follow chunk of code shows the same `onCreate()` function as the previous section, only simplified:
 
+====
 [source,javascript,indent=0]
 ----
 include::src/main/js/app.js[tag=on-create]
 ----
+====
 
-Here, the `follow()` function is used to get to the *employees* link, and then the *POST* operation is applied. Notice how `client({method: 'GET' ...})` has no `then()` or `done()` like before? The event handler to listen for updates is now found in `refreshAndGoToLastPage()` which you just looked at.
+Here, the `follow()` function is used to get to the `employees` link, and then the `POST` operation is applied. Notice how `client({method: 'GET' ...})` has no `then()` or `done()`, as before? The event handler to listen for updates is now found in `refreshAndGoToLastPage()`, which you just looked at.
 
-== Putting it all together
+== Putting It All Together
 
-With all these mods in place, fire up the app (`./mvnw spring-boot:run`) and poke around with it. Open up two browser tabs and resize so you can see them both. Start making updates in one and see how they instantly update the other tab. Open up your phone and visit the same page. Find a friend and ask him or her to do the same thing. You might find this type of dynamic updating more keen.
+With all these modifications in place, fire up the application (`./mvnw spring-boot:run`) and poke around with it. Open up two browser tabs and resize so you can see them both. Start making updates in one and see how they instantly update the other tab. Open up your phone and visit the same page. Find a friend and ask that person to do the same thing. You might find this type of dynamic updating more keen.
 
-Want a challenge? Try the exercise from the previous section where you open the same record in two different browser tabs. Try to update it in one and NOT see it update in the other. If it's possible, the conditional PUT code should still protect you. But it may be trickier to pull that off!
+Want a challenge? Try the exercise from the previous section where you open the same record in two different browser tabs. Try to update it in one and NOT see it update in the other. If it is possible, the conditional `PUT` code should still protect you. But it may be trickier to pull that off!
 
 == Review
 
-In this section:
+In this section, you:
 
-* You configured Spring's WebSocket suport with SockJS fallback.
-* You subscribed for create, update, and delete events from Spring Data REST to dynamically update the UI.
-* You published the URI of affected REST resources along with a contextual message ("/topic/newEmployee", "/topic/updateEmployee", etc.).
-* You registered WebSocket listeners in the UI to listen for these events.
-* You wired the listeners to handlers to update the UI state.
+* Configured Spring's WebSocket support with a SockJS fallback.
+* Subscribed for create, update, and delete events from Spring Data REST to dynamically update the UI.
+* Published the URI of affected REST resources along with a contextual message ("/topic/newEmployee", "/topic/updateEmployee", and so on).
+* Registered WebSocket listeners in the UI to listen for these events.
+* Wred the listeners to handlers to update the UI state.
 
-With all these features, it's easy to run two browsers, side-by-side, and see how updating one ripples to the other.
+With all these features, it is easy to run two browsers, side-by-side, and see how updating one ripples to the other.
 
 Issues?
 
 While multiple displays nicely update, polishing the precise behavior is warranted. For example, creating a new user will cause ALL users to jump to the end. Any thoughts on how this should be handled?
 
-Paging is useful, but offers a tricky state to manage. The costs are low on this sample app, and React at very efficient at updating the DOM without causing lots of flickering in the UI. But with a more complex app, not all of these approaches will fit.
+Paging is useful, but it offers a tricky state to manage. The costs are low on this sample application, and React is very efficient at updating the DOM without causing lots of flickering in the UI. But with a more complex application, not all of these approaches will fit.
 
-When designing with paging in mind, you have to decide what is the expected behavior between clients and if there needs to updates or not. Depending on your requirements and performance of the system, the existing navigational hypermedia may be sufficent.
+When designing with paging in mind, you have to decide what is the expected behavior between clients and if there needs to be updates or not. Depending on your requirements and performance of the system, the existing navigational hypermedia may be sufficient.

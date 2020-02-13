@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  */
 // tag::code[]
 @Component
-@RepositoryEventHandler(Employee.class)
+@RepositoryEventHandler(Employee.class) // <1>
 public class SpringDataRestEventHandler {
 
 	private final ManagerRepository managerRepository;
