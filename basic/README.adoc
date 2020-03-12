@@ -99,7 +99,7 @@ include::src/main/resources/application.properties[]
 
 == Launching the Backend
 
-The last step needed to get a fully operational REST API off the ground is to write a `public static void main` mwethod by using Spring Boot, as follows:
+The last step needed to get a fully operational REST API off the ground is to write a `public static void main` method by using Spring Boot, as follows:
 
 .src/main/java/com/greglturnquist/payroll/ReactAndSpringDataRestApplication.java
 ====
