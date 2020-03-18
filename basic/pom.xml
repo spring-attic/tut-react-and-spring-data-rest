@@ -6,7 +6,7 @@
 
 	<parent>
 		<groupId>com.greglturnquist</groupId>
-		<artifactId>react-and-spring-data-rest</artifactId>
+		<artifactId>my-app</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	
