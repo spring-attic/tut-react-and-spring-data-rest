@@ -32,34 +32,34 @@ import org.springframework.stereotype.Component;
 // tag::code[]
 @Component
 @RepositoryEventHandler(Contestant.class) // <1>
-public class EmployeeEventHandler {
+public class ContestantEventHandler {
 
 	private final SimpMessagingTemplate websocket; // <2>
 
 	private final EntityLinks entityLinks;
 
 	@Autowired
-	public EmployeeEventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks) {
+	public ContestantEventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks) {
 		this.websocket = websocket;
 		this.entityLinks = entityLinks;
 	}
 
 	@HandleAfterCreate // <3>
-	public void newEmployee(Contestant contestant) {
+	public void newContestant(Contestant contestant) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/newEmployee", getPath(contestant));
+				MESSAGE_PREFIX + "/newContestant", getPath(contestant));
 	}
 
 	@HandleAfterDelete // <3>
-	public void deleteEmployee(Contestant contestant) {
+	public void deleteContestant(Contestant contestant) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/deleteEmployee", getPath(contestant));
+				MESSAGE_PREFIX + "/deleteContestant", getPath(contestant));
 	}
 
 	@HandleAfterSave // <3>
-	public void updateEmployee(Contestant contestant) {
+	public void updateContestant(Contestant contestant) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/updateEmployee", getPath(contestant));
+				MESSAGE_PREFIX + "/updateContestant", getPath(contestant));
 	}
 
 	/**

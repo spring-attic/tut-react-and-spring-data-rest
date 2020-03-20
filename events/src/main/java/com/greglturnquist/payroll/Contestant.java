@@ -40,10 +40,10 @@ public class Contestant {
 
 	private Contestant() {}
 
-	public Contestant(String firstName, String lastName, String description) {
+	public Contestant(String firstName, String lastName, String gender) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.gender = description;
+		this.gender = gender;
 	}
 
 	@Override
@@ -88,11 +88,11 @@ public class Contestant {
 		this.lastName = lastName;
 	}
 
-	public String getDescription() {
+	public String getGender() {
 		return gender;
 	}
 
-	public void setDescription(String description) {
+	public void setGender(String description) {
 		this.gender = description;
 	}
 

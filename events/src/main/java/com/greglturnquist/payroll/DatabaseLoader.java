@@ -26,22 +26,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatabaseLoader implements CommandLineRunner {
 
-	private final EmployeeRepository repository;
+	private final ContestantRepository contestantRepository;
+	private final GridItemRepository gridItemRepository;
 
 	@Autowired
-	public DatabaseLoader(EmployeeRepository repository) {
-		this.repository = repository;
+	public DatabaseLoader(ContestantRepository contestantRepository, GridItemRepository gridItemRepository) {
+		this.contestantRepository = contestantRepository;
+		this.gridItemRepository = gridItemRepository;
 	}
 
 	@Override
 	public void run(String... strings) throws Exception {
+//		load contestants
 
-		this.repository.save(new Contestant("Sarah", "Smith", "female"));
-		this.repository.save(new Contestant("Mark", "Jones", "male"));
-		this.repository.save(new Contestant("Amanda", "Abrams", "female"));
-		this.repository.save(new Contestant("Lewis", "Wright", "male"));
-		this.repository.save(new Contestant("Lauren", "Lane", "female"));
-		this.repository.save(new Contestant("Chris", "Bukowski", "male"));
+		Contestant c1 = new Contestant("Sarah", "Smith", "female");
+		Contestant c2 = new Contestant("Mark", "Jones", "male");
+		Contestant c3 = new Contestant("Amanda", "Abrams", "female");
+		Contestant c4 = new Contestant("Lewis", "Wright", "male");
+		this.contestantRepository.save(c1);
+		this.contestantRepository.save(c2);
+
+//		load gridItems
+		GridItem g1 = new GridItem(c1, c2);
+		this.gridItemRepository.save(g1);
+
+
 	}
 }
 // end::code[]

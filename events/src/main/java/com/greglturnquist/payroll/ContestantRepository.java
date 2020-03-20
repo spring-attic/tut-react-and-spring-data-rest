@@ -21,7 +21,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author Greg Turnquist
  */
 // tag::code[]
-public interface EmployeeRepository extends PagingAndSortingRepository<Contestant, Long> {
+public interface ContestantRepository extends PagingAndSortingRepository<Contestant, Long> {
 
 }
 // end::code[]

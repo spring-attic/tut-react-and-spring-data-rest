@@ -10,16 +10,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class GridItem {
     private @Id @GeneratedValue Long id;
-    private String girlName;
-    private String boyName;
+    private Contestant girl;
+    private Contestant boy;
     private @Version @JsonIgnore Long version;
     private int colorState;
 
     private GridItem() {}
 
-    public GridItem(String girlName, String boyName) {
-        this.girlName = girlName;
-        this.boyName = boyName;
+    public GridItem(Contestant girl, Contestant boy) {
+        this.girl = girl;
+        this.boy = boy;
         this.colorState=0;
     }
 

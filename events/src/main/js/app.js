@@ -21,7 +21,7 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {employees: [], attributes: [], page: 1, pageSize: 2, links: {}};
+		this.state = {contestants: [], attributes: [], page: 1, pageSize: 2, links: {}};
 		this.updatePageSize = this.updatePageSize.bind(this);
 		this.onCreate = this.onCreate.bind(this);
 		this.onUpdate = this.onUpdate.bind(this);
@@ -33,7 +33,7 @@ class App extends React.Component {
 
 	loadFromServer(pageSize) {
 		follow(client, root, [
-				{rel: 'employees', params: {size: pageSize}}]
+				{rel: 'contestants', params: {size: pageSize}}]
 		).then(employeeCollection => {
 				return client({
 					method: 'GET',
@@ -46,7 +46,7 @@ class App extends React.Component {
 				});
 		}).then(employeeCollection => {
 			this.page = employeeCollection.entity.page;
-			return employeeCollection.entity._embedded.employees.map(employee =>
+			return employeeCollection.entity._embedded.contestants.map(employee =>
 					client({
 						method: 'GET',
 						path: employee._links.self.href
@@ -54,10 +54,10 @@ class App extends React.Component {
 			);
 		}).then(employeePromises => {
 			return when.all(employeePromises);
-		}).done(employees => {
+		}).done(contestants => {
 			this.setState({
 				page: this.page,
-				employees: employees,
+				contestants: contestants,
 				attributes: Object.keys(this.schema.properties),
 				pageSize: pageSize,
 				links: this.links
@@ -67,7 +67,7 @@ class App extends React.Component {
 
 	// tag::on-create[]
 	onCreate(newEmployee) {
-		follow(client, root, ['employees']).done(response => {
+		follow(client, root, ['contestants']).done(response => {
 			client({
 				method: 'POST',
 				path: response.entity._links.self.href,
@@ -108,7 +108,7 @@ class App extends React.Component {
 			this.links = employeeCollection.entity._links;
 			this.page = employeeCollection.entity.page;
 
-			return employeeCollection.entity._embedded.employees.map(employee =>
+			return employeeCollection.entity._embedded.contestants.map(employee =>
 					client({
 						method: 'GET',
 						path: employee._links.self.href
@@ -116,10 +116,10 @@ class App extends React.Component {
 			);
 		}).then(employeePromises => {
 			return when.all(employeePromises);
-		}).done(employees => {
+		}).done(contestants => {
 			this.setState({
 				page: this.page,
-				employees: employees,
+				contestants: contestants,
 				attributes: Object.keys(this.schema.properties),
 				pageSize: this.state.pageSize,
 				links: this.links
@@ -136,7 +136,7 @@ class App extends React.Component {
 	// tag::websocket-handlers[]
 	refreshAndGoToLastPage(message) {
 		follow(client, root, [{
-			rel: 'employees',
+			rel: 'contestants',
 			params: {size: this.state.pageSize}
 		}]).done(response => {
 			if (response.entity._links.last !== undefined) {
@@ -149,7 +149,7 @@ class App extends React.Component {
 
 	refreshCurrentPage(message) {
 		follow(client, root, [{
-			rel: 'employees',
+			rel: 'contestants',
 			params: {
 				size: this.state.pageSize,
 				page: this.state.page.number
@@ -158,7 +158,7 @@ class App extends React.Component {
 			this.links = employeeCollection.entity._links;
 			this.page = employeeCollection.entity.page;
 
-			return employeeCollection.entity._embedded.employees.map(employee => {
+			return employeeCollection.entity._embedded.contestants.map(employee => {
 				return client({
 					method: 'GET',
 					path: employee._links.self.href
@@ -166,10 +166,10 @@ class App extends React.Component {
 			});
 		}).then(employeePromises => {
 			return when.all(employeePromises);
-		}).then(employees => {
+		}).then(contestants => {
 			this.setState({
 				page: this.page,
-				employees: employees,
+				contestants: contestants,
 				attributes: Object.keys(this.schema.properties),
 				pageSize: this.state.pageSize,
 				links: this.links
@@ -194,9 +194,9 @@ class App extends React.Component {
 
 			<div>
 				<CreateDialog attributes={this.state.attributes} onCreate={this.onCreate}/>
-				<Grid rowCount={this.state.employees.length} columnCount={this.state.employees.length} gridItems={[]} />
+				<Grid rowCount={this.state.contestants.length} columnCount={this.state.contestants.length} gridItems={[]} />
 				<EmployeeList page={this.state.page}
-							  employees={this.state.employees}
+							  contestants={this.state.contestants}
 							  links={this.state.links}
 							  pageSize={this.state.pageSize}
 							  attributes={this.state.attributes}
@@ -351,9 +351,9 @@ class EmployeeList extends React.Component {
 
 	render() {
 		const pageInfo = this.props.page.hasOwnProperty("number") ?
-			<h3>Employees - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
+			<h3>contestants - Page {this.props.page.number + 1} of {this.props.page.totalPages}</h3> : null;
 
-		const employees = this.props.employees.map(employee =>
+		const contestants = this.props.contestants.map(employee =>
 			<Employee key={employee.entity._links.self.href}
 					  employee={employee}
 					  attributes={this.props.attributes}
@@ -388,7 +388,7 @@ class EmployeeList extends React.Component {
 							<th></th>
 							<th></th>
 						</tr>
-						{employees}
+						{contestants}
 					</tbody>
 				</table>
 				<div>
