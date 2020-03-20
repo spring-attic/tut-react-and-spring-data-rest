@@ -43,7 +43,7 @@ include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 <2> `@Id` and `@GeneratedValue` are JPA annotations to note the primary key and that is generated automatically when needed.
 ====
 
-This entity is used to track employee information -- in this case, their names and job descriptions.
+This entity is used to track contestant information -- in this case, their names and job descriptions.
 
 NOTE: Spring Data REST is not confined to JPA. It supports many NoSQL data stores, though you will not see those in this tutorial. For more information, see https://spring.io/guides/gs/accessing-neo4j-data-rest/[Accessing Neo4j Data with REST], https://spring.io/guides/gs/accessing-data-rest/[Accessing JPA Data with REST], and https://spring.io/guides/gs/accessing-mongodb-data-rest/[Accessing MongoDB Data with REST].
 
@@ -136,7 +136,7 @@ $ curl localhost:8080/api
 When you ping the root node, you get back a collection of links wrapped in a http://stateless.co/hal_specification.html[HAL-formatted JSON document].
 
 * `_links` is the collection of available links.
-* `employees` points to an aggregate root for the employee objects defined by the `EmployeeRepository` interface.
+* `employees` points to an aggregate root for the contestant objects defined by the `EmployeeRepository` interface.
 * `profile` is an IANA-standard relation and points to discoverable metadata about the entire service. We explore this in a later section.
 
 You can further dig into this service by navigating the `employees` link. The following command (shown with its output) does so:
@@ -163,11 +163,11 @@ $ curl localhost:8080/api/employees
 
 At this stage, you are viewing the entire collection of employees.
 
-Along with the data you pre-loaded earlier, a `_links` attribute with a `self` link is included. This is the canonical link for that particular employee. What is canonical? It means "`free of context`". For example, the same user could be fetched through `/api/orders/1/processor`, in which the employee is associated with processing a particular order. Here, there is no relationship to other entities.
+Along with the data you pre-loaded earlier, a `_links` attribute with a `self` link is included. This is the canonical link for that particular contestant. What is canonical? It means "`free of context`". For example, the same user could be fetched through `/api/orders/1/processor`, in which the contestant is associated with processing a particular order. Here, there is no relationship to other entities.
 
 IMPORTANT: Links are a critical facet of REST. They provide the power to navigate to related items. It makes it possible for other parties to navigate around your API without having to rewrite things every time there is a change. Updates in the client is a common problem when the clients hard-code paths to resources. Restructuring resources can cause big upheavals in code. If links are used and the navigation route is maintained, it becomes easy and flexible to make such adjustments.
 
-You can decide to view that one employee if you wish. The following command (shown with its output) does so:
+You can decide to view that one contestant if you wish. The following command (shown with its output) does so:
 
 ====
 ----
@@ -321,7 +321,7 @@ IMPORTANT: The code for `client` is not shown because what you use to make REST 
 
 React is based on defining components. Often, one component can hold multiple instances of another in a parent-child relationship. This concept can extend to several layers.
 
-To start things off, it is very handy to have a top level container for all components. (This will become more evident as you expand upon the code throughout this series.) Right now, you only have the employee list. But you might need some other related components later on, so start with the following:
+To start things off, it is very handy to have a top level container for all components. (This will become more evident as you expand upon the code throughout this series.) Right now, you only have the contestant list. But you might need some other related components later on, so start with the following:
 
 .src/main/js/app.js - App component
 ====
@@ -354,7 +354,7 @@ WARNING: JavaScript does not lock down data structures as other languages do. Yo
 
 In this code, the function loads data through `client`, a https://promisesaplus.com/[Promise-compliant] instance of rest.js. When it is done retrieving from `/api/employees`, it then invokes the function inside `done()` and sets the state based on its HAL document (`response.entity._embedded.employees`). See the structure of `curl /api/employees` <<Touring your REST service,earlier>> and see how it maps onto this structure.
 
-When the state is updated, the `render()` function is invoked by the framework. The employee state data is included in the creation of the `<EmployeeList />` React component as an input parameter.
+When the state is updated, the `render()` function is invoked by the framework. The contestant state data is included in the creation of the `<EmployeeList />` React component as an input parameter.
 
 The following listing shows the definition for an `EmployeeList`:
 
@@ -362,22 +362,22 @@ The following listing shows the definition for an `EmployeeList`:
 ====
 [source,javascript,indent=0]
 ----
-include::src/main/js/app.js[tag=employee-list]
+include::src/main/js/app.js[tag=contestant-list]
 ----
 ====
 
-Using JavaScript's map function, `this.props.employees` is transformed from an array of employee records into an array of `<Element />` React components (which you will see a little later).
+Using JavaScript's map function, `this.props.employees` is transformed from an array of contestant records into an array of `<Element />` React components (which you will see a little later).
 
 Consider the following listing:
 
 ====
 [source,javascript]
 ----
-<Employee key={employee._links.self.href} data={employee} />
+<Employee key={contestant._links.self.href} data={contestant} />
 ----
 ====
 
-The preceding listing creates a new React component (note the uppercase format) with two properties: *key* and *data*. These are supplied with values from `employee._links.self.href` and `employee`.
+The preceding listing creates a new React component (note the uppercase format) with two properties: *key* and *data*. These are supplied with values from `contestant._links.self.href` and `contestant`.
 
 IMPORTANT: Whenever you work with Spring Data REST, the `self` link is the key for a given resource. React needs a unique identifier for child nodes, and `_links.self.href` is perfect.
 
@@ -414,11 +414,11 @@ Next, you need to actually define what an `<Employee />` is, as follows:
 ====
 [source,javascript,indent=0]
 ----
-include::src/main/js/app.js[tag=employee]
+include::src/main/js/app.js[tag=contestant]
 ----
 ====
 
-This component is very simple. It has a single HTML table row wrapped around the employee's three properties. The property itself is `this.props.employee`. Notice how passing in a JavaScript object makes it easy to pass along data fetched from the server.
+This component is very simple. It has a single HTML table row wrapped around the contestant's three properties. The property itself is `this.props.contestant`. Notice how passing in a JavaScript object makes it easy to pass along data fetched from the server.
 
 Because this component does not manage any state nor deal with user input, there is nothing else to do. This might tempt you to cram it into the `<EmployeeList />` up above. Do not do it! Splitting your app up into small components that each do one job will make it easier to build up functionality in the future.
 
@@ -438,7 +438,7 @@ With all this in place, re-run the application (`./mvnw spring-boot:run`) and vi
 
 image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/basic/images/basic-1.png[]
 
-You can see the initial employee loaded up by the system.
+You can see the initial contestant loaded up by the system.
 
 Remember using cURL to create new entries? Do that again with the following command:
 

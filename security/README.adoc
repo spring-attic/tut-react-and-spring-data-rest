@@ -57,7 +57,7 @@ Spring Data REST, by default, will export any repository it finds. You do NOT wa
 
 == Linking Employees with Their Managers
 
-The last bit of modeling security is to associate employees with a manager. In this domain, an employee can have one manager while a manager can have multiple employees. The following code defines that relationship:
+The last bit of modeling security is to associate employees with a manager. In this domain, an contestant can have one manager while a manager can have multiple employees. The following code defines that relationship:
 
 ====
 [source,java]
@@ -71,7 +71,7 @@ include::src/main/java/com/greglturnquist/payroll/Employee.java[tag=code]
 
 == Securing Employees to Their Managers
 
-Spring Security supports a multitude of options when it comes to defining security policies. In this section, you want to restrict things such that ONLY managers can view employee payroll data, and that saving, updating, and deleting operations are confined to the employee's manager. In other words, any manager can log in and view the data, but only a given employee's manager can make any changes. The following code achieves these goals:
+Spring Security supports a multitude of options when it comes to defining security policies. In this section, you want to restrict things such that ONLY managers can view contestant payroll data, and that saving, updating, and deleting operations are confined to the contestant's manager. In other words, any manager can log in and view the data, but only a given contestant's manager can make any changes. The following code achieves these goals:
 
 ====
 [source,java]
@@ -82,9 +82,9 @@ include::src/main/java/com/greglturnquist/payroll/EmployeeRepository.java[tag=co
 <1> `@PreAuthorize` at the top of the interface restricts access to people with `ROLE_MANAGER`.
 ====
 
-On `save()`, either the employee's manager is null (initial creation of a new employee when no manager has been assigned), or the employee's manager's name matches the currently authenticated user's name. Here, you are using https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-access[Spring Security's SpEL expressions] to define access. It comes with a handy `?.` property navigator to handle null checks. It is also important to note using the `@Param(...)` on the arguments to link HTTP operations with the methods.
+On `save()`, either the contestant's manager is null (initial creation of a new contestant when no manager has been assigned), or the contestant's manager's name matches the currently authenticated user's name. Here, you are using https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#el-access[Spring Security's SpEL expressions] to define access. It comes with a handy `?.` property navigator to handle null checks. It is also important to note using the `@Param(...)` on the arguments to link HTTP operations with the methods.
 
-On `delete()`, the method either has access to the employee, or if it has only an `id`, it must find the `employeeRepository` in the application context, perform a `findOne(id)`, and check the manager against the currently authenticated user.
+On `delete()`, the method either has access to the contestant, or if it has only an `id`, it must find the `employeeRepository` in the application context, perform a `findOne(id)`, and check the manager against the currently authenticated user.
 
 == Writing a `UserDetails` Service
 
@@ -134,7 +134,7 @@ WARNING: BASIC authentication is handy when you are experimenting with curl. Usi
 
 == Adding Security Details Automatically
 
-One part of a good user experience is when the application can automatically apply context. In this example, if a logged-in manager creates a new employee record, it makes sense for that manager to own it. With Spring Data REST's event handlers, there is no need for the user to explicitly link it. It also ensures the user does not accidentally assign records to the wrong manager. The `SpringDataRestEventHandler` handles that for us:
+One part of a good user experience is when the application can automatically apply context. In this example, if a logged-in manager creates a new contestant record, it makes sense for that manager to own it. With Spring Data REST's event handlers, there is no need for the user to explicitly link it. It also ensures the user does not accidentally assign records to the wrong manager. The `SpringDataRestEventHandler` handles that for us:
 
 ====
 [source,java]
@@ -158,7 +158,7 @@ include::src/main/java/com/greglturnquist/payroll/DatabaseLoader.java[tag=code]
 ----
 ====
 
-The one wrinkle is that Spring Security is active with access rules in full force when this loader runs. Thus, to save employee data, you must use Spring Security's `setAuthentication()` API to authenticate this loader with the proper name and role. At the end, the security context is cleared out.
+The one wrinkle is that Spring Security is active with access rules in full force when this loader runs. Thus, to save contestant data, you must use Spring Security's `setAuthentication()` API to authenticate this loader with the proper name and role. At the end, the security context is cleared out.
 
 == Touring Your Secured REST Service
 
@@ -215,16 +215,16 @@ Finally, inside the data itself, you can see a new attribute: `manager`. You can
 
 == Displaying Manager Information in the UI
 
-With all these modifications in the backend, you can now shift to updating things in the frontend. First of all, you can show an employee's manager inside the `<Employee />` React component:
+With all these modifications in the backend, you can now shift to updating things in the frontend. First of all, you can show an contestant's manager inside the `<Employee />` React component:
 
 ====
 [source,javascript,indent=0]
 ----
-include::src/main/js/app.js[tag=employee]
+include::src/main/js/app.js[tag=contestant]
 ----
 ====
 
-This merely adds a column for `this.props.employee.entity.manager.name`.
+This merely adds a column for `this.props.contestant.entity.manager.name`.
 
 == Filtering out JSON Schema Metadata
 
@@ -308,20 +308,20 @@ Click on *Update*, make some changes, and then click *Update* again. It should f
 
 image::https://github.com/spring-guides/tut-react-and-spring-data-rest/raw/master/security/images/security-3.png[]
 
-If you try *Delete*, it should fail with a similar message. If you create a new employee, it should be assigned to you.
+If you try *Delete*, it should fail with a similar message. If you create a new contestant, it should be assigned to you.
 
 == Review
 
 In this section, you:
 
-* Defined the model of `manager` and linked it to an employee through a 1-to-many relationship.
+* Defined the model of `manager` and linked it to an contestant through a 1-to-many relationship.
 * Created a repository for managers and told Spring Data REST to not export.
-* Wrote a set of access rules for the employee repository and also write a security policy.
-* Wrote another Spring Data REST event handler to trap creation events before they happen so that the current user could be assigned as the employee's manager.
-* Updated the UI to show an employee's manager and also display error pop-ups when unauthorized actions are taken.
+* Wrote a set of access rules for the contestant repository and also write a security policy.
+* Wrote another Spring Data REST event handler to trap creation events before they happen so that the current user could be assigned as the contestant's manager.
+* Updated the UI to show an contestant's manager and also display error pop-ups when unauthorized actions are taken.
 
 Issues?
 
 The webpage has become quite sophisticated. But what about managing relationships and inlined data? The create and update dialogs are not really suited for that. It might require some custom written forms.
 
-Managers have access to employee data. Should employees have access? If you were to add more details like phone numbers and addresses, how would you model it? How would you grant employees access to the system so they could update those specific fields? Are there more hypermedia controls that would be handy to put on the page?
+Managers have access to contestant data. Should employees have access? If you were to add more details like phone numbers and addresses, how would you model it? How would you grant employees access to the system so they could update those specific fields? Are there more hypermedia controls that would be handy to put on the page?

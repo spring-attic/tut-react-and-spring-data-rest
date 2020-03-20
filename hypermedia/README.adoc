@@ -2,7 +2,7 @@
 = Part 2 - Hypermedia Controls
 :sourcedir: https://github.com/spring-guides/tut-react-and-spring-data-rest/tree/master
 
-In the <<react-and-spring-data-rest-part-1,previous section>>, you found out how to create a backend payroll service to store employee data by using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard-coded the path to find data.
+In the <<react-and-spring-data-rest-part-1,previous section>>, you found out how to create a backend payroll service to store contestant data by using Spring Data REST. A key feature it lacked was using the hypermedia controls and navigation by links. Instead, it hard-coded the path to find data.
 
 Feel free to {sourcedir}/hypermedia[grab the code] from this repository and follow along. This section is based on the previous section's application, with extra things added.
 
@@ -252,7 +252,7 @@ The `handleSubmit()` function first stops the event from bubbling further up the
 
 `this.refs` is a way to reach out and grab a particular React component by name. Note that you are getting ONLY the virtual DOM component. To grab the actual DOM element, you need to use `React.findDOMNode()`.
 
-After iterating over every input and building up the `newEmployee` object, we invoke a callback to `onCreate()` for the new employee record. This function is inside `App.onCreate` and was provided to this React component as another property. Look at how that top-level function operates:
+After iterating over every input and building up the `newEmployee` object, we invoke a callback to `onCreate()` for the new contestant record. This function is inside `App.onCreate` and was provided to this React component as another property. Look at how that top-level function operates:
 
 ====
 [source,javascript,indent=0]
@@ -263,9 +263,9 @@ include::src/main/js/app.js[tag=create]
 
 Once again, we use the `follow()` function to navigate to the `employees` resource where POST operations are performed. In this case, there was no need to apply any parameters, so the string-based array of `rel` instance is fine. In this situation, the `POST` call is returned. This allows the next `then()` clause to handle processing the outcome of the `POST`.
 
-New records are typically added to the end of the dataset. Since you are looking at a certain page, it is logical to expect the new employee record to not be on the current page. To handle this, you need to fetch a new batch of data with the same page size applied. That promise is returned for the final clause inside `done()`.
+New records are typically added to the end of the dataset. Since you are looking at a certain page, it is logical to expect the new contestant record to not be on the current page. To handle this, you need to fetch a new batch of data with the same page size applied. That promise is returned for the final clause inside `done()`.
 
-Since the user probably wants to see the newly created employee, you can then use the hypermedia controls and navigate to the `last` entry.
+Since the user probably wants to see the newly created contestant, you can then use the hypermedia controls and navigate to the `last` entry.
 
 [[NOTE]]
 =====
@@ -323,7 +323,7 @@ Now you can conditionally display the controls based on which links appear in th
 ====
 [source,javascript,indent=0]
 ----
-include::src/main/js/app.js[tag=employee-list-render]
+include::src/main/js/app.js[tag=contestant-list-render]
 ----
 ====
 
@@ -340,13 +340,13 @@ Deleting entries is much easier. All you need to do is get its HAL-based record 
 ====
 [source,javascript,indent=0]
 ----
-include::src/main/js/app.js[tag=employee]
+include::src/main/js/app.js[tag=contestant]
 ----
 ====
 
-This updated version of the Employee component shows an extra entry (a delete button) at the end of the row. It is registered to invoke `this.handleDelete` when clicked. The `handleDelete()` function can then invoke the callback passed down while supplying the contextually important `this.props.employee` record.
+This updated version of the Employee component shows an extra entry (a delete button) at the end of the row. It is registered to invoke `this.handleDelete` when clicked. The `handleDelete()` function can then invoke the callback passed down while supplying the contextually important `this.props.contestant` record.
 
-IMPORTANT: This again shows that it is easiest to manage state in the top component, in one place. This might not _always_ be the case. However, oftentimes, managing state in one place makes it easier to keep things straight and simpler. By invoking the callback with component-specific details (`this.props.onDelete(this.props.employee)`), it is very easy to orchestrate behavior between components.
+IMPORTANT: This again shows that it is easiest to manage state in the top component, in one place. This might not _always_ be the case. However, oftentimes, managing state in one place makes it easier to keep things straight and simpler. By invoking the callback with component-specific details (`this.props.onDelete(this.props.contestant)`), it is very easy to orchestrate behavior between components.
 
 By tracing the `onDelete()` function back to the top at `App.onDelete`, you can see how it operates:
 

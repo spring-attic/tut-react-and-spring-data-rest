@@ -47,7 +47,7 @@ include::src/main/js/app.js[tag=follow-2]
 +
 Notice that this embedded promise returns the `employeeCollection`. That way, the collection can be passed onto the next call, letting you grab the metadata along the way.
 
-<3> The second `then(employeeCollection => ...)` clause converts the collection of employees into an array of `GET` promises to fetch each individual resource. *This is what you need to fetch an ETag header for each employee.*
+<3> The second `then(employeeCollection => ...)` clause converts the collection of employees into an array of `GET` promises to fetch each individual resource. *This is what you need to fetch an ETag header for each contestant.*
 
 <4> The `then(employeePromises => ...)` clause takes the array of `GET` promises and merges them into a single promise with `when.all()`, which is resolved when all the GET promises are resolved.
 
@@ -58,7 +58,7 @@ This chain is implemented in other places as well. For example, `onNavigate()` (
 
 == Updating Existing Resources
 
-In this section, you are adding an `UpdateDialog` React component to edit existing employee records:
+In this section, you are adding an `UpdateDialog` React component to edit existing contestant records:
 
 .src/main/js/app.js - UpdateDialog component
 ====
@@ -76,7 +76,7 @@ We dig into these functions in reverse order and first look at the `render()` fu
 
 This component uses the same CSS/HTML tactics to show and hide the dialog as the `<CreateDialog />` from the previous section.
 
-It converts the array of JSON Schema attributes into an array of HTML inputs, wrapped in paragraph elements for styling. This is also the same as the `<CreateDialog />` with one difference: The fields are loaded with `this.props.employee`. In the `CreateDialog` component, the fields are empty.
+It converts the array of JSON Schema attributes into an array of HTML inputs, wrapped in paragraph elements for styling. This is also the same as the `<CreateDialog />` with one difference: The fields are loaded with `this.props.contestant`. In the `CreateDialog` component, the fields are empty.
 
 The `id` field is built differently. There is only one `CreateDialog` link on the entire UI, but a separate `UpdateDialog` link for every row displayed. Hence, the `id` field is based on the `self` link's URI. This is used in the `<div>` element's React `key`, the HTML anchor tag, and the hidden pop-up.
 
@@ -112,11 +112,11 @@ The `CreateDialog` created in the previous section was put at the top of the `Em
 ====
 [source,javascript,indent=0]
 ----
-include::src/main/js/app.js[tag=employee]
+include::src/main/js/app.js[tag=contestant]
 ----
 ====
 
-In this section, you switch from using the collection resource to using individual resources. The fields for an employee record are now found at `this.props.employee.entity`. It gives us access to `this.props.employee.headers`, where we can find ETags.
+In this section, you switch from using the collection resource to using individual resources. The fields for an contestant record are now found at `this.props.contestant.entity`. It gives us access to `this.props.contestant.headers`, where we can find ETags.
 
 There are other headers supported by Spring Data REST (such as https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.29[Last-Modified]) that are not part of this series. So structuring your data this way is handy.
 
@@ -153,7 +153,7 @@ In this section:
 * You configured your domain model with a `@Version` field for JPA-based optimistic locking.
 * You adjusted the frontend to fetch individual resources.
 * You plugged the ETag header from an individual resource into an `If-Match` request header to make PUTs conditional.
-* You coded a new `UpdateDialog` for each employee shown on the list.
+* You coded a new `UpdateDialog` for each contestant shown on the list.
 
 With this plugged in, itis easy to avoid colliding with other users or overwriting their edits.
 

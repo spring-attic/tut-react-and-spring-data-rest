@@ -31,45 +31,45 @@ import org.springframework.stereotype.Component;
  */
 // tag::code[]
 @Component
-@RepositoryEventHandler(Employee.class) // <1>
-public class EventHandler {
+@RepositoryEventHandler(Contestant.class) // <1>
+public class EmployeeEventHandler {
 
 	private final SimpMessagingTemplate websocket; // <2>
 
 	private final EntityLinks entityLinks;
 
 	@Autowired
-	public EventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks) {
+	public EmployeeEventHandler(SimpMessagingTemplate websocket, EntityLinks entityLinks) {
 		this.websocket = websocket;
 		this.entityLinks = entityLinks;
 	}
 
 	@HandleAfterCreate // <3>
-	public void newEmployee(Employee employee) {
+	public void newEmployee(Contestant contestant) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/newEmployee", getPath(employee));
+				MESSAGE_PREFIX + "/newEmployee", getPath(contestant));
 	}
 
 	@HandleAfterDelete // <3>
-	public void deleteEmployee(Employee employee) {
+	public void deleteEmployee(Contestant contestant) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/deleteEmployee", getPath(employee));
+				MESSAGE_PREFIX + "/deleteEmployee", getPath(contestant));
 	}
 
 	@HandleAfterSave // <3>
-	public void updateEmployee(Employee employee) {
+	public void updateEmployee(Contestant contestant) {
 		this.websocket.convertAndSend(
-				MESSAGE_PREFIX + "/updateEmployee", getPath(employee));
+				MESSAGE_PREFIX + "/updateEmployee", getPath(contestant));
 	}
 
 	/**
-	 * Take an {@link Employee} and get the URI using Spring Data REST's {@link EntityLinks}.
+	 * Take an {@link Contestant} and get the URI using Spring Data REST's {@link EntityLinks}.
 	 *
-	 * @param employee
+	 * @param contestant
 	 */
-	private String getPath(Employee employee) {
-		return this.entityLinks.linkForItemResource(employee.getClass(),
-				employee.getId()).toUri().getPath();
+	private String getPath(Contestant contestant) {
+		return this.entityLinks.linkForItemResource(contestant.getClass(),
+				contestant.getId()).toUri().getPath();
 	}
 
 }

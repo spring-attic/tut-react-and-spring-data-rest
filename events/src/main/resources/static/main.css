@@ -67,3 +67,20 @@ td, th {
 }
 
 .close:hover { background: #00d9ff; }
+
+.gridItem {
+  float: left;
+  padding: 15px;
+  margin: 2px;
+  text-align: center;
+  font-size: 25px;
+  cursor: pointer;
+  color: white;
+  background: grey;
+}
+
+.gridRow {
+    display:flex;
+    flex-direction: row;
+}
+

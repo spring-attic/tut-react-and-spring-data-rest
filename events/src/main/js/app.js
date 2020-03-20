@@ -1,5 +1,7 @@
 'use strict';
 
+import Grid from './components/Grid';
+import GridItem from './components/GridItem';
 
 const React = require('react');
 const ReactDOM = require('react-dom');
@@ -192,6 +194,7 @@ class App extends React.Component {
 
 			<div>
 				<CreateDialog attributes={this.state.attributes} onCreate={this.onCreate}/>
+				<Grid rowCount={this.state.employees.length} columnCount={this.state.employees.length} gridItems={[]} />
 				<EmployeeList page={this.state.page}
 							  employees={this.state.employees}
 							  links={this.state.links}
@@ -201,7 +204,6 @@ class App extends React.Component {
 							  onUpdate={this.onUpdate}
 							  onDelete={this.onDelete}
 							  updatePageSize={this.updatePageSize}/>
-				<BarChart data={[5,1]} size={[500,500]} />
 			</div>
 
 
@@ -382,7 +384,7 @@ class EmployeeList extends React.Component {
 						<tr>
 							<th>First Name</th>
 							<th>Last Name</th>
-							<th>Description</th>
+							<th>Gender</th>
 							<th></th>
 							<th></th>
 						</tr>
@@ -413,7 +415,7 @@ class Employee extends React.Component {
 			<tr>
 				<td>{this.props.employee.entity.firstName}</td>
 				<td>{this.props.employee.entity.lastName}</td>
-				<td>{this.props.employee.entity.description}</td>
+				<td>{this.props.employee.entity.gender}</td>
 				<td>
 					<UpdateDialog employee={this.props.employee}
 								  attributes={this.props.attributes}
@@ -427,52 +429,6 @@ class Employee extends React.Component {
 	}
 }
 
-
-
-class BarChart extends React.Component {
-   constructor(props){
-      super(props)
-      this.createBarChart = this.createBarChart.bind(this)
-   }
-   componentDidMount() {
-      this.createBarChart()
-   }
-   componentDidUpdate() {
-      this.createBarChart()
-   }
-   createBarChart() {
-      const node = this.node
-      const dataMax = d3.max(this.props.data)
-      const yScale = d3Scale.scaleLinear()
-         .domain([0, dataMax])
-         .range([0, this.props.size[1]])
-   d3.select(node)
-      .selectAll('rect')
-      .data(this.props.data)
-      .enter()
-      .append('rect')
-
-   d3.select(node)
-      .selectAll('rect')
-      .data(this.props.data)
-      .exit()
-      .remove()
-
-   d3.select(node)
-      .selectAll('rect')
-      .data(this.props.data)
-      .style('fill', '#fe9922')
-      .attr('x', (d,i) => i * 25)
-      .attr('y', d => this.props.size[1] - yScale(d))
-      .attr('height', d => yScale(d))
-      .attr('width', 25)
-   }
-render() {
-      return <svg ref={node => this.node = node}
-      width={500} height={500}>
-      </svg>
-   }
-}
 
 ReactDOM.render(
 	<App />,

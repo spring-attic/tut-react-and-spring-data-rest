@@ -109,9 +109,9 @@ include::src/main/js/app.js[tag=register-handlers]
 
 The first line is the same as before, where all the employees are fetched from the server using page size. The second line shows an array of JavaScript objects being registered for WebSocket events, each with a `route` and a `callback`.
 
-When a new employee is created, the behavior is to refresh the data set and then use the paging links to navigate to the *last* page. Why refresh the data before navigating to the end? It is possible that adding a new record causes a new page to get created. While it is possible to calculate if this will happen, it subverts the point of hypermedia. Instead of cobbling together customized page counts, it is better to use existing links and only go down that road if there is a performance-driving reason to do so.
+When a new contestant is created, the behavior is to refresh the data set and then use the paging links to navigate to the *last* page. Why refresh the data before navigating to the end? It is possible that adding a new record causes a new page to get created. While it is possible to calculate if this will happen, it subverts the point of hypermedia. Instead of cobbling together customized page counts, it is better to use existing links and only go down that road if there is a performance-driving reason to do so.
 
-When an employee is updated or deleted, the behavior is to refresh the current page. When you update a record, it impacts the page your are viewing. When you delete a record on the current page, a record from the next page will get pulled into the current one -- hence the need to also refresh the current page.
+When an contestant is updated or deleted, the behavior is to refresh the current page. When you update a record, it impacts the page your are viewing. When you delete a record on the current page, a record from the next page will get pulled into the current one -- hence the need to also refresh the current page.
 
 NOTE: There is no requirement for these WebSocket messages to start with `/topic`. It is a common convention that indicates pub-sub semantics.
 

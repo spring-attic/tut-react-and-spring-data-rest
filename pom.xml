@@ -18,6 +18,13 @@
 	<name>React.js and Spring Data REST - Root</name>
 	<description>An SPA with ReactJS in the frontend and Spring Data REST in the backend</description>
 
+
+	<properties>
+		<java.version>8</java.version>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
+	</properties>
+
 	<modules>
 		<module>basic</module>
 		<module>hypermedia</module>

@@ -29,39 +29,39 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 // tag::code[]
 @Entity
-public class Employee {
+public class Contestant {
 
 	private @Id @GeneratedValue Long id;
 	private String firstName;
 	private String lastName;
-	private String description;
+	private String gender;
 
 	private @Version @JsonIgnore Long version;
 
-	private Employee() {}
+	private Contestant() {}
 
-	public Employee(String firstName, String lastName, String description) {
+	public Contestant(String firstName, String lastName, String description) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.description = description;
+		this.gender = description;
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		Employee employee = (Employee) o;
-		return Objects.equals(id, employee.id) &&
-			Objects.equals(firstName, employee.firstName) &&
-			Objects.equals(lastName, employee.lastName) &&
-			Objects.equals(description, employee.description) &&
-			Objects.equals(version, employee.version);
+		Contestant contestant = (Contestant) o;
+		return Objects.equals(id, contestant.id) &&
+			Objects.equals(firstName, contestant.firstName) &&
+			Objects.equals(lastName, contestant.lastName) &&
+			Objects.equals(gender, contestant.gender) &&
+			Objects.equals(version, contestant.version);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(id, firstName, lastName, description, version);
+		return Objects.hash(id, firstName, lastName, gender, version);
 	}
 
 	public Long getId() {
@@ -89,11 +89,11 @@ public class Employee {
 	}
 
 	public String getDescription() {
-		return description;
+		return gender;
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		this.gender = description;
 	}
 
 	public Long getVersion() {
@@ -110,7 +110,7 @@ public class Employee {
 			"id=" + id +
 			", firstName='" + firstName + '\'' +
 			", lastName='" + lastName + '\'' +
-			", description='" + description + '\'' +
+			", description='" + gender + '\'' +
 			", version=" + version +
 			'}';
 	}
