@@ -132,7 +132,7 @@ That looks neat, but it will be even better when you update the frontend to take
 
 No more changes are needed on the backend to start using the hypermedia controls Spring Data REST provides out of the box. You can switch to working on the frontend. (That is part of the beauty of Spring Data REST: No messy controller updates!)
 
-NOTE: It is important to point out that this application is not "`Spring Data REST-specific.`" Instead, it uses http://stateless.co/hal_specification.html[HAL], https://tools.ietf.org/html/rfc6570[URI Templates], and other standards. That is Why using rest.js is a snap: That library comes with HAL support.
+NOTE: It is important to point out that this application is not "`Spring Data REST-specific.`" Instead, it uses http://stateless.co/hal_specification.html[HAL], https://tools.ietf.org/html/rfc6570[URI Templates], and other standards. That is why using rest.js is a snap: That library comes with HAL support.
 
 In the previous section, you hardcoded the path to `/api/employees`. Instead, the ONLY path you should hardcode is the root, as follows
 
