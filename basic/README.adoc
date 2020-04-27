@@ -311,7 +311,7 @@ include::src/main/js/app.js[tag=vars]
 ----
 
 <1> `React` is one of the main libraries from Facebook used to build this app.
-<2> `ReactDOM` this package serves as the entry point to the DOM and server renderers for React. It is intended to be paired with the generic React package.
+<2> `ReactDOM` is the package that serves as the entry point to the DOM and server renderers for React. It is intended to be paired with the generic React package.
 <3> `client` is custom code that configures rest.js to include support for HAL, URI Templates, and other things. It also sets the default `Accept` request header to `application/hal+json`. You can https://github.com/spring-guides/tut-react-and-spring-data-rest/blob/master/basic/src/main/js/client.js[read the code here].
 ====
 
