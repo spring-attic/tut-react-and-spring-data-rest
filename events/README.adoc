@@ -165,7 +165,7 @@ In this section, you:
 * Subscribed for create, update, and delete events from Spring Data REST to dynamically update the UI.
 * Published the URI of affected REST resources along with a contextual message ("/topic/newEmployee", "/topic/updateEmployee", and so on).
 * Registered WebSocket listeners in the UI to listen for these events.
-* Wred the listeners to handlers to update the UI state.
+* Wired the listeners to handlers to update the UI state.
 
 With all these features, it is easy to run two browsers, side-by-side, and see how updating one ripples to the other.
 
