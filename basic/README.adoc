@@ -249,7 +249,7 @@ This section contains the barebones information to get the JavaScript bits off t
 ====
 [source,xml,indent=0]
 ----
-include::pom.xml[tag=frontend-maven-plugin]
+include::../pom.xml[tag=frontend-maven-plugin]
 ----
 ====
 
