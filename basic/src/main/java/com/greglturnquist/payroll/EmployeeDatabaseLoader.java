@@ -24,12 +24,12 @@ import org.springframework.stereotype.Component;
  */
 // tag::code[]
 @Component // <1>
-public class DatabaseLoader implements CommandLineRunner { // <2>
+public class EmployeeDatabaseLoader implements CommandLineRunner { // <2>
 
 	private final EmployeeRepository repository;
 
 	@Autowired // <3>
-	public DatabaseLoader(EmployeeRepository repository) {
+	public EmployeeDatabaseLoader(EmployeeRepository repository) {
 		this.repository = repository;
 	}
 
