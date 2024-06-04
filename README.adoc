@@ -6,6 +6,8 @@
 :source-highlighter: prettify
 :image-width: 500
 
+# This repository is no longer maintained.
+
 = React.js and Spring Data REST
 
 This tutorial shows a collection of apps that use Spring Data REST and its powerful backend functionality, combined with React's sophisticated features to build an easy-to-understand UI.
