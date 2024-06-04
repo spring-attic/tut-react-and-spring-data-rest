@@ -365,7 +365,7 @@ If you are deleting the last record on the last page, it will jump to the first 
 
 One way to see how hypermedia really shines is to update the page size. Spring Data REST fluidly updates the navigational links based on the page size.
 
-There is an HTML element at the top of `ElementList.render`: `<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>`.
+There is an HTML element at the top of `EmployeeList.render`: `<input ref="pageSize" defaultValue={this.props.pageSize} onInput={this.handleInput}/>`.
 
 * `ref="pageSize"` makes it easy to grab that element with `this.refs.pageSize`.
 * `defaultValue` initializes it with the state's `pageSize`.
